@@ -1,0 +1,47 @@
+@use "@/style/variables" as v;
+
+.container {
+	max-width: 600px;
+}
+
+.subtitle {
+	margin-bottom: 1rem;
+	font-style: italic;
+
+	&>a {
+		color: v.$linkColor;
+	}
+}
+
+.title {
+	margin-bottom: 0.5rem;
+}
+
+.episodeTimer {
+	display: flex;
+	justify-content: space-between;
+}
+
+.description {
+	>p {
+		&:first-child {
+			margin-top: 1rem;
+		}
+
+		>a {
+			text-decoration: underline;
+			color: v.$linkColor
+		}
+
+		margin-bottom: 1rem;
+	}
+}
+
+.podcastPlayerContainer {
+	margin-top: 1rem;
+
+	>div:first-child {
+		display: flex;
+		justify-content: center;
+	}
+}

@@ -1,0 +1,37 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	height: 500px;
+	overflow-y: scroll;
+	border: 1px solid #ccc;
+	row-gap: 0.2rem;
+	padding: 0.5rem;
+	box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.15);
+}
+
+.itemContainer {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	padding: 0.5rem;
+	gap: 0.5rem;
+	border-bottom: 1px solid #38383859;
+	border-top: 1px solid #38383859;
+
+	&:hover {
+		cursor: pointer;
+		background-color: #fff2d6;
+		filter: sepia(90%);
+	}
+}
+
+.itemText {
+	display: flex;
+
+	>:first-child {
+		margin-right: 1rem;
+	}
+}

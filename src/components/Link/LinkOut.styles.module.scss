@@ -1,0 +1,9 @@
+@use "@/style/variables" as v;
+
+.container {
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+	color: v.$linkColor;
+	text-decoration: none;
+}
