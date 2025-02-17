@@ -1,8 +1,8 @@
 import { mockSeries } from "../series/mocks";
-import { ListCard } from "../episodes/EpisodeList";
 import styles from "./Results.style.module.scss";
 import { SearchFilters } from "./Filters";
 import { Text } from "@radix-ui/themes";
+import { ListCard } from "@/components/ListCard";
 
 export const SearchResults = () => {
   const data = [mockSeries, mockSeries, mockSeries];
@@ -21,7 +21,12 @@ export const SearchResults = () => {
         {data.map((series) => {
           return (
             <li key={series.uuid}>
-              <ListCard data={series} imgSrc={series.imageUrl} />
+              <ListCard
+                href={`/series/${series.uuid}/`}
+                name={series.name}
+                description={series.description}
+                imgSrc={series.imageUrl}
+              />
             </li>
           );
         })}

@@ -28,33 +28,25 @@ export const GET_PODCAST_EPISODE = gql`
 export const GET_PODCASTSERIES = gql`
   query getPodcastSeries($uuid: ID) {
     getPodcastSeries(uuid: $uuid) {
-      uuid
-      hash
-      name
-      description
-      imageUrl
-      datePublished
-      language
-      seriesType
-      contentType
-      isExplicitContent
-      copyright
-      websiteUrl
-      rssUrl
-      rssOwnerName
-      rssOwnerPublicEmail
       authorName
-      isCompleted
-      isBlocked
-      itunesId
+      datePublished
+      description
       genres
-      childrenHash
-      itunesInfo {
+      imageUrl
+      isBlocked
+      isCompleted
+      isExplicitContent
+      name
+      rssUrl
+      seriesType
+      uuid
+      websiteUrl
+      episodes {
         uuid
-        publisherId
-        publisherName
-        baseArtworkUrl
-        baseArtworkUrlOf(size: 640)
+        name
+        description
+        seasonNumber
+        episodeNumber
       }
     }
   }
@@ -101,6 +93,57 @@ export const SEARCH_FOR_TERM_QUERY = gql`
         guid
         name
         audioUrl
+      }
+    }
+  }
+`;
+
+export const TOP_PODCAST_SERIES = gql`
+  query getTopPods {
+    getTopChartsByCountry(
+      taddyType: PODCASTSERIES
+      country: UNITED_STATES_OF_AMERICA
+    ) {
+      topChartsId
+      podcastSeries {
+        authorName
+        datePublished
+        description
+        imageUrl
+        name
+        totalEpisodesCount
+        uuid
+        websiteUrl
+      }
+    }
+  }
+`;
+
+export const TOP_PODCAST_EPISODES = gql`
+  query getTopPods {
+    getTopChartsByCountry(
+      taddyType: PODCASTEPISODE
+      country: UNITED_STATES_OF_AMERICA
+    ) {
+      topChartsId
+      podcastEpisodes {
+        audioUrl
+        datePublished
+        description
+        duration
+        episodeNumber
+        name
+        seasonNumber
+        uuid
+        podcastSeries {
+          authorName
+          description
+          imageUrl
+          name
+          totalEpisodesCount
+          uuid
+          websiteUrl
+        }
       }
     }
   }

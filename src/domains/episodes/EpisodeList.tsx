@@ -1,43 +1,15 @@
-import { SeriesEpisodes } from "./types";
+import { EpisodeDetails } from "./types";
 import styles from "./EpisodeList.style.module.scss";
-import { Avatar, Box, Card, Flex, Heading, Text } from "@radix-ui/themes";
-import Image from "next/image";
-import { truncate } from "@/utils";
-import { SeriesDetail } from "../series/types";
-
-export const ListCard = ({
-  data,
-  imgSrc,
-}: {
-  data: SeriesEpisodes | SeriesDetail;
-  imgSrc: string;
-}) => {
-  return (
-    <li>
-      <div className={styles.itemContainer}>
-        <Text size="1" weight="bold">
-          {data.name}
-        </Text>
-        <div className={styles.itemText}>
-          <Image
-            src={imgSrc}
-            alt={data.name}
-            objectFit="cover"
-            width={100}
-            height={100}
-          />
-          <Text size="1">{truncate(data.description, 50)}</Text>
-        </div>
-      </div>
-    </li>
-  );
-};
+import { Heading } from "@radix-ui/themes";
+import { ListCard } from "@/components/ListCard";
 
 export const EpisodeList = ({
+  seriesId,
   episodes,
   imgSrc,
 }: {
-  episodes: SeriesEpisodes[];
+  seriesId: string;
+  episodes: EpisodeDetails[];
   imgSrc: string;
 }) => {
   return (
@@ -47,7 +19,15 @@ export const EpisodeList = ({
       </Heading>
       <ul className={styles.container}>
         {episodes.map((episode) => {
-          return <ListCard key={episode.uuid} data={episode} imgSrc={imgSrc} />;
+          return (
+            <ListCard
+              key={episode.uuid}
+              href={`/series/${seriesId}/episodes/${episode.uuid}`}
+              name={episode.name}
+              description={episode.description}
+              imgSrc={imgSrc}
+            />
+          );
         })}
       </ul>
     </div>

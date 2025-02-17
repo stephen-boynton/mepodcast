@@ -7,7 +7,12 @@ const nextConfig: NextConfig = {
     TADDY_API_KEY: process.env.TADDY_API_KEY,
   },
   images: {
-    domains: ["images.unsplash.com", "megaphone.imgix.net"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+    ],
   },
 };
 

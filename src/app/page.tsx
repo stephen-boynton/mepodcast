@@ -1,11 +1,10 @@
 import styles from "./page.module.scss";
+import { Home } from "@/modules/home";
 
-export default function Home() {
+export default function HomePage() {
   return (
     <div className={styles.page}>
-      <main className={styles.main}>
-        <p>Subscribe to podcasts to populate your feed.</p>
-      </main>
+      <Home />
     </div>
   );
 }

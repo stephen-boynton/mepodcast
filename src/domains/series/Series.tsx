@@ -1,13 +1,20 @@
+"use client";
 import { Heading, Text } from "@radix-ui/themes";
-import { mockSeries } from "./mocks";
 import { EpisodeList } from "../episodes/EpisodeList";
 import Image from "next/image";
 import styles from "./Series.style.module.scss";
 import { LinkOut } from "@/components/Link/LinkOut";
 import { truncate } from "@/utils";
+import { useSeriesDetails } from "./useSeriesDetails";
 
-export const SeriesDetails = () => {
-  const data = mockSeries;
+export const SeriesDetails = ({ uuid }: { uuid: string }) => {
+  const { data, loading, error } = useSeriesDetails({ uuid });
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
   return (
     <div className={styles.container}>
       <Heading as="h2" size="6">
@@ -23,10 +30,14 @@ export const SeriesDetails = () => {
         />
         <div className={styles.descriptionText}>
           <Text wrap="pretty">{truncate(data.description, 100)}</Text>
-          <LinkOut href={data.websiteUrl}>More details.</LinkOut>
+          <LinkOut href={data.websiteUrl || ""}>More details.</LinkOut>
         </div>
       </div>
-      <EpisodeList episodes={data.episodes} imgSrc={data.imageUrl} />
+      <EpisodeList
+        seriesId={data.uuid}
+        episodes={data.episodes}
+        imgSrc={data.imageUrl}
+      />
     </div>
   );
 };

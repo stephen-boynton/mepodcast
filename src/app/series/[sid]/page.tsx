@@ -1,5 +1,5 @@
-import { SeriesDetails } from "@/domains/series/Series";
+import { Series } from "@/modules/series";
 
-export default function Series() {
-  return <SeriesDetails />;
+export default function SeriesPage({ params }: { params: { sid: string } }) {
+  return <Series uuid={params.sid} />;
 }

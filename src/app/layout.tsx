@@ -5,6 +5,8 @@ import { NavBar } from "@/components/NavBar";
 import styles from "./layout.styles.module.scss";
 import { Theme } from "@radix-ui/themes";
 import "@radix-ui/themes/styles.css";
+import { ApolloProvider } from "@apollo/client";
+import { client } from "@/lib/podcastApi";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

@@ -1,10 +1,10 @@
 import { Heading, Text } from "@radix-ui/themes";
-import { EpisodeDetails } from "./types";
 import styles from "./Episode.style.module.scss";
 import Image from "next/image";
 import { PodcastPlayer } from "../podcastPlayer/PodcastPlayer";
 import sanitizeHtml from "sanitize-html";
 import { LinkOut } from "@/components/Link/LinkOut";
+import { useEpisodeDetail } from "./useEpisodeDetails";
 
 const clean = (dirty: string) =>
   sanitizeHtml(dirty, {
@@ -14,7 +14,16 @@ const clean = (dirty: string) =>
     },
   });
 
-export const Episode = ({ data }: { data: EpisodeDetails }) => {
+export const EpisodeDetail = ({ id }: { id: string }) => {
+  const { data, error, loading } = useEpisodeDetail({ id });
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
   return (
     <div className={styles.container}>
       <Heading className={styles.title} size="6" as="h2">

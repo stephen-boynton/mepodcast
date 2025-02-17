@@ -1,14 +1,14 @@
 import { Maybe } from "graphql/jsutils/Maybe";
-import { SeriesEpisodes } from "../episodes/types";
+import { EpisodeDetails } from "../episodes/types";
 
 export type SeriesDetail = {
-  uuid: string;
-  name: string;
-  datePublished: number;
-  imageUrl: string;
-  episodes: SeriesEpisodes[];
   authorName: string;
+  datePublished: number;
   description: string;
+  episodes?: EpisodeDetails[];
+  imageUrl: string;
+  name: string;
   totalEpisodesCount: number;
+  uuid: string;
   websiteUrl: Maybe<string>;
 };

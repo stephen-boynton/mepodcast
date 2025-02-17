@@ -10,12 +10,10 @@ export type SeriesEpisodes = {
   uuid: string;
 };
 
-export type EpisodeDetails = SeriesEpisodes & {
-  imageUrl: string;
-  subtitle: string;
+export type EpisodeDetails = Partial<SeriesEpisodes> & {
   audioUrl: string;
-  websiteUrl: string;
-  podcastSeries: {
+  imageUrl: string;
+  podcastSeries?: {
     uuid: string;
     name: string;
     authorName: string;
@@ -23,4 +21,6 @@ export type EpisodeDetails = SeriesEpisodes & {
     imageUrl: string;
     websiteUrl: Maybe<string>;
   };
+  subtitle: string;
+  websiteUrl: string;
 };

@@ -1,7 +1,5 @@
-import { Episode } from "@/domains/episodes/Episode";
-import { mockEpisode } from "@/domains/episodes/mocks";
+import { Episode } from "@/modules/episode";
 
-export default function Episodes() {
-  const data = mockEpisode;
-  return <Episode data={data} />;
+export default function Episodes({ params }: { params: { id: string } }) {
+  return <Episode id={params.id} />;
 }
