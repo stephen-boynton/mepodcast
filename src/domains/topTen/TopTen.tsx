@@ -1,23 +1,22 @@
 "use client";
 import { PodcastCard } from "@/components/PodcastCard";
 import { Heading, Separator } from "@radix-ui/themes";
-import { Display } from "@/types/shared";
+import { Content, DisplayType } from "@/types/shared";
 import { useTopTen } from "./useTopTen";
 import styles from "./TopTen.style.module.scss";
 import Link from "next/link";
+import { FavoriteButton } from "../favoriteSeries/FavoriteButton";
+import { DownloadButton } from "../episodes/DownloadButton";
 
-const TopGrid = ({ items }: { items: Display[] }) => {
+const TopGrid = ({ items, type }: { items: Content[]; type: DisplayType }) => {
+  const renderButton = type === "series" ? FavoriteButton : DownloadButton;
   return (
     <ul className={styles.itemGrid}>
       {items.map((item) => {
         return (
           <li key={item.uuid} className={styles.itemContainer}>
             <Link href={`/series/${item.uuid}`}>
-              <PodcastCard
-                imgSrc={item.imageUrl || item.imageUrl}
-                name={item.name || ""}
-                author={item.authorName || ""}
-              />
+              <PodcastCard details={item} renderButton={renderButton} />
             </Link>
           </li>
         );
@@ -40,7 +39,7 @@ export const TopTen = () => {
       <Heading as="h3" mb="4" weight="bold">
         Top 10 Series
       </Heading>
-      <TopGrid items={series} />
+      <TopGrid items={series} type="series" />
 
       {episodes.length && (
         <>
@@ -48,7 +47,7 @@ export const TopTen = () => {
           <Heading as="h3" mb="4" weight="bold">
             Top 10 Episodes
           </Heading>
-          <TopGrid items={episodes} />
+          <TopGrid items={episodes} type="episode" />
         </>
       )}
     </>

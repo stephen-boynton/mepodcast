@@ -1,4 +1,6 @@
 import { TOP_PODCAST_EPISODES, TOP_PODCAST_SERIES } from "@/gql";
+import { createEpisode } from "@/models/Episode";
+import { createSeries } from "@/models/Series";
 import { useQuery } from "@apollo/client";
 
 export const useTopTen = () => {
@@ -17,8 +19,10 @@ export const useTopTen = () => {
     loading: seriesLoading || episodeLoading,
     error: seriesError || episodeError,
     data: {
-      series: seriesData?.getTopChartsByCountry?.podcastSeries,
-      episodes: episodeData?.getTopChartsByCountry?.podcastEpisodes,
+      series:
+        seriesData?.getTopChartsByCountry?.podcastSeries.map(createSeries),
+      episodes:
+        episodeData?.getTopChartsByCountry?.podcastEpisodes.map(createEpisode),
     },
   };
 };

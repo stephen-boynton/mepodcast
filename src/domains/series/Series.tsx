@@ -5,7 +5,7 @@ import Image from "next/image";
 import styles from "./Series.style.module.scss";
 import { LinkOut } from "@/components/Link/LinkOut";
 import { truncate } from "@/utils";
-import { useSeriesDetails } from "./useSeriesDetails";
+import { useSeriesDetails } from "./hooks/useSeriesDetails";
 
 export const SeriesDetails = ({ uuid }: { uuid: string }) => {
   const { data, loading, error } = useSeriesDetails({ uuid });

@@ -1,26 +1,36 @@
+import { Episode } from "@/models/Episode";
+import { Series } from "@/models/Series";
 import { Box, Card, Flex, Text } from "@radix-ui/themes";
 import Image from "next/image";
 
-type PodcastCardProps = {
-  imgSrc: string;
-  name: string;
-  author: string;
-};
-
-export const PodcastCard = ({ imgSrc, name, author }: PodcastCardProps) => {
+export const PodcastCard = ({
+  details,
+  renderButton: Button,
+}: {
+  details: Series | Episode;
+  renderButton: React.ComponentType<{ series: Series }>;
+}) => {
   return (
-    <Box maxWidth="240px">
-      <Card>
-        <Flex gap="3" align="center">
+    <Box maxWidth="240px" height="100%">
+      <Card asChild>
+        <Flex gap="3" align="center" height={"100%"}>
           <Box>
-            {imgSrc && (
-              <Image src={imgSrc} alt={name} width={100} height={100} />
-            )}
+            <Flex justify={"between"}>
+              {details.imageUrl && (
+                <Image
+                  src={details.imageUrl}
+                  alt={details.name ?? "Podcast Image"}
+                  width={100}
+                  height={100}
+                />
+              )}
+              <Button series={details as Series} />
+            </Flex>
             <Text as="div" size="2" weight="bold">
-              {name}
+              {details.name}
             </Text>
             <Text as="div" size="2" color="gray">
-              {author}
+              {details.authorName}
             </Text>
           </Box>
         </Flex>
