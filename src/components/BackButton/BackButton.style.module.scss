@@ -1,0 +1,14 @@
+.container {
+	display: flex;
+	background-color: transparent;
+	outline: none;
+	border: none;
+	cursor: pointer;
+	color: rgb(79, 89, 230);
+	font-size: 1rem;
+	line-height: 1;
+	user-select: none;
+	-webkit-user-select: none;
+	touch-action: manipulation;
+	padding: 0.5rem;
+}

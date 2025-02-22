@@ -1,6 +1,6 @@
-import H5AudioPlayer from "react-h5-audio-player"
-import AudioPlayer from "react-h5-audio-player"
-import "react-h5-audio-player/lib/styles.css"
+import H5AudioPlayer from 'react-h5-audio-player'
+import AudioPlayer from 'react-h5-audio-player'
+import 'react-h5-audio-player/lib/styles.css'
 
 type PodcastPlayerProps = {
   src: string
@@ -12,6 +12,14 @@ type PodcastPlayerProps = {
   playerRef: React.RefObject<H5AudioPlayer>
 }
 
+const Header = () => {
+  return (
+    <div className="audio-player-header">
+      <h4>Podcast Player</h4>
+    </div>
+  )
+}
+
 export const PodcastPlayer = ({
   src,
   playerRef,
@@ -19,11 +27,12 @@ export const PodcastPlayer = ({
   handlePlay,
   handleListening,
   handleLoaded,
-  handleCompleted,
+  handleCompleted
 }: PodcastPlayerProps) => {
   return (
     <>
       <AudioPlayer
+        header={<Header />}
         onPause={handlePause}
         onPlay={handlePlay}
         onListen={handleListening}

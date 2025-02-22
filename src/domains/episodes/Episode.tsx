@@ -1,18 +1,19 @@
-"use client"
-import { Heading, Text } from "@radix-ui/themes"
-import styles from "./Episode.style.module.scss"
-import Image from "next/image"
-import { PodcastPlayer } from "../podcastPlayer/PodcastPlayer"
-import sanitizeHtml from "sanitize-html"
-import { LinkOut } from "@/components/Link/LinkOut"
-import { usePodcastPlayer } from "../podcastPlayer/usePodcastPlayer"
+'use client'
+import { Heading, Text } from '@radix-ui/themes'
+import styles from './Episode.style.module.scss'
+import Image from 'next/image'
+import { PodcastPlayer } from '../podcastPlayer/PodcastPlayer'
+import sanitizeHtml from 'sanitize-html'
+import { LinkOut } from '@/components/Link/LinkOut'
+import { usePodcastPlayer } from '../podcastPlayer/usePodcastPlayer'
+import Link from 'next/link'
 
 const clean = (dirty: string) =>
   sanitizeHtml(dirty, {
-    allowedTags: ["b", "i", "em", "strong", "a", "p", "ul", "ol", "li"],
+    allowedTags: ['b', 'i', 'em', 'strong', 'a', 'p', 'ul', 'ol', 'li'],
     allowedAttributes: {
-      a: ["href"],
-    },
+      a: ['href']
+    }
   })
 
 export const EpisodeDetail = () => {
@@ -25,7 +26,7 @@ export const EpisodeDetail = () => {
     handlePlay,
     handleListening,
     handleLoaded,
-    handleCompleted,
+    handleCompleted
   } = usePodcastPlayer()
 
   if (loading) {
@@ -39,11 +40,13 @@ export const EpisodeDetail = () => {
   return (
     <div className={styles.container}>
       <Heading className={styles.title} size="6" as="h2">
-        {episode.name}
+        <Link href={`/series/${episode.series.uuid}`}>
+          {episode.series.name}
+        </Link>
       </Heading>
       <Heading className={styles.subtitle} size="5" as="h3">
         <LinkOut href={episode.websiteUrl || episode.series.websiteUrl}>
-          {episode.series.name}
+          Learn More
         </LinkOut>
       </Heading>
       <div className={styles.episodeTimer}>
@@ -53,14 +56,15 @@ export const EpisodeDetail = () => {
         <Text>{new Date(episode.datePublished).toDateString()}</Text>
       </div>
       <div className={styles.podcastPlayerContainer}>
+        <Image
+          priority
+          src={episode.imageUrl || episode.series.imageUrl}
+          alt={episode.name}
+          width={100}
+          height={100}
+          style={{ width: '100%', height: 'auto' }}
+        />
         <div>
-          <Image
-            src={episode.imageUrl || episode.series.imageUrl}
-            alt={episode.name}
-            objectFit="cover"
-            width={100}
-            height={100}
-          />
           <PodcastPlayer
             handlePause={handlePause}
             handlePlay={handlePlay}
