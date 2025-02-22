@@ -28,16 +28,16 @@ export const podcastDtoToDisplay = (
     };
   }
 
-  const { podcastSeries } = podcast;
+  const { series } = podcast;
 
   return {
     type: "episode" as DisplayType,
     uuid: podcast.uuid,
     name: podcast.name,
-    authorName: podcastSeries?.authorName,
-    description: podcast.description || podcastSeries?.description,
+    authorName: series?.authorName,
+    description: podcast.description || series?.description,
     imageUrl: podcast.imageUrl,
-    totalEpisodesCount: podcastSeries?.totalEpisodesCount,
+    totalEpisodesCount: series?.totalEpisodesCount,
     websiteUrl: podcast.websiteUrl,
   };
 };

@@ -1,19 +1,19 @@
-"use client";
-import { Heading, Text } from "@radix-ui/themes";
-import { EpisodeList } from "../episodes/EpisodeList";
-import Image from "next/image";
-import styles from "./Series.style.module.scss";
-import { LinkOut } from "@/components/Link/LinkOut";
-import { truncate } from "@/utils";
-import { useSeriesDetails } from "./hooks/useSeriesDetails";
+"use client"
+import { Heading, Text } from "@radix-ui/themes"
+import { EpisodeList } from "../episodes/EpisodeList"
+import Image from "next/image"
+import styles from "./Series.style.module.scss"
+import { LinkOut } from "@/components/Link/LinkOut"
+import { truncate } from "@/utils"
+import { useSeriesDetails } from "./hooks/useSeriesDetails"
 
 export const SeriesDetails = ({ uuid }: { uuid: string }) => {
-  const { data, loading, error } = useSeriesDetails({ uuid });
+  const { data, loading, error } = useSeriesDetails({ uuid })
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>
   }
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return <div>Error: {error.message}</div>
   }
   return (
     <div className={styles.container}>
@@ -34,10 +34,11 @@ export const SeriesDetails = ({ uuid }: { uuid: string }) => {
         </div>
       </div>
       <EpisodeList
+        progress={data.progress}
         seriesId={data.uuid}
         episodes={data.episodes}
         imgSrc={data.imageUrl}
       />
     </div>
-  );
-};
+  )
+}

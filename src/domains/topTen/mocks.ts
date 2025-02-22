@@ -9,7 +9,7 @@ export const mockTopEpisodes: TopTenSeries = {
 export const mockTopTenSeries: TopTenSeries = {
   topChartsId:
     "5cc6c526c1e0ef009dc95c2ac29a40e0017e064929f4a6f8b042faa12408cee9",
-  podcastSeries: [
+  series: [
     {
       authorName: "Mel Robbins",
       datePublished: 1663689600,

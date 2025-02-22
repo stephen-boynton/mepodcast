@@ -1,32 +1,30 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "../style/globals.scss";
-import { NavBar } from "@/components/NavBar";
-import styles from "./layout.styles.module.scss";
-import { Theme } from "@radix-ui/themes";
-import "@radix-ui/themes/styles.css";
-import { ApolloProvider } from "@apollo/client";
-import { client } from "@/lib/podcastApi";
+import type { Metadata } from "next"
+import { Geist, Geist_Mono } from "next/font/google"
+import "../style/globals.scss"
+import { NavBar } from "@/components/NavBar"
+import styles from "./layout.styles.module.scss"
+import { Theme } from "@radix-ui/themes"
+import "@radix-ui/themes/styles.css"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
-});
+})
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
-});
+})
 
 export const metadata: Metadata = {
   title: "MePodcast",
   description: "Avast! Ye Podcast Player!",
-};
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html lang="en">
@@ -44,5 +42,5 @@ export default function RootLayout({
         </Theme>
       </body>
     </html>
-  );
+  )
 }

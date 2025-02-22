@@ -1,19 +1,22 @@
-import styles from "./ListCard.styles.module.scss";
-import { Text } from "@radix-ui/themes";
-import Image from "next/image";
-import { truncate } from "@/utils";
-import Link from "next/link";
+import styles from "./ListCard.styles.module.scss"
+import { Text } from "@radix-ui/themes"
+import Image from "next/image"
+import { truncate } from "@/utils"
+import Link from "next/link"
+import { CircleIcon } from "@radix-ui/react-icons"
 
 export const ListCard = ({
   href,
   name,
+  inProgress,
   description,
   imgSrc,
 }: {
-  href: string;
-  name: string;
-  description: string;
-  imgSrc: string;
+  href: string
+  name: string
+  inProgress?: boolean
+  description: string
+  imgSrc: string
 }) => {
   return (
     <li>
@@ -21,6 +24,7 @@ export const ListCard = ({
         <Text size="1" weight="bold">
           {name}
         </Text>
+        {inProgress && <CircleIcon />}
         <div className={styles.itemText}>
           <Image
             src={imgSrc}
@@ -33,5 +37,5 @@ export const ListCard = ({
         </div>
       </Link>
     </li>
-  );
-};
+  )
+}

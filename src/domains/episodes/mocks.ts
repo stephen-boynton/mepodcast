@@ -14,7 +14,7 @@ export const mockEpisode: EpisodeDetails = {
   seasonNumber: 12,
   episodeNumber: 1,
   websiteUrl: null,
-  podcastSeries: {
+  series: {
     uuid: "3a8d3cdf-b2aa-4c97-abdf-5b6787cbf0fe",
     name: "Science Vs",
     authorName: "Spotify Studios",

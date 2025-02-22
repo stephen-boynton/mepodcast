@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export const MeSeries = () => {
   const { subscribed } = useSubscribedSeries();
-  console.log({ subscribed });
+
   return (
     <Grid columns="repeat(auto-fill, minmax(8rem, 1fr))" gap="4">
       {subscribed?.map((series) => (

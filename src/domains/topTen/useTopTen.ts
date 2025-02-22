@@ -19,8 +19,7 @@ export const useTopTen = () => {
     loading: seriesLoading || episodeLoading,
     error: seriesError || episodeError,
     data: {
-      series:
-        seriesData?.getTopChartsByCountry?.podcastSeries.map(createSeries),
+      series: seriesData?.getTopChartsByCountry?.series.map(createSeries),
       episodes:
         episodeData?.getTopChartsByCountry?.podcastEpisodes.map(createEpisode),
     },

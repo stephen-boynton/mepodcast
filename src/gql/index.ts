@@ -14,7 +14,7 @@ export const GET_PODCAST_EPISODE = gql`
       seasonNumber
       episodeNumber
       websiteUrl
-      podcastSeries {
+      series: podcastSeries {
         uuid
         name
         authorName
@@ -82,7 +82,7 @@ export const SEARCH_FOR_TERM_QUERY = gql`
       searchResultsBoostType: $searchResultsBoostType
     ) {
       searchId
-      podcastSeries {
+      series: podcastSeries {
         uuid
         name
         rssUrl
@@ -105,7 +105,7 @@ export const TOP_PODCAST_SERIES = gql`
       country: UNITED_STATES_OF_AMERICA
     ) {
       topChartsId
-      podcastSeries {
+      series: podcastSeries {
         authorName
         datePublished
         description
@@ -135,7 +135,7 @@ export const TOP_PODCAST_EPISODES = gql`
         name
         seasonNumber
         uuid
-        podcastSeries {
+        series: podcastSeries {
           authorName
           description
           imageUrl

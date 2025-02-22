@@ -1,5 +1,5 @@
-import { MeSeries } from "@/domains/series/MeSeries";
+import { MeSeriesModule } from "@/modules/series";
 
 export default function MeSeriesPage() {
-  return <MeSeries />;
+  return <MeSeriesModule />;
 }

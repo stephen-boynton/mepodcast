@@ -3,6 +3,6 @@ import { SeriesDetail } from "../series/types";
 
 export type TopTenSeries = {
   topChartsId: string;
-  podcastSeries: SeriesDetail[];
+  series: SeriesDetail[];
   podcastEpisodes: EpisodeDetails[];
 };

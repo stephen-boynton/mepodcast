@@ -43,7 +43,6 @@ export const SearchBar = () => {
       onChange={(e) => setQuery(e.target.value)}
       onKeyDown={(e) => {
         if (e.key === "Enter") {
-          console.log("enter");
           handleSearch();
         }
       }}
