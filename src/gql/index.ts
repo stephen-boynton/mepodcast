@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql } from '@apollo/client'
 
 export const GET_PODCAST_EPISODE = gql`
   query podcastEpisode($uuid: ID) {
@@ -23,7 +23,7 @@ export const GET_PODCAST_EPISODE = gql`
       }
     }
   }
-`;
+`
 
 export const GET_PODCASTSERIES = gql`
   query getPodcastSeries($uuid: ID) {
@@ -50,7 +50,22 @@ export const GET_PODCASTSERIES = gql`
       }
     }
   }
-`;
+`
+
+export const LOAD_MORE_FROM_SERIES_QUERY = gql`
+  query loadMoreFromSeries($uuid: ID, $page: Int, $limitPerPage: Int) {
+    getPodcastSeries(uuid: $uuid) {
+      uuid
+      episodes(page: $page, limitPerPage: $limitPerPage) {
+        uuid
+        name
+        description
+        seasonNumber
+        episodeNumber
+      }
+    }
+  }
+`
 
 export const SEARCH_FOR_TERM_QUERY = gql`
   query searchForTerm(
@@ -96,7 +111,7 @@ export const SEARCH_FOR_TERM_QUERY = gql`
       }
     }
   }
-`;
+`
 
 export const TOP_PODCAST_SERIES = gql`
   query getTopPods {
@@ -117,7 +132,7 @@ export const TOP_PODCAST_SERIES = gql`
       }
     }
   }
-`;
+`
 
 export const TOP_PODCAST_EPISODES = gql`
   query getTopPods {
@@ -147,4 +162,4 @@ export const TOP_PODCAST_EPISODES = gql`
       }
     }
   }
-`;
+`

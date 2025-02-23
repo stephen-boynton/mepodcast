@@ -3,18 +3,10 @@ import { Heading, Text } from '@radix-ui/themes'
 import styles from './Episode.style.module.scss'
 import Image from 'next/image'
 import { PodcastPlayer } from '../podcastPlayer/PodcastPlayer'
-import sanitizeHtml from 'sanitize-html'
 import { LinkOut } from '@/components/Link/LinkOut'
 import { usePodcastPlayer } from '../podcastPlayer/usePodcastPlayer'
 import Link from 'next/link'
-
-const clean = (dirty: string) =>
-  sanitizeHtml(dirty, {
-    allowedTags: ['b', 'i', 'em', 'strong', 'a', 'p', 'ul', 'ol', 'li'],
-    allowedAttributes: {
-      a: ['href']
-    }
-  })
+import { clean } from '@/utils'
 
 export const EpisodeDetail = () => {
   const {

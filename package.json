@@ -24,6 +24,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-h5-audio-player": "^3.10.0-rc.1",
+    "react-infinite-scroll-hook": "^5.0.1",
     "sanitize-html": "^2.14.0",
     "sass": "^1.83.4"
   },

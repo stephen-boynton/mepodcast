@@ -1,9 +1,10 @@
-import styles from "./ListCard.styles.module.scss"
-import { Text } from "@radix-ui/themes"
-import Image from "next/image"
-import { truncate } from "@/utils"
-import Link from "next/link"
-import { CircleIcon } from "@radix-ui/react-icons"
+import styles from './ListCard.styles.module.scss'
+import { Badge, Card, Flex, Text } from '@radix-ui/themes'
+import Image from 'next/image'
+import { clean, truncate } from '@/utils'
+import Link from 'next/link'
+import { Progress } from '@/models/Progress'
+import { Maybe } from '@/types/shared'
 
 export const ListCard = ({
   href,
@@ -11,31 +12,47 @@ export const ListCard = ({
   inProgress,
   description,
   imgSrc,
+  showDescription
 }: {
   href: string
-  name: string
-  inProgress?: boolean
-  description: string
+  name: Maybe<string>
+  inProgress?: Progress
+  description: Maybe<string>
   imgSrc: string
+  showDescription?: boolean
 }) => {
   return (
-    <li>
-      <Link href={href} className={styles.itemContainer}>
-        <Text size="1" weight="bold">
-          {name}
-        </Text>
-        {inProgress && <CircleIcon />}
+    <Link href={href}>
+      <Card size="3" className={styles.itemContainer}>
+        {/* {inProgress && <CircleIcon className={styles.inProgress} />} */}
+        {inProgress && (
+          <Badge size="2" color="orange" className={styles.inProgress}>
+            In Progress{' '}
+          </Badge>
+        )}
         <div className={styles.itemText}>
           <Image
             src={imgSrc}
-            alt={name}
+            alt={name ?? 'Podcast Image'}
             objectFit="cover"
             width={100}
             height={100}
           />
-          <Text size="1">{truncate(description, 50)}</Text>
+          <Flex gap="2" align="center" direction="column">
+            <Text size="3" weight="bold">
+              {name}
+            </Text>
+            {showDescription && (
+              <div
+                className={styles.description}
+                dangerouslySetInnerHTML={{
+                  __html: truncate(clean(description ?? ''), 175)
+                }}
+              />
+            )}
+          </Flex>
         </div>
-      </Link>
-    </li>
+      </Card>
+    </Link>
   )
 }

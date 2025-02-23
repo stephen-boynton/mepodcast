@@ -6,6 +6,7 @@ import styles from './Series.style.module.scss'
 import { LinkOut } from '@/components/Link/LinkOut'
 import { truncate } from '@/utils'
 import { useSeriesDetails } from './hooks/useSeriesDetails'
+import useInfiniteScroll from 'react-infinite-scroll-hook'
 
 export const SeriesDetails = ({
   uuid,
@@ -14,7 +15,13 @@ export const SeriesDetails = ({
   uuid: string
   showImage?: boolean
 }) => {
-  const { data, loading, error } = useSeriesDetails({ uuid })
+  const { data, loading, error, loadMore } = useSeriesDetails({ uuid })
+
+  const [sentryRef] = useInfiniteScroll({
+    onLoadMore: loadMore,
+    hasNextPage: true,
+    loading
+  })
 
   if (loading) {
     return <div>Loading...</div>
@@ -45,10 +52,14 @@ export const SeriesDetails = ({
         </div>
       </div>
       <EpisodeList
+        sentryRef={sentryRef}
+        key={data.uuid}
         progress={data.progress}
         seriesId={data.uuid}
         episodes={data.episodes}
         imgSrc={data.imageUrl}
+        loading={loading}
+        hasMorePages={true}
       />
     </div>
   )
