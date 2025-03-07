@@ -1,67 +1,33 @@
-import { useEffect } from "react"
-import { useSaveProgress } from "./useSaveProgress"
-import { useSelectedEpisode } from "./SelectedEpisodeContext"
-import { useEpisodeDetail } from "../episodes/useEpisodeDetails"
-import { usePodcastStatus } from "./usePodcastStatus"
-import { useParams } from "next/navigation"
-import { usePodcastAudioElement } from "./usePodcastAudioElement"
+'use client'
+import { createRef, useEffect, useState } from 'react'
+import H5AudioPlayer from 'react-h5-audio-player'
+import { Maybe } from '@/types/shared'
+import { PodcastPlayer } from './Player'
 
-export const usePodcastPlayer = () => {
-  const a = useParams()
-  const episodeUuid = a.id as string
-  const seriesUuid = a.sid as string
-  const playerRef = usePodcastAudioElement()
-  const { data, error, loading } = useEpisodeDetail({ uuid: episodeUuid })
-  const { setSelectedEpisode } = useSelectedEpisode()
-  const { isPaused, setIsPaused } = usePodcastStatus({ playerRef })
+type UsePodcastPlayerReturn = {
+  player: Maybe<PodcastPlayer>
+  playerRef: React.RefObject<Maybe<H5AudioPlayer>>
+}
+
+export const usePodcastPlayer = (): UsePodcastPlayerReturn => {
+  const [initialized, setInitialized] = useState(false)
+  const [player, setPlayer] = useState<Maybe<PodcastPlayer>>(null)
+  const playerRef = createRef<Maybe<H5AudioPlayer>>()
 
   useEffect(() => {
-    if (data && setSelectedEpisode) {
-      setSelectedEpisode(data)
-    }
-  }, [data, setSelectedEpisode])
-
-  const { progress, handleSaveProgress, startingTime, handleCompleted } =
-    useSaveProgress({
-      episodeUuid,
-      seriesUuid,
-    })
-
-  const handleLoaded = (e: Event) => {
-    const event = e.target as HTMLAudioElement
-    if (startingTime) {
-      event.currentTime = startingTime
-    }
-  }
-
-  const handlePause = () => {
-    setIsPaused(true)
-  }
-
-  const handlePlay = () => {
-    setIsPaused(false)
-  }
-
-  const handleListening = (e: Event) => {
-    if (!playerRef.current) {
+    if (!playerRef.current?.audio?.current) {
       return
     }
-    const event = e.target as HTMLAudioElement
-    handleSaveProgress(event.currentTime)
-    setIsPaused(false)
-  }
+    console.log({ playerRef })
+    if (!initialized) {
+      console.log('initializing player')
+      setInitialized(true)
+      setPlayer(PodcastPlayer.create(playerRef.current.audio.current))
+    }
+  }, [playerRef, initialized])
 
   return {
-    episode: data,
-    error,
-    handleLoaded,
-    handleCompleted,
-    handleListening,
-    handlePause,
-    handlePlay,
-    isPaused,
-    loading,
-    playerRef,
-    progress,
+    player,
+    playerRef
   }
 }

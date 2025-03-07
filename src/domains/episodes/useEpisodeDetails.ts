@@ -1,14 +1,24 @@
-import { GET_PODCAST_EPISODE } from "@/gql"
-import { useQuery } from "@apollo/client"
+import { GET_PODCAST_EPISODE } from '@/gql'
+import { createEpisode, Episode } from '@/models/Episode'
+import { useSuspenseQuery } from '@apollo/client'
 
-export const useEpisodeDetail = ({ uuid }: { uuid: string }) => {
-  const { data, loading, error } = useQuery(GET_PODCAST_EPISODE, {
-    variables: { uuid },
-  })
+type UseEpisodeDetailProps = {
+  uuid?: string
+  isCached?: boolean
+}
+
+export const useEpisodeDetail = ({ uuid }: UseEpisodeDetailProps) => {
+  const { data, error } = useSuspenseQuery<{ getPodcastEpisode: Episode }>(
+    GET_PODCAST_EPISODE,
+    {
+      variables: { uuid },
+      skip: !uuid,
+      errorPolicy: 'none'
+    }
+  )
 
   return {
-    data: data?.getPodcastEpisode,
-    loading,
-    error,
+    data: data && createEpisode(data.getPodcastEpisode),
+    error
   }
 }

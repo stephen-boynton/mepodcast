@@ -1,77 +1,126 @@
 'use client'
-import { Heading, Text } from '@radix-ui/themes'
+import { Box, Heading, ScrollArea, Text } from '@radix-ui/themes'
 import styles from './Episode.style.module.scss'
 import Image from 'next/image'
-import { PodcastPlayer } from '../podcastPlayer/PodcastPlayer'
 import { LinkOut } from '@/components/Link/LinkOut'
-import { usePodcastPlayer } from '../podcastPlayer/usePodcastPlayer'
 import Link from 'next/link'
 import { clean } from '@/utils'
+import { PauseIcon, PlayIcon } from '@radix-ui/react-icons'
+import { useDrawerPlayer } from '../podcastPlayer/DrawerPlayer/useDrawerPlayer'
+import { useSelectedEpisode } from '../podcastPlayer/SelectedEpisodeContext'
+import { useParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { Episode } from '@/models/Episode'
+import { Carousel } from '@/components/Carousel'
 
 export const EpisodeDetail = () => {
-  const {
-    episode,
-    loading,
-    error,
-    playerRef,
-    handlePause,
-    handlePlay,
-    handleListening,
-    handleLoaded,
-    handleCompleted
-  } = usePodcastPlayer()
+  const { id } = useParams()
+  const [isLoading, setIsLoading] = useState(true)
 
-  if (loading) {
+  const { episode, setSelectedEpisode } = useSelectedEpisode()
+  const { handlePlay, isPlaying, handlePause } = useDrawerPlayer()
+
+  useEffect(() => {
+    if (setSelectedEpisode) {
+      if (!Episode.isPlayable(episode)) {
+        setIsLoading(true)
+        setSelectedEpisode(id as string)
+      }
+
+      if (id !== episode?.uuid) {
+        setIsLoading(true)
+        setSelectedEpisode(id as string)
+      }
+
+      if (episode?.uuid === id) {
+        setIsLoading(false)
+      }
+    }
+  }, [episode, setSelectedEpisode, id])
+
+  if (isLoading) {
     return <div>Loading...</div>
   }
 
-  if (error) {
-    return <div>Error: {error.message}</div>
-  }
+  const {
+    websiteUrl,
+    name,
+    series,
+    datePublished,
+    description,
+    imageUrl,
+    seasonNumber,
+    episodeNumber
+  } = episode as Episode
+
+  const showUrl = websiteUrl || series?.websiteUrl
+  const image = imageUrl || series?.imageUrl
+  const handleAction = isPlaying ? handlePause : handlePlay
+  const Icon = () =>
+    !isPlaying ? (
+      <PlayIcon
+        name="play"
+        width={100}
+        height={100}
+        className={styles.playIcon}
+      />
+    ) : (
+      <PauseIcon
+        name="pause"
+        width={100}
+        height={100}
+        className={styles.playIcon}
+      />
+    )
 
   return (
     <div className={styles.container}>
-      <Heading className={styles.title} size="6" as="h2">
-        <Link href={`/series/${episode.series.uuid}`}>
-          {episode.series.name}
-        </Link>
+      <div className={styles.podcastPlayerContainer} onClick={handleAction}>
+        {image && (
+          <Image
+            priority
+            src={image}
+            alt={name ?? 'Podcast Image'}
+            width={100}
+            height={100}
+            style={{ width: '100%', height: 'auto' }}
+          />
+        )}
+        <Icon />
+      </div>
+      <Heading as="h2" size="5" my={'4'}>
+        {name}
       </Heading>
-      <Heading className={styles.subtitle} size="5" as="h3">
-        <LinkOut href={episode.websiteUrl || episode.series.websiteUrl}>
-          Learn More
-        </LinkOut>
-      </Heading>
+      <div className={styles.descriptionContainer}>
+        <ScrollArea
+          type="always"
+          scrollbars="vertical"
+          style={{
+            height: 300
+          }}
+        >
+          <Box p="2" pr="8">
+            {description && (
+              <Text
+                className={styles.description}
+                dangerouslySetInnerHTML={{ __html: clean(description) }}
+              />
+            )}
+          </Box>
+        </ScrollArea>
+      </div>
       <div className={styles.episodeTimer}>
         <Text className={styles.seasonEpisode}>
-          Season {episode.seasonNumber} Episode {episode.episodeNumber}
+          Season {seasonNumber} Episode {episodeNumber}
         </Text>
-        <Text>{new Date(episode.datePublished).toDateString()}</Text>
+        <Text>{datePublished && new Date(datePublished).toDateString()}</Text>
       </div>
-      <div className={styles.podcastPlayerContainer}>
-        <Image
-          priority
-          src={episode.imageUrl || episode.series.imageUrl}
-          alt={episode.name}
-          width={100}
-          height={100}
-          style={{ width: '100%', height: 'auto' }}
-        />
-        <div>
-          <PodcastPlayer
-            handlePause={handlePause}
-            handlePlay={handlePlay}
-            handleListening={handleListening}
-            handleLoaded={handleLoaded}
-            handleCompleted={handleCompleted}
-            src={episode.audioUrl}
-            playerRef={playerRef}
-          />
-        </div>
-        <Text
-          className={styles.description}
-          dangerouslySetInnerHTML={{ __html: clean(episode.description) }}
-        />
-      </div>
+      {/* <Heading className={styles.title} size="6" as="h3">
+        <Link href={`/series/${series?.uuid}`}>{series?.name}</Link>
+      </Heading>
+      <Heading className={styles.subtitle} size="5" as="h3">
+        {showUrl && <LinkOut href={showUrl}>Learn More</LinkOut>}
+      </Heading> */}
     </div>
   )
 }

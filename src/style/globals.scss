@@ -1,12 +1,12 @@
 :root {
-	--background: #ffffff;
-	--foreground: #171717;
+	--background: v.$darkBlue;
+	--foreground: v.$blue;
 }
 
 @media (prefers-color-scheme: dark) {
 	:root {
-		--background: #0a0a0a;
-		--foreground: #ededed;
+		--background: v.$darkBlue;
+		--foreground: v.$blue;
 	}
 }
 
@@ -28,6 +28,9 @@ body {
 	box-sizing: border-box;
 	padding: 0;
 	margin: 0;
+	margin-inline: 0;
+	margin-block: 0;
+	line-height: 0;
 }
 
 a {

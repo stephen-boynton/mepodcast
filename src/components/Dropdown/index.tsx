@@ -1,7 +1,7 @@
-import { DropdownMenu } from "radix-ui";
-import { Separator } from "@radix-ui/themes";
-import styles from "./Dropdown.style.module.scss";
-import Link from "next/link";
+import { DropdownMenu } from 'radix-ui'
+import { Separator } from '@radix-ui/themes'
+import styles from './Dropdown.style.module.scss'
+import Link from 'next/link'
 
 export const Dropdown = () => (
   <DropdownMenu.Root>
@@ -18,4 +18,4 @@ export const Dropdown = () => (
       </DropdownMenu.Content>
     </DropdownMenu.Portal>
   </DropdownMenu.Root>
-);
+)

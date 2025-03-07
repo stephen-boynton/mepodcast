@@ -12,23 +12,25 @@
 	}
 }
 
+.container {
+	display: flex;
+	justify-content: space-between;
+}
+
 .menuItem {
 	font-size: 1rem;
-	line-height: 1;
-	color: var(--violet-11);
-	border-radius: 3px;
 	display: flex;
 	align-items: center;
-	height: 25px;
-	padding: 0 5px;
-	position: relative;
-	user-select: none;
-	outline: none;
+
+	>a {
+		padding: 1rem 0.5rem;
+		width: 100%;
+	}
 }
 
 .trigger {
 	font-size: 1rem;
-	color: black;
+	color: v.$linkColor;
 	border: none;
 	background-color: transparent;
 	height: 25px;

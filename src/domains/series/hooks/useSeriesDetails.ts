@@ -33,7 +33,6 @@ export const useSeriesDetails = ({ uuid }: { uuid: string }) => {
   const seriesProgress = useLiveQuery(() => getSeriesProgress(uuid), [uuid])
 
   const loadMore = () => {
-    console.log('loading more')
     loadMoreEpisodes({
       variables: { uuid, page, limitPerPage: 10 }
     })

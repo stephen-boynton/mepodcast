@@ -1,39 +1,34 @@
-"use client";
-import { PodcastCard } from "@/components/PodcastCard";
-import { Heading, Separator } from "@radix-ui/themes";
-import { Content, DisplayType } from "@/types/shared";
-import { useTopTen } from "./useTopTen";
-import styles from "./TopTen.style.module.scss";
-import Link from "next/link";
-import { FavoriteButton } from "../favoriteSeries/FavoriteButton";
-import { DownloadButton } from "../episodes/DownloadButton";
+import { PodcastCard } from '@/components/PodcastCard'
+import { Heading, Separator } from '@radix-ui/themes'
+import { Content, DisplayType } from '@/types/shared'
+import { useTopTen as fetchTopTen } from './useTopTen'
+import styles from './TopTen.style.module.scss'
+import Link from 'next/link'
+import { FavoriteButton } from '../favoriteSeries/FavoriteButton'
+import { DownloadButton } from '../episodes/DownloadButton'
 
 const TopGrid = ({ items, type }: { items: Content[]; type: DisplayType }) => {
-  const renderButton = type === "series" ? FavoriteButton : DownloadButton;
+  const renderButton = type === 'series' ? FavoriteButton : DownloadButton
   return (
     <ul className={styles.itemGrid}>
       {items.map((item) => {
+        const details = JSON.stringify(item)
         return (
           <li key={item.uuid} className={styles.itemContainer}>
             <Link href={`/series/${item.uuid}`}>
-              <PodcastCard details={item} renderButton={renderButton} />
+              <PodcastCard details={details} renderButton={renderButton} />
             </Link>
           </li>
-        );
+        )
       })}
     </ul>
-  );
-};
+  )
+}
 
-export const TopTen = () => {
+export const TopTen = async () => {
   const {
-    data: { series, episodes },
-    loading,
-  } = useTopTen();
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+    data: { series, episodes }
+  } = await fetchTopTen()
   return (
     <>
       <Heading as="h3" mb="4" weight="bold">
@@ -51,5 +46,5 @@ export const TopTen = () => {
         </>
       )}
     </>
-  );
-};
+  )
+}

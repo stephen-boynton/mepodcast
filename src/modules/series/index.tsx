@@ -1,19 +1,14 @@
-"use client";
-import { MeSeries } from "@/domains/series/MeSeries";
-import { SeriesDetails } from "@/domains/series/Series";
-import { client } from "@/lib/podcastApi";
-import { ApolloProvider } from "@apollo/client";
-import { Separator, Text } from "@radix-ui/themes";
+import { MeSeries } from '@/domains/series/MeSeries'
+import { SeriesDetails } from '@/domains/series/Series'
+import { Separator, Text } from '@radix-ui/themes'
 
 export const Series = ({ uuid }: { uuid: string }) => {
   return (
     <main>
-      <ApolloProvider client={client}>
-        <SeriesDetails uuid={uuid} />
-      </ApolloProvider>
+      <SeriesDetails uuid={uuid} />
     </main>
-  );
-};
+  )
+}
 
 export const MeSeriesModule = () => {
   return (
@@ -24,5 +19,5 @@ export const MeSeriesModule = () => {
       <Separator my="4" size="4" />
       <MeSeries />
     </main>
-  );
-};
+  )
+}

@@ -1,17 +1,9 @@
-"use client"
-import { EpisodeDetail } from "@/domains/episodes/Episode"
-import { SelectedEpisodeProvider } from "@/domains/podcastPlayer/SelectedEpisodeContext"
-import { client } from "@/lib/podcastApi"
-import { ApolloProvider } from "@apollo/client"
+import { EpisodeDetail } from '@/domains/episodes/Episode'
 
-export const Episode = ({ id }: { id: string }) => {
+export const Episode = () => {
   return (
     <main>
-      <SelectedEpisodeProvider episode={id}>
-        <ApolloProvider client={client}>
-          <EpisodeDetail />
-        </ApolloProvider>
-      </SelectedEpisodeProvider>
+      <EpisodeDetail />
     </main>
   )
 }

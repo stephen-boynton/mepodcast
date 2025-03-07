@@ -1,7 +1,7 @@
-import { getProgress, saveProgress } from "@/db/operations"
-import { createBlankProgress, Progress } from "@/models/Progress"
-import { useLiveQuery } from "dexie-react-hooks"
-import { useEffect, useState } from "react"
+import { getProgress, saveProgress as _saveProgress } from '@/db/operations'
+import { createBlankProgress, Progress } from '@/models/Progress'
+import { useLiveQuery } from 'dexie-react-hooks'
+import { useEffect, useState } from 'react'
 
 type UseSaveProgressProps = {
   episodeUuid: string
@@ -10,16 +10,16 @@ type UseSaveProgressProps = {
 
 export const useSaveProgress = ({
   episodeUuid,
-  seriesUuid,
+  seriesUuid
 }: UseSaveProgressProps) => {
   const [progress, setProgress] = useState<Progress>()
   const [startingTime, setStartingTime] = useState(0)
   const [initialized, setInitialized] = useState(false)
 
-  const savedProgress = useLiveQuery(
-    async () => await getProgress(episodeUuid),
-    [episodeUuid]
-  )
+  const savedProgress = useLiveQuery(async () => {
+    if (!episodeUuid) return
+    return await getProgress(episodeUuid)
+  }, [episodeUuid])
 
   useEffect(() => {
     if (savedProgress && !initialized) {
@@ -38,43 +38,44 @@ export const useSaveProgress = ({
     }
   }, [savedProgress, progress])
 
-  const handleSaveProgress = (timestamp?: number) => {
+  const saveProgress = (timestamp?: number) => {
     setProgress({
       ...progress,
       episodeUuid,
       seriesUuid,
-      episodeProgress: timestamp,
+      episodeProgress: timestamp
     } as Progress)
 
-    saveProgress({
+    _saveProgress({
       ...progress,
       episodeUuid,
       seriesUuid,
-      episodeProgress: timestamp,
+      episodeProgress: timestamp
     } as Progress)
   }
 
-  const handleCompleted = () => {
+  const saveCompleted = () => {
     setProgress({
       ...progress,
       episodeUuid,
       seriesUuid,
       episodeProgress: 100,
-      completed: true,
+      completed: true
     } as Progress)
-    saveProgress({
+
+    _saveProgress({
       ...progress,
       episodeUuid,
       seriesUuid,
       episodeProgress: 100,
-      completed: true,
+      completed: true
     } as Progress)
   }
 
   return {
     progress,
     startingTime,
-    handleSaveProgress,
-    handleCompleted,
+    saveProgress,
+    saveCompleted
   }
 }

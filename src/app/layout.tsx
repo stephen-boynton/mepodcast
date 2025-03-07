@@ -5,7 +5,10 @@ import { NavBar } from '@/components/NavBar'
 import styles from './layout.styles.module.scss'
 import { Theme } from '@radix-ui/themes'
 import '@radix-ui/themes/styles.css'
-import BackButton from '@/components/BackButton'
+import { DrawerPlayer } from '@/domains/podcastPlayer/DrawerPlayer'
+import { SelectedEpisodeProvider } from '@/domains/podcastPlayer/SelectedEpisodeContext'
+import { DrawerStateProvider } from '@/domains/podcastPlayer/DrawerPlayer/useDrawerPlayer'
+import { ApolloWrapper } from '@/lib/gql/makeClient'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -32,6 +35,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         {' '}
         <Theme
+          appearance="dark"
           accentColor="mint"
           grayColor="gray"
           panelBackground="solid"
@@ -39,10 +43,16 @@ export default function RootLayout({
           radius="full"
         >
           <NavBar />
-          <div className={styles.pageContainer}>
-            <BackButton />
-            {children}
-          </div>
+          <ApolloWrapper>
+            <SelectedEpisodeProvider>
+              <DrawerStateProvider>
+                <div className={styles.pageContainer}>
+                  {children}
+                  <DrawerPlayer />
+                </div>
+              </DrawerStateProvider>
+            </SelectedEpisodeProvider>
+          </ApolloWrapper>
         </Theme>
       </body>
     </html>

@@ -12,12 +12,20 @@
 }
 
 .title {
-	margin-bottom: 0.5rem;
+	margin: 1rem 0.5rem 0.5rem;
 }
 
 .episodeTimer {
 	display: flex;
 	justify-content: space-between;
+}
+
+.descriptionContainer {
+	padding-bottom: 1rem;
+
+	>h3 {
+		margin: 0.5rem 0;
+	}
 }
 
 .description {
@@ -32,14 +40,23 @@
 		}
 
 		margin-bottom: 1rem;
+		line-height: 1.5;
 	}
 }
 
 .podcastPlayerContainer {
 	margin-top: 1rem;
+	position: relative;
+	text-align: center;
 
-	>div:first-child {
-		display: flex;
-		justify-content: center;
+	>img {
+		filter: brightness(0.5) grayscale(100%) blur(2px);
+	}
+
+	>svg {
+		bottom: 40%;
+		left: 35%;
+		position: absolute;
+		stroke: white;
 	}
 }

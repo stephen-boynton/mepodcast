@@ -1,14 +1,9 @@
-"use client";
-import { TopTen } from "@/domains/topTen/TopTen";
-import { client } from "@/lib/podcastApi";
-import { ApolloProvider } from "@apollo/client";
+import { TopTen } from '@/domains/topTen/TopTen'
 
 export const Home = () => {
   return (
     <main>
-      <ApolloProvider client={client}>
-        <TopTen />
-      </ApolloProvider>
+      <TopTen />
     </main>
-  );
-};
+  )
+}
