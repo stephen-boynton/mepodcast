@@ -1,5 +1,6 @@
 import '../style/globals.scss'
 import '@radix-ui/themes/styles.css'
+import styles from './layout.styles.module.scss'
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { NavBar } from '@/components/NavBar'
@@ -34,9 +35,10 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         {' '}
         <Theme
+          className={styles.theme}
           appearance="dark"
           accentColor="mint"
-          grayColor="gray"
+          grayColor="mauve"
           panelBackground="solid"
           scaling="100%"
           radius="full"

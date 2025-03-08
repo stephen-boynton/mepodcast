@@ -75,6 +75,9 @@ export const EpisodeDetail = () => {
 
   return (
     <Box className={styles.container}>
+      <Heading className={styles.title} size="6" as="h3">
+        <Link href={`/series/${series?.uuid}`}>{series?.name}</Link>
+      </Heading>
       <Flex className={styles.podcastPlayerContainer} onClick={handleAction}>
         {image && (
           <Image
@@ -91,15 +94,25 @@ export const EpisodeDetail = () => {
       <Heading as="h2" size="5" my={'4'}>
         {name}
       </Heading>
-      <Flex className={styles.descriptionContainer}>
+      <Flex direction="column" className={styles.descriptionContainer}>
+        <Heading className={styles.subtitle} size="5" as="h3">
+          {showUrl && <LinkOut href={showUrl}>Show Website</LinkOut>}
+        </Heading>
+        <Flex justify="between" mb="4">
+          <Text className={styles.seasonEpisode}>
+            Season {seasonNumber} Episode {episodeNumber}
+          </Text>
+          <Text>{datePublished && new Date(datePublished).toDateString()}</Text>
+        </Flex>
         <ScrollArea
           type="always"
           scrollbars="vertical"
+          className={styles.descriptionBox}
           style={{
             height: 300
           }}
         >
-          <Box p="2" pr="8">
+          <Box p="2" px="4">
             {description && (
               <Text
                 className={styles.description}
@@ -109,18 +122,7 @@ export const EpisodeDetail = () => {
           </Box>
         </ScrollArea>
       </Flex>
-      <Flex className={styles.episodeTimer}>
-        <Text className={styles.seasonEpisode}>
-          Season {seasonNumber} Episode {episodeNumber}
-        </Text>
-        <Text>{datePublished && new Date(datePublished).toDateString()}</Text>
-      </Flex>
-      {/* <Heading className={styles.title} size="6" as="h3">
-        <Link href={`/series/${series?.uuid}`}>{series?.name}</Link>
-      </Heading>
-      <Heading className={styles.subtitle} size="5" as="h3">
-        {showUrl && <LinkOut href={showUrl}>Learn More</LinkOut>}
-      </Heading> */}
+      <Flex className={styles.episodeTimer}></Flex>
     </Box>
   )
 }
