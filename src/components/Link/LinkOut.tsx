@@ -1,24 +1,25 @@
-import { ExternalLinkIcon } from "@radix-ui/react-icons";
-import styles from "./LinkOut.styles.module.scss";
+import { ExternalLinkIcon } from '@radix-ui/react-icons'
+import styles from './LinkOut.styles.module.scss'
+import { Flex, Link } from '@radix-ui/themes'
 
 export const LinkOut = ({
   href,
-  children,
+  children
 }: {
-  href: string;
-  children: string;
+  href: string
+  children: string
 }) => {
   return (
-    <a
+    <Link
       className={styles.container}
       href={href}
       target="_blank"
       rel="noopener noreferrer"
     >
-      <>
+      <Flex align="center">
         {children}
         <ExternalLinkIcon />
-      </>
-    </a>
-  );
-};
+      </Flex>
+    </Link>
+  )
+}

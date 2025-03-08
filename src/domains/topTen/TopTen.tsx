@@ -1,5 +1,5 @@
 import { PodcastCard } from '@/components/PodcastCard'
-import { Heading, Separator } from '@radix-ui/themes'
+import { Flex, Heading, Separator } from '@radix-ui/themes'
 import { Content, DisplayType } from '@/types/shared'
 import { useTopTen as fetchTopTen } from './useTopTen'
 import styles from './TopTen.style.module.scss'
@@ -30,7 +30,7 @@ export const TopTen = async () => {
     data: { series, episodes }
   } = await fetchTopTen()
   return (
-    <>
+    <Flex direction="column">
       <Heading as="h3" mb="4" weight="bold">
         Top 10 Series
       </Heading>
@@ -45,6 +45,6 @@ export const TopTen = async () => {
           <TopGrid items={episodes} type="episode" />
         </>
       )}
-    </>
+    </Flex>
   )
 }

@@ -1,5 +1,5 @@
 'use client'
-import { Box, Heading, ScrollArea, Text } from '@radix-ui/themes'
+import { Box, Flex, Heading, ScrollArea, Text } from '@radix-ui/themes'
 import styles from './Episode.style.module.scss'
 import Image from 'next/image'
 import { LinkOut } from '@/components/Link/LinkOut'
@@ -74,8 +74,8 @@ export const EpisodeDetail = () => {
     )
 
   return (
-    <div className={styles.container}>
-      <div className={styles.podcastPlayerContainer} onClick={handleAction}>
+    <Box className={styles.container}>
+      <Flex className={styles.podcastPlayerContainer} onClick={handleAction}>
         {image && (
           <Image
             priority
@@ -87,11 +87,11 @@ export const EpisodeDetail = () => {
           />
         )}
         <Icon />
-      </div>
+      </Flex>
       <Heading as="h2" size="5" my={'4'}>
         {name}
       </Heading>
-      <div className={styles.descriptionContainer}>
+      <Flex className={styles.descriptionContainer}>
         <ScrollArea
           type="always"
           scrollbars="vertical"
@@ -108,19 +108,19 @@ export const EpisodeDetail = () => {
             )}
           </Box>
         </ScrollArea>
-      </div>
-      <div className={styles.episodeTimer}>
+      </Flex>
+      <Flex className={styles.episodeTimer}>
         <Text className={styles.seasonEpisode}>
           Season {seasonNumber} Episode {episodeNumber}
         </Text>
         <Text>{datePublished && new Date(datePublished).toDateString()}</Text>
-      </div>
+      </Flex>
       {/* <Heading className={styles.title} size="6" as="h3">
         <Link href={`/series/${series?.uuid}`}>{series?.name}</Link>
       </Heading>
       <Heading className={styles.subtitle} size="5" as="h3">
         {showUrl && <LinkOut href={showUrl}>Learn More</LinkOut>}
       </Heading> */}
-    </div>
+    </Box>
   )
 }

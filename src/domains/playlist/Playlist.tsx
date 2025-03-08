@@ -1,3 +1,5 @@
+import { Box } from '@radix-ui/themes'
+
 export const Playlist = () => {
-  return <div>Playlist</div>;
-};
+  return <Box>Playlist</Box>
+}

@@ -3,19 +3,20 @@ import React from 'react'
 import styles from './styles.module.scss'
 import { Dropdown } from '../Dropdown'
 import BackButton from '../BackButton'
+import { Flex, Heading } from '@radix-ui/themes'
 
 export const NavBar = () => {
   return (
-    <div className={styles.container}>
-      <div className={styles.leftSide}>
+    <Flex align="center" justify="between" className={styles.container}>
+      <Flex align="center" justify="between">
         <BackButton />
-        <h1 className={styles.logo}>MePodcast</h1>
-      </div>
-      <nav className={styles.nav}>
+        <Heading as="h1">MePodcast</Heading>
+      </Flex>
+      <Flex className={styles.nav}>
         <Link href="/">Home</Link>
         <Link href="/search">Search</Link>
         <Dropdown />
-      </nav>
-    </div>
+      </Flex>
+    </Flex>
   )
 }

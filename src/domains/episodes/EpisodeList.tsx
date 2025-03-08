@@ -1,5 +1,5 @@
 import styles from './EpisodeList.style.module.scss'
-import { Heading } from '@radix-ui/themes'
+import { Flex, Heading } from '@radix-ui/themes'
 import { ListCard } from '@/components/ListCard'
 import { Progress } from '@/models/Progress'
 import { Episode } from '@/models/Episode'
@@ -23,7 +23,7 @@ export const EpisodeList = ({
   imgSrc: string
 }) => {
   return (
-    <div>
+    <Flex direction="column">
       <Heading as="h3" mb="4" weight="bold">
         Episodes:
       </Heading>
@@ -41,11 +41,11 @@ export const EpisodeList = ({
           )
         })}
         {(loading || hasMorePages) && (
-          <div ref={sentryRef} className={styles.sentry}>
+          <Flex ref={sentryRef} className={styles.sentry}>
             Loading
-          </div>
+          </Flex>
         )}
       </ul>
-    </div>
+    </Flex>
   )
 }

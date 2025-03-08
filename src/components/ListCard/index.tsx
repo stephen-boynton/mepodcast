@@ -30,7 +30,7 @@ export const ListCard = ({
             In Progress{' '}
           </Badge>
         )}
-        <div className={styles.itemText}>
+        <Flex className={styles.itemText}>
           <Image
             src={imgSrc}
             alt={name ?? 'Podcast Image'}
@@ -51,7 +51,7 @@ export const ListCard = ({
               />
             )}
           </Flex>
-        </div>
+        </Flex>
       </Card>
     </Link>
   )

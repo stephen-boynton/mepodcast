@@ -1,10 +1,9 @@
+import '../style/globals.scss'
+import '@radix-ui/themes/styles.css'
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
-import '../style/globals.scss'
 import { NavBar } from '@/components/NavBar'
-import styles from './layout.styles.module.scss'
-import { Theme } from '@radix-ui/themes'
-import '@radix-ui/themes/styles.css'
+import { Container, Theme } from '@radix-ui/themes'
 import { DrawerPlayer } from '@/domains/podcastPlayer/DrawerPlayer'
 import { SelectedEpisodeProvider } from '@/domains/podcastPlayer/SelectedEpisodeContext'
 import { DrawerStateProvider } from '@/domains/podcastPlayer/DrawerPlayer/useDrawerPlayer'
@@ -46,10 +45,10 @@ export default function RootLayout({
           <ApolloWrapper>
             <SelectedEpisodeProvider>
               <DrawerStateProvider>
-                <div className={styles.pageContainer}>
+                <Container py="4" px="6" size="4">
                   {children}
                   <DrawerPlayer />
-                </div>
+                </Container>
               </DrawerStateProvider>
             </SelectedEpisodeProvider>
           </ApolloWrapper>

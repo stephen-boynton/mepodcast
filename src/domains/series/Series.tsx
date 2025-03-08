@@ -1,5 +1,5 @@
 'use client'
-import { Heading, Text } from '@radix-ui/themes'
+import { Flex, Heading, Text } from '@radix-ui/themes'
 import { EpisodeList } from '../episodes/EpisodeList'
 import Image from 'next/image'
 import styles from './Series.style.module.scss'
@@ -32,11 +32,11 @@ export const SeriesDetails = ({
   }
 
   return (
-    <div className={styles.container}>
+    <Flex className={styles.container}>
       <Heading as="h2" size="6">
         {data.name}
       </Heading>
-      <div className={styles.description}>
+      <Flex direction="column" className={styles.description}>
         {showImage && (
           <Image
             src={data.imageUrl}
@@ -46,11 +46,11 @@ export const SeriesDetails = ({
             height={100}
           />
         )}
-        <div className={styles.descriptionText}>
+        <Flex direction="column" className={styles.descriptionText}>
           <Text wrap="pretty">{truncate(data.description, 200)}</Text>
           <LinkOut href={data.websiteUrl || ''}>More details.</LinkOut>
-        </div>
-      </div>
+        </Flex>
+      </Flex>
       <EpisodeList
         sentryRef={sentryRef}
         key={data.uuid}
@@ -61,6 +61,6 @@ export const SeriesDetails = ({
         loading={loading}
         hasMorePages={true}
       />
-    </div>
+    </Flex>
   )
 }

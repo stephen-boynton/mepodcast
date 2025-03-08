@@ -1,3 +1,4 @@
+import { Box, Flex } from '@radix-ui/themes'
 import { useCollapse } from 'react-collapsed'
 
 export const CollapsibleDescription = ({
@@ -6,9 +7,9 @@ export const CollapsibleDescription = ({
   const { getCollapseProps, getToggleProps } = useCollapse()
 
   return (
-    <div>
-      <div {...getToggleProps()}>Show description</div>
-      <div {...getCollapseProps()}>{children}</div>
-    </div>
+    <Box>
+      <Flex {...getToggleProps()}>Show description</Flex>
+      <Flex {...getCollapseProps()}>{children}</Flex>
+    </Box>
   )
 }

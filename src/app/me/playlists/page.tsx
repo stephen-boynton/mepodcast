@@ -1,3 +1,5 @@
+import { Box } from '@radix-ui/themes'
+
 export default function MePlaylists() {
-  return <div>Me Playlists</div>;
+  return <Box>Me Playlists</Box>
 }
