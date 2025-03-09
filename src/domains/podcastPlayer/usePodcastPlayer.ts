@@ -18,7 +18,7 @@ export const usePodcastPlayer = (): UsePodcastPlayerReturn => {
     if (!playerRef.current?.audio?.current) {
       return
     }
-    console.log({ playerRef })
+
     if (!initialized) {
       console.log('initializing player')
       setInitialized(true)

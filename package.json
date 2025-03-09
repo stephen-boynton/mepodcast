@@ -31,6 +31,7 @@
     "react-infinite-scroll-hook": "^5.0.1",
     "react-modern-drawer": "^1.4.0",
     "react-simply-carousel": "^9.1.8",
+    "react-swipeable": "^7.0.2",
     "sanitize-html": "^2.14.0",
     "sass": "^1.83.4"
   },

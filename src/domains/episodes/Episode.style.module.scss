@@ -29,6 +29,8 @@
 }
 
 .description {
+	line-height: 1.5;
+
 	>p {
 		&:first-child {
 			margin-top: 1rem;
@@ -40,7 +42,10 @@
 		}
 
 		margin-bottom: 1rem;
-		line-height: 1.5;
+	}
+
+	li:not(:last-child) {
+		margin-bottom: 0.5rem;
 	}
 }
 

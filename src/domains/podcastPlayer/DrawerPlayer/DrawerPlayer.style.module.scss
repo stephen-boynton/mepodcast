@@ -1,6 +1,55 @@
-.container {
-	display: flex;
-	flex-direction: column;
-	// height: 100%;
-	padding: 1rem;
+nav.container[id^="EZDrawer__"] {
+	color: white;
+	box-shadow: var(--blue-9) 0px 0px 0px 1px;
+	touch-action: cross-slide-y;
+	background-color: var(--gray-3);
+
+	div[class^="rhap_container"] {
+		background-color: var(--gray-3);
+
+		div[class*="rhap_total-time"],
+		div[class*="rhap_current-time"],
+		button[class*="rhap_main-controls-button"],
+		button[class*="rhap_repeat-button"],
+		button[class*="rhap_volume-button"] {
+			color: white;
+		}
+
+		button[aria-label*="Pause"] {
+			color: var(--mint-9);
+		}
+
+		button[aria-label*="Disable loop"] {
+			color: var(--mint-9);
+		}
+
+		div[class*="rhap_volume-indicator"] {
+			background: var(--blue-9);
+		}
+
+		div[class*="rhap_progress-indicator"] {
+			background-color: var(--blue-9);
+		}
+
+		div[class*="rhap_progress-bar"] {
+			background-color: white;
+		}
+
+		div[class*="rhap_progress-filled"] {
+			background-color: var(--mint-9);
+		}
+	}
+}
+
+.drawer {
+	position: relative;
+	background-color: var(--gray-3);
+	touch-action: none;
+}
+
+.handle {
+	position: absolute;
+	height: 115px;
+	width: 100%;
+	background-color: transparent;
 }

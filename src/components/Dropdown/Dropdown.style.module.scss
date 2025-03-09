@@ -1,6 +1,6 @@
 .content {
 	min-width: 220px;
-	background-color: white;
+	background-color: var(--gray-12);
 	border-radius: 6px;
 	padding: 0.5rem;
 	box-shadow:
@@ -30,7 +30,7 @@
 
 .trigger {
 	font-size: 1rem;
-	color: v.$linkColor;
+	color: var(--mint-9);
 	border: none;
 	background-color: transparent;
 	height: 25px;

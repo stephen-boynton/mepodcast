@@ -1,10 +1,9 @@
 import { Maybe } from '@/types/shared'
 import type { Series } from './Series'
-import { matches } from 'es-toolkit/compat'
-import { defaultSelectedEpisode } from '@/domains/podcastPlayer/SelectedEpisodeContext'
 
 export class Episode {
   audioUrl: Maybe<string> = null
+  authorName: Maybe<string> = null
   completed: boolean = false
   datePublished: Maybe<number> = null
   description: Maybe<string> = null
@@ -13,7 +12,8 @@ export class Episode {
   imageUrl: Maybe<string> = null
   listens: Maybe<number> = null
   name: Maybe<string> = null
-  series: Maybe<Partial<Series>> = null
+  series?: Maybe<Partial<Series>> = null
+  seriesName: Maybe<string> = null
   seriesUuid: Maybe<string> = null
   seasonNumber: Maybe<number> = null
   subtitle: Maybe<string> = null
@@ -21,13 +21,13 @@ export class Episode {
   websiteUrl: Maybe<string> = null
 
   constructor(episode: Episode) {
-    Object.assign(this, episode)
+    const { series, ...rest } = episode
+    Object.assign(this, rest)
+    this.seriesUuid = series?.uuid || null
+    this.imageUrl = series?.imageUrl || null
+    this.seriesName = series?.name || null
+    this.authorName = series?.authorName || null
   }
-
-  get authorName(): Maybe<string> {
-    return this.series?.authorName || null
-  }
-
   static isPlayable(episode: Partial<Episode> = {}): boolean {
     const { audioUrl, name, uuid } = episode
     return Boolean(audioUrl && name && uuid)

@@ -1,6 +1,9 @@
 import H5AudioPlayer from 'react-h5-audio-player'
 import AudioPlayer from 'react-h5-audio-player'
+import styles from './PodcastPlayer.style.module.scss'
 import 'react-h5-audio-player/lib/styles.css'
+import { Maybe } from 'graphql/jsutils/Maybe'
+import { Box } from '@radix-ui/themes'
 
 type PodcastPlayerProps = {
   src: string
@@ -9,16 +12,16 @@ type PodcastPlayerProps = {
   handleListening: () => void
   handleLoaded: () => void
   handleCompleted: () => void
-  playerRef: React.RefObject<H5AudioPlayer>
+  playerRef: React.RefObject<Maybe<H5AudioPlayer>>
 }
 
-const Header = () => {
-  return (
-    <div className="audio-player-header">
-      <h4>Podcast Player</h4>
-    </div>
-  )
-}
+// const Header = () => {
+//   return (
+//     <div className="audio-player-header">
+//       <h4>Podcast Player</h4>
+//     </div>
+//   )
+// }
 
 export const PodcastPlayer = ({
   src,
@@ -30,9 +33,9 @@ export const PodcastPlayer = ({
   handleCompleted
 }: PodcastPlayerProps) => {
   return (
-    <>
+    <Box className={styles.container} onTouchMove={(e) => e.preventDefault()}>
       <AudioPlayer
-        header={<Header />}
+        className={styles.audioPlayer}
         onPause={handlePause}
         onPlay={handlePlay}
         onListen={handleListening}
@@ -40,8 +43,12 @@ export const PodcastPlayer = ({
         onEnded={handleCompleted}
         listenInterval={5000}
         src={src}
-        ref={playerRef}
+        ref={(instance) => {
+          if (instance) {
+            playerRef.current = instance
+          }
+        }}
       />
-    </>
+    </Box>
   )
 }

@@ -11,7 +11,6 @@ import { useSelectedEpisode } from '../podcastPlayer/SelectedEpisodeContext'
 import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Episode } from '@/models/Episode'
-import { Carousel } from '@/components/Carousel'
 
 export const EpisodeDetail = () => {
   const { id } = useParams()
@@ -25,14 +24,10 @@ export const EpisodeDetail = () => {
       if (!Episode.isPlayable(episode)) {
         setIsLoading(true)
         setSelectedEpisode(id as string)
-      }
-
-      if (id !== episode?.uuid) {
+      } else if (id !== episode?.uuid) {
         setIsLoading(true)
         setSelectedEpisode(id as string)
-      }
-
-      if (episode?.uuid === id) {
+      } else if (episode?.uuid === id) {
         setIsLoading(false)
       }
     }
