@@ -13,7 +13,6 @@ import { PlaylistTab } from './PlaylistTab'
 const Drawer = dynamic(() => import('react-modern-drawer'), { ssr: false })
 
 const EpisodeDetailsTop = ({ episode }: { episode: Partial<Episode> }) => {
-  console.log({ episode })
   return (
     <Flex direction="column" align="center" justify="center" gap="3">
       <Heading as="h2">{episode.name}</Heading>
@@ -62,25 +61,28 @@ export const DrawerPlayer: React.FC = () => {
           <Flex direction="column" p={isOpen ? '4' : '0'} gap="6">
             <Box className={styles.handle} {...swipeHandlers} />
             {isOpen && <EpisodeDetailsTop episode={episode} />}
-            <Flex>
-              {episode.imageUrl && (
-                <Image
-                  src={episode.imageUrl || ''}
-                  alt={episode.name || 'Podcast Image'}
-                  width={125}
-                  height={125}
+            {episode?.audioUrl && (
+              <Flex>
+                {episode.imageUrl && (
+                  <Image
+                    src={episode.imageUrl || ''}
+                    alt={episode.name || 'Podcast Image'}
+                    width={125}
+                    height={125}
+                  />
+                )}
+
+                <PodcastPlayer
+                  handleCompleted={handleCompleted}
+                  handleListening={handleListenInterval}
+                  handleLoaded={() => {}}
+                  handlePause={handlePause}
+                  handlePlay={handlePlay}
+                  src={episode.audioUrl || ''}
+                  playerRef={playerRef}
                 />
-              )}
-              <PodcastPlayer
-                handleCompleted={handleCompleted}
-                handleListening={handleListenInterval}
-                handleLoaded={() => {}}
-                handlePause={handlePause}
-                handlePlay={handlePlay}
-                src={episode.audioUrl || ''}
-                playerRef={playerRef}
-              />
-            </Flex>
+              </Flex>
+            )}
             {isOpen && <PlaylistTab />}
           </Flex>
         </Box>

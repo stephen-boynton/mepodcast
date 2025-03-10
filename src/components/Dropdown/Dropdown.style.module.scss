@@ -3,6 +3,7 @@
 	background-color: var(--gray-12);
 	border-radius: 6px;
 	padding: 0.5rem;
+	border: var(--blue-9) 1px solid;
 	box-shadow:
 		0px 10px 38px -10px rgba(22, 23, 24, 0.35),
 		0px 10px 20px -15px rgba(22, 23, 24, 0.2);
@@ -29,6 +30,8 @@
 }
 
 .trigger {
+	display: flex;
+	align-items: center;
 	font-size: 1rem;
 	color: var(--mint-9);
 	border: none;

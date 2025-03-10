@@ -1,12 +1,6 @@
 .itemContainer {
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-start;
-	position: relative;
-	padding: 0.5rem;
-	gap: 0.5rem;
-	border-bottom: 1px solid #38383859;
-	border-top: 1px solid #38383859;
+	width: 100%;
+	color: white;
 
 	&:hover {
 		cursor: pointer;
@@ -22,15 +16,8 @@
 	stroke: black;
 }
 
-.itemText {
-	display: flex;
-
-	>:first-child {
-		margin-right: 1rem;
-	}
-}
+.itemText {}
 
 .description {
-	color: black;
 	font-size: 0.8rem;
 }

@@ -1,33 +1,27 @@
-import { Series } from '@/models/Series'
-import { Box, Card, Flex, Text } from '@radix-ui/themes'
+import { truncate } from '@/utils'
+import { Box, Card, Flex, Inset, Text } from '@radix-ui/themes'
 import Image from 'next/image'
 
-export const PodcastCard = ({
-  details: _details,
-  renderButton: Button
-}: {
-  details: string
-  renderButton: React.ComponentType<{ series: Series }>
-}) => {
+export const PodcastCard = ({ details: _details }: { details: string }) => {
   const details = JSON.parse(_details)
   return (
     <Box maxWidth="240px" height="100%">
-      <Card asChild>
+      <Card asChild size="1">
         <Flex gap="3" align="center" height={'100%'}>
           <Box>
-            <Flex justify={'between'}>
-              {details.imageUrl && (
+            {details.imageUrl && (
+              <Inset clip="padding-box" side="top">
                 <Image
                   src={details.imageUrl}
                   alt={details.name ?? 'Podcast Image'}
-                  width={100}
-                  height={100}
+                  width={160}
+                  height={160}
+                  objectFit="cover"
                 />
-              )}
-              <Button series={details as Series} />
-            </Flex>
+              </Inset>
+            )}
             <Text as="div" size="2" weight="bold">
-              {details.name}
+              {truncate(details.name, 60)}
             </Text>
             <Text as="div" size="2" color="gray">
               {details.authorName}

@@ -50,3 +50,7 @@ export const clean = (dirty: string) =>
       a: ['href']
     }
   })
+
+export const convertFromUnix = (unix: number) => {
+  return new Date(unix * 1000).toDateString()
+}

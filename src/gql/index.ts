@@ -45,6 +45,7 @@ export const GET_PODCASTSERIES = gql`
         uuid
         name
         description
+        datePublished
         seasonNumber
         episodeNumber
       }

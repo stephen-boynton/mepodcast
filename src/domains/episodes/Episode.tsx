@@ -1,16 +1,17 @@
 'use client'
-import { Box, Flex, Heading, ScrollArea, Text } from '@radix-ui/themes'
+import { Box, Button, Flex, Heading, ScrollArea, Text } from '@radix-ui/themes'
 import styles from './Episode.style.module.scss'
 import Image from 'next/image'
 import { LinkOut } from '@/components/Link/LinkOut'
 import Link from 'next/link'
 import { clean } from '@/utils'
-import { PauseIcon, PlayIcon } from '@radix-ui/react-icons'
+import { PauseIcon, PlayIcon, PlusIcon } from '@radix-ui/react-icons'
 import { useDrawerPlayer } from '../podcastPlayer/DrawerPlayer/useDrawerPlayer'
 import { useSelectedEpisode } from '../podcastPlayer/SelectedEpisodeContext'
 import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Episode } from '@/models/Episode'
+import { ControlPanel } from './ControlPanel'
 
 export const EpisodeDetail = () => {
   const { id } = useParams()
@@ -51,44 +52,25 @@ export const EpisodeDetail = () => {
   const showUrl = websiteUrl || series?.websiteUrl
   const image = imageUrl || series?.imageUrl
   const handleAction = isPlaying ? handlePause : handlePlay
-  const Icon = () =>
-    !isPlaying ? (
-      <PlayIcon
-        name="play"
-        width={100}
-        height={100}
-        className={styles.playIcon}
-      />
-    ) : (
-      <PauseIcon
-        name="pause"
-        width={100}
-        height={100}
-        className={styles.playIcon}
-      />
-    )
 
   return (
     <Box className={styles.container}>
       <Heading className={styles.title} size="6" as="h3">
         <Link href={`/series/${series?.uuid}`}>{series?.name}</Link>
       </Heading>
-      <Flex className={styles.podcastPlayerContainer} onClick={handleAction}>
-        {image && (
-          <Image
-            priority
-            src={image}
-            alt={name ?? 'Podcast Image'}
-            width={100}
-            height={100}
-            style={{ width: '100%', height: 'auto' }}
-          />
-        )}
-        <Icon />
-      </Flex>
       <Heading as="h2" size="5" my={'4'}>
         {name}
       </Heading>
+      <Flex align="center" width="100%" justify="between">
+        <Image
+          src={image}
+          width={205}
+          height={205}
+          alt="Show Image"
+          className={styles.image}
+        />
+        <ControlPanel handleAction={handleAction} isPlaying={isPlaying} />
+      </Flex>
       <Flex direction="column" className={styles.descriptionContainer}>
         <Heading className={styles.subtitle} size="5" as="h3">
           {showUrl && <LinkOut href={showUrl}>Show Website</LinkOut>}
@@ -104,7 +86,7 @@ export const EpisodeDetail = () => {
           scrollbars="vertical"
           className={styles.descriptionBox}
           style={{
-            height: 300
+            maxHeight: '30vh'
           }}
         >
           <Box p="2" px="4">

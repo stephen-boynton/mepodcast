@@ -4,11 +4,8 @@ import { Content, DisplayType } from '@/types/shared'
 import { useTopTen as fetchTopTen } from './useTopTen'
 import styles from './TopTen.style.module.scss'
 import Link from 'next/link'
-import { FavoriteButton } from '../favoriteSeries/FavoriteButton'
-import { DownloadButton } from '../episodes/DownloadButton'
 
-const TopGrid = ({ items, type }: { items: Content[]; type: DisplayType }) => {
-  const renderButton = type === 'series' ? FavoriteButton : DownloadButton
+const TopGrid = ({ items }: { items: Content[]; type: DisplayType }) => {
   return (
     <ul className={styles.itemGrid}>
       {items.map((item) => {
@@ -16,7 +13,7 @@ const TopGrid = ({ items, type }: { items: Content[]; type: DisplayType }) => {
         return (
           <li key={item.uuid} className={styles.itemContainer}>
             <Link href={`/series/${item.uuid}`}>
-              <PodcastCard details={details} renderButton={renderButton} />
+              <PodcastCard details={details} />
             </Link>
           </li>
         )
@@ -30,7 +27,7 @@ export const TopTen = async () => {
     data: { series, episodes }
   } = await fetchTopTen()
   return (
-    <Flex direction="column">
+    <Flex direction="column" justify="center">
       <Heading as="h3" mb="4" weight="bold">
         Top 10 Series
       </Heading>

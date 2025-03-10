@@ -10,11 +10,11 @@ export const NavBar = () => {
     <Flex align="center" justify="between" className={styles.container}>
       <Flex align="center" justify="between">
         <BackButton />
-        <Heading as="h1">MePodcast</Heading>
+        <Link href="/">
+          <Heading as="h1">MePodcast</Heading>
+        </Link>
       </Flex>
       <Flex className={styles.nav}>
-        <Link href="/">Home</Link>
-        <Link href="/search">Search</Link>
         <Dropdown />
       </Flex>
     </Flex>

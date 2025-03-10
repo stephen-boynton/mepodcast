@@ -47,7 +47,7 @@ export default function RootLayout({
           <ApolloWrapper>
             <SelectedEpisodeProvider>
               <DrawerStateProvider>
-                <Container py="4" px="6" size="4">
+                <Container py="3" px="3" size="4">
                   {children}
                   <DrawerPlayer />
                 </Container>

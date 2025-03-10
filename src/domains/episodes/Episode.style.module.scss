@@ -1,5 +1,6 @@
 .container {
 	max-width: 600px;
+	max-height: 98vh;
 }
 
 .subtitle {
@@ -68,4 +69,8 @@
 
 .descriptionBox {
 	background-color: var(--gray-3);
+}
+
+.image {
+	width: 100%;
 }

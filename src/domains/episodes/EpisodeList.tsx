@@ -22,6 +22,7 @@ export const EpisodeList = ({
   hasMorePages: boolean
   imgSrc: string
 }) => {
+  console.log({ episodes })
   return (
     <Flex direction="column">
       <Heading as="h3" mb="4" weight="bold">
@@ -32,6 +33,8 @@ export const EpisodeList = ({
           return (
             <ListCard
               key={episode.uuid}
+              episodeNumber={episode.episodeNumber}
+              episodeDatePublished={episode.datePublished}
               inProgress={progress?.find((p) => p.episodeUuid === episode.uuid)}
               href={`/series/${seriesId}/episodes/${episode.uuid}`}
               name={episode.name}
