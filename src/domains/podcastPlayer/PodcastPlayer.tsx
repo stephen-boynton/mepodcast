@@ -4,33 +4,28 @@ import styles from './PodcastPlayer.style.module.scss'
 import 'react-h5-audio-player/lib/styles.css'
 import { Maybe } from 'graphql/jsutils/Maybe'
 import { Box } from '@radix-ui/themes'
+import { Logger } from '@/lib/Logger'
 
 type PodcastPlayerProps = {
-  src: string
+  src: Maybe<string>
   handlePause: () => void
   handlePlay: () => void
   handleListening: () => void
   handleLoaded: () => void
   handleCompleted: () => void
-  playerRef: React.RefObject<Maybe<H5AudioPlayer>>
+  initializePlayer: (player: H5AudioPlayer) => void
+  isInitialized: boolean
 }
-
-// const Header = () => {
-//   return (
-//     <div className="audio-player-header">
-//       <h4>Podcast Player</h4>
-//     </div>
-//   )
-// }
 
 export const PodcastPlayer = ({
   src,
-  playerRef,
+  initializePlayer,
   handlePause,
   handlePlay,
   handleListening,
   handleLoaded,
-  handleCompleted
+  handleCompleted,
+  isInitialized
 }: PodcastPlayerProps) => {
   return (
     <Box className={styles.container} onTouchMove={(e) => e.preventDefault()}>
@@ -42,10 +37,11 @@ export const PodcastPlayer = ({
         onLoadedMetaData={handleLoaded}
         onEnded={handleCompleted}
         listenInterval={5000}
-        src={src}
+        src={src || undefined}
         ref={(instance) => {
-          if (instance) {
-            playerRef.current = instance
+          if (instance && !isInitialized) {
+            Logger.log('Initializing Player')
+            initializePlayer(instance)
           }
         }}
       />

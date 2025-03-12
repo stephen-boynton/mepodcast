@@ -14,13 +14,13 @@ export class PodcastPlayer {
     return PodcastPlayer.#instance
   }
 
-  play() {
-    this.player.play()
+  async play() {
+    await this.player.play()
   }
 
-  load(url: string) {
+  async load(url: string) {
     this.player.src = url
-    this.player.load()
+    await this.player.load()
   }
 
   pause() {

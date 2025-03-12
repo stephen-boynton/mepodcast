@@ -1,42 +1,24 @@
 'use client'
-import { Box, Button, Flex, Heading, ScrollArea, Text } from '@radix-ui/themes'
+import { Box, Flex, Heading, ScrollArea, Text } from '@radix-ui/themes'
 import styles from './Episode.style.module.scss'
 import Image from 'next/image'
 import { LinkOut } from '@/components/Link/LinkOut'
 import Link from 'next/link'
 import { clean } from '@/utils'
-import { PauseIcon, PlayIcon, PlusIcon } from '@radix-ui/react-icons'
-import { useDrawerPlayer } from '../podcastPlayer/DrawerPlayer/useDrawerPlayer'
+import { useDrawerPlayer } from '../podcastPlayer/hooks/useDrawerPlayer'
 import { useSelectedEpisode } from '../podcastPlayer/SelectedEpisodeContext'
 import { useParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
 import { Episode } from '@/models/Episode'
 import { ControlPanel } from './ControlPanel'
+import { useEpisodeDetail } from './useEpisodeDetails'
 
 export const EpisodeDetail = () => {
   const { id } = useParams()
-  const [isLoading, setIsLoading] = useState(true)
-
-  const { episode, setSelectedEpisode } = useSelectedEpisode()
-  const { handlePlay, isPlaying, handlePause } = useDrawerPlayer()
-
-  useEffect(() => {
-    if (setSelectedEpisode) {
-      if (!Episode.isPlayable(episode)) {
-        setIsLoading(true)
-        setSelectedEpisode(id as string)
-      } else if (id !== episode?.uuid) {
-        setIsLoading(true)
-        setSelectedEpisode(id as string)
-      } else if (episode?.uuid === id) {
-        setIsLoading(false)
-      }
-    }
-  }, [episode, setSelectedEpisode, id])
-
-  if (isLoading) {
-    return <div>Loading...</div>
-  }
+  const { setSelectedEpisode } = useSelectedEpisode()
+  const { handlePlayWithNewSrc, isPlaying, handlePause } = useDrawerPlayer()
+  const { data: episode } = useEpisodeDetail({
+    uuid: id as string
+  })
 
   const {
     websiteUrl,
@@ -51,7 +33,10 @@ export const EpisodeDetail = () => {
 
   const showUrl = websiteUrl || series?.websiteUrl
   const image = imageUrl || series?.imageUrl
-  const handleAction = isPlaying ? handlePause : handlePlay
+  const handleAction = () => {
+    setSelectedEpisode?.(id as string)
+    return isPlaying ? handlePause() : handlePlayWithNewSrc(episode as Episode)
+  }
 
   return (
     <Box className={styles.container}>

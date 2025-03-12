@@ -7,7 +7,7 @@ import { NavBar } from '@/components/NavBar'
 import { Container, Theme } from '@radix-ui/themes'
 import { DrawerPlayer } from '@/domains/podcastPlayer/DrawerPlayer'
 import { SelectedEpisodeProvider } from '@/domains/podcastPlayer/SelectedEpisodeContext'
-import { DrawerStateProvider } from '@/domains/podcastPlayer/DrawerPlayer/useDrawerPlayer'
+import { DrawerStateProvider } from '@/domains/podcastPlayer/hooks/useDrawerPlayer'
 import { ApolloWrapper } from '@/lib/gql/makeClient'
 
 const geistSans = Geist({

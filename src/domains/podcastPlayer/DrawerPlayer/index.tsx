@@ -1,7 +1,7 @@
 'use client'
 import 'react-modern-drawer/dist/index.css'
 import styles from './DrawerPlayer.style.module.scss'
-import { useDrawerPlayer } from './useDrawerPlayer'
+import { useDrawerPlayer } from '../hooks/useDrawerPlayer'
 import { useSelectedEpisode } from '../SelectedEpisodeContext'
 import dynamic from 'next/dynamic'
 import { PodcastPlayer } from '../PodcastPlayer'
@@ -30,7 +30,8 @@ export const DrawerPlayer: React.FC = () => {
     handleListenInterval,
     handlePause,
     handlePlay,
-    playerRef,
+    initializePlayer,
+    isInitialized,
     swipeHandlers
   } = useDrawerPlayer()
 
@@ -61,28 +62,27 @@ export const DrawerPlayer: React.FC = () => {
           <Flex direction="column" p={isOpen ? '4' : '0'} gap="6">
             <Box className={styles.handle} {...swipeHandlers} />
             {isOpen && <EpisodeDetailsTop episode={episode} />}
-            {episode?.audioUrl && (
-              <Flex>
-                {episode.imageUrl && (
-                  <Image
-                    src={episode.imageUrl || ''}
-                    alt={episode.name || 'Podcast Image'}
-                    width={125}
-                    height={125}
-                  />
-                )}
-
-                <PodcastPlayer
-                  handleCompleted={handleCompleted}
-                  handleListening={handleListenInterval}
-                  handleLoaded={() => {}}
-                  handlePause={handlePause}
-                  handlePlay={handlePlay}
-                  src={episode.audioUrl || ''}
-                  playerRef={playerRef}
+            <Flex>
+              {episode.imageUrl && (
+                <Image
+                  src={episode.imageUrl || ''}
+                  alt={episode.name || 'Podcast Image'}
+                  width={125}
+                  height={125}
                 />
-              </Flex>
-            )}
+              )}
+
+              <PodcastPlayer
+                handleCompleted={handleCompleted}
+                handleListening={handleListenInterval}
+                handleLoaded={() => {}}
+                handlePause={handlePause}
+                handlePlay={handlePlay}
+                initializePlayer={initializePlayer}
+                isInitialized={isInitialized}
+                src={episode.audioUrl}
+              />
+            </Flex>
             {isOpen && <PlaylistTab />}
           </Flex>
         </Box>

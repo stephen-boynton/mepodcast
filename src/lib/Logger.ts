@@ -1,6 +1,6 @@
 export class Logger {
-  static log(message: string) {
-    console.log(message)
+  static log(...messages: string[]) {
+    console.log(...messages)
   }
 
   static error(message: string) {

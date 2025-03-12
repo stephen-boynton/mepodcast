@@ -16,7 +16,7 @@ export const useEpisodeDetail = ({ uuid }: UseEpisodeDetailProps) => {
       errorPolicy: 'none'
     }
   )
-  console.log({ data })
+
   return {
     data: data && createEpisode(data.getPodcastEpisode),
     error
