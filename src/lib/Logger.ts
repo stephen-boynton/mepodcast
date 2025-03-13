@@ -1,5 +1,6 @@
 export class Logger {
-  static log(...messages: string[]) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static log(...messages: any[]) {
     console.log(...messages)
   }
 
@@ -9,5 +10,12 @@ export class Logger {
 
   static warn(message: string) {
     console.warn(message)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static debug(...message: any[]) {
+    if (process.env.NODE_ENV === 'development') {
+      console.debug(message)
+    }
   }
 }

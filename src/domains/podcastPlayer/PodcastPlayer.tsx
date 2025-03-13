@@ -1,7 +1,7 @@
+import 'react-h5-audio-player/lib/styles.css'
 import H5AudioPlayer from 'react-h5-audio-player'
 import AudioPlayer from 'react-h5-audio-player'
 import styles from './PodcastPlayer.style.module.scss'
-import 'react-h5-audio-player/lib/styles.css'
 import { Maybe } from 'graphql/jsutils/Maybe'
 import { Box } from '@radix-ui/themes'
 import { Logger } from '@/lib/Logger'
@@ -40,7 +40,7 @@ export const PodcastPlayer = ({
         src={src || undefined}
         ref={(instance) => {
           if (instance && !isInitialized) {
-            Logger.log('Initializing Player')
+            Logger.debug('Initializing Player')
             initializePlayer(instance)
           }
         }}

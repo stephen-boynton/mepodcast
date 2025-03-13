@@ -1,8 +1,8 @@
 'use client'
 import { useState } from 'react'
-import { Maybe } from '@/types/shared'
 import { PodcastPlayer } from '../Player'
 import H5AudioPlayer from 'react-h5-audio-player'
+import { Maybe } from '@/types/shared'
 
 export const usePodcastPlayer = () => {
   const [player, setPlayer] = useState<Maybe<PodcastPlayer>>(null)

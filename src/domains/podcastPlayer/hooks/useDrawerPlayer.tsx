@@ -1,12 +1,13 @@
 'use client'
-import { useContext, useMemo, useState, createContext } from 'react'
+import { useContext, useMemo, createContext, useState } from 'react'
 import { usePodcastPlayer } from './usePodcastPlayer'
-import { useSaveProgress } from './useSaveProgress'
 import { SwipeableHandlers } from 'react-swipeable'
 import H5AudioPlayer from 'react-h5-audio-player'
 import { Episode } from '@/models/Episode'
 import { useDrawerHandlers } from './useDrawerHandlers'
 import { useAudioActions } from './useAudioActions'
+import { Maybe } from '@/types/shared'
+import { PodcastPlayer } from '../Player'
 
 export type DrawerState = 'open' | 'minimized' | 'closed'
 
@@ -17,12 +18,12 @@ type DrawerPlayerState = {
   handleCompleted: () => void
   handleListenInterval: () => void
   handlePause: () => void
-  handlePlay: () => void
-  handlePlayWithNewSrc: (episode: Episode) => void
-  minimizeDrawer: () => void
-  openDrawer: () => void
+  handlePlay: (episode?: Episode) => void
   initializePlayer: (player: H5AudioPlayer) => void
   isInitialized: boolean
+  minimizeDrawer: () => void
+  openDrawer: () => void
+  player: Maybe<PodcastPlayer>
   setDrawerState: (state: DrawerState) => void
   swipeHandlers: SwipeableHandlers
 }
@@ -35,11 +36,11 @@ const DrawwerPlayerState = createContext<DrawerPlayerState>({
   handleListenInterval: () => {},
   handlePause: () => {},
   handlePlay: () => {},
-  handlePlayWithNewSrc: () => {},
-  minimizeDrawer: () => {},
-  openDrawer: () => {},
   initializePlayer: () => {},
   isInitialized: false,
+  minimizeDrawer: () => {},
+  openDrawer: () => {},
+  player: null,
   setDrawerState: () => {},
   swipeHandlers: {} as SwipeableHandlers
 })
@@ -49,7 +50,7 @@ export const DrawerStateProvider = ({
 }: {
   children: React.ReactNode
 }) => {
-  const [episode, setEpisode] = useState<Episode | null>(null)
+  const [episode, setEpisode] = useState<Maybe<Episode>>(null)
   const { player, initializePlayer, initialized } = usePodcastPlayer()
 
   const {
@@ -62,33 +63,14 @@ export const DrawerStateProvider = ({
     setDrawerState
   } = useDrawerHandlers()
 
-  const [isPlaying, setIsPlaying] = useState<boolean>(
-    Boolean(player && player.isLoaded() && !player.isPaused)
-  )
-
-  const { saveCompleted, saveProgress, startingTime } = useSaveProgress({
-    episodeUuid: episode?.uuid || '',
-    seriesUuid: episode?.seriesUuid || ''
-  })
-
-  const {
-    handleCompleted,
-    handleListenInterval,
-    handlePause,
-    handlePlay,
-    handlePlayWithNewSrc
-  } = useAudioActions({
-    drawerState,
-    episode,
-    isPlaying,
-    minimizeDrawer,
-    player,
-    saveCompleted,
-    saveProgress,
-    setEpisode,
-    setIsPlaying,
-    startingTime
-  })
+  const { handleCompleted, handleListenInterval, handlePause, handlePlay } =
+    useAudioActions({
+      drawerState,
+      minimizeDrawer,
+      isInitialized: initialized,
+      setEpisode,
+      player
+    })
 
   const value = useMemo(
     () => ({
@@ -99,11 +81,11 @@ export const DrawerStateProvider = ({
       handleListenInterval,
       handlePause,
       handlePlay,
-      handlePlayWithNewSrc,
-      isPlaying,
+      isPlaying: player?.isPlaying || false,
       isInitialized: initialized,
       minimizeDrawer,
       openDrawer,
+      player,
       initializePlayer,
       setDrawerState,
       swipeHandlers
@@ -115,12 +97,11 @@ export const DrawerStateProvider = ({
       handleCompleted,
       handleListenInterval,
       handlePause,
-      handlePlayWithNewSrc,
       handlePlay,
       initialized,
-      isPlaying,
       minimizeDrawer,
       openDrawer,
+      player,
       initializePlayer,
       setDrawerState,
       swipeHandlers

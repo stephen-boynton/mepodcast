@@ -6,7 +6,6 @@ import { LinkOut } from '@/components/Link/LinkOut'
 import Link from 'next/link'
 import { clean } from '@/utils'
 import { useDrawerPlayer } from '../podcastPlayer/hooks/useDrawerPlayer'
-import { useSelectedEpisode } from '../podcastPlayer/SelectedEpisodeContext'
 import { useParams } from 'next/navigation'
 import { Episode } from '@/models/Episode'
 import { ControlPanel } from './ControlPanel'
@@ -14,8 +13,7 @@ import { useEpisodeDetail } from './useEpisodeDetails'
 
 export const EpisodeDetail = () => {
   const { id } = useParams()
-  const { setSelectedEpisode } = useSelectedEpisode()
-  const { handlePlayWithNewSrc, isPlaying, handlePause } = useDrawerPlayer()
+  const { handlePlay, player, handlePause } = useDrawerPlayer()
   const { data: episode } = useEpisodeDetail({
     uuid: id as string
   })
@@ -33,9 +31,14 @@ export const EpisodeDetail = () => {
 
   const showUrl = websiteUrl || series?.websiteUrl
   const image = imageUrl || series?.imageUrl
+
   const handleAction = () => {
-    setSelectedEpisode?.(id as string)
-    return isPlaying ? handlePause() : handlePlayWithNewSrc(episode as Episode)
+    if (player?.isPlaying) {
+      handlePause()
+    } else {
+      handlePlay(episode as Episode)
+    }
+    return
   }
 
   return (
@@ -54,7 +57,10 @@ export const EpisodeDetail = () => {
           alt="Show Image"
           className={styles.image}
         />
-        <ControlPanel handleAction={handleAction} isPlaying={isPlaying} />
+        <ControlPanel
+          handleAction={handleAction}
+          isPlaying={Boolean(player?.isPlaying)}
+        />
       </Flex>
       <Flex direction="column" className={styles.descriptionContainer}>
         <Heading className={styles.subtitle} size="5" as="h3">
