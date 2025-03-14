@@ -19,7 +19,6 @@ export const ListCard = ({
   episodeNumber: Maybe<number>
   episodeDatePublished: Maybe<number>
 }) => {
-  console.log({ episodeDatePublished })
   return (
     <Link href={href}>
       <Card asChild className={styles.itemContainer}>

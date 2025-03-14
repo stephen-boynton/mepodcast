@@ -2,30 +2,32 @@
 import 'react-modern-drawer/dist/index.css'
 import styles from './DrawerPlayer.style.module.scss'
 import { useDrawerPlayer } from '../hooks/useDrawerPlayer'
-import { useSelectedEpisode } from '../SelectedEpisodeContext'
 import dynamic from 'next/dynamic'
 import { PodcastPlayer } from '../PodcastPlayer'
 import { Box, Flex, Heading, Theme } from '@radix-ui/themes'
 import { Episode } from '@/models/Episode'
 import Image from 'next/image'
 import { PlaylistTab } from './PlaylistTab'
+import cn from 'classnames'
+import { useSelectedEpisode } from '../SelectedEpisodeContext'
 
 const Drawer = dynamic(() => import('react-modern-drawer'), { ssr: false })
 
 const EpisodeDetailsTop = ({ episode }: { episode: Partial<Episode> }) => {
   return (
     <Flex direction="column" align="center" justify="center" gap="3">
-      <Heading as="h2">{episode.name}</Heading>
+      <Heading size="5" as="h2">
+        {episode.name}
+      </Heading>
     </Flex>
   )
 }
 
 export const DrawerPlayer: React.FC = () => {
-  const { episode } = useSelectedEpisode()
-
   const {
     drawerHeight,
     drawerState,
+    // episode,
     handleCompleted,
     handleListenInterval,
     handlePause,
@@ -34,9 +36,10 @@ export const DrawerPlayer: React.FC = () => {
     isInitialized,
     swipeHandlers
   } = useDrawerPlayer()
-
+  const { episode } = useSelectedEpisode()
   const isOpen = drawerState === 'open'
   const isMinimized = drawerState === 'minimized'
+  console.log({ isMinimized, episode })
 
   if (!episode) {
     return null
@@ -59,8 +62,13 @@ export const DrawerPlayer: React.FC = () => {
         radius="full"
       >
         <Box height={`${drawerHeight}`} className={styles.drawer}>
-          <Flex direction="column" p={isOpen ? '4' : '0'} gap="6">
-            <Box className={styles.handle} {...swipeHandlers} />
+          <Flex direction="column" p={isOpen ? '6' : '4'} gap="6">
+            <Box
+              className={cn(styles.handle, {
+                [styles.minimized]: isMinimized
+              })}
+              {...swipeHandlers}
+            />
             {isOpen && <EpisodeDetailsTop episode={episode} />}
             <Flex>
               {episode.imageUrl && (

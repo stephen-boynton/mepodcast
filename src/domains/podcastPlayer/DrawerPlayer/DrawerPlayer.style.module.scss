@@ -15,10 +15,6 @@ nav.container[id^="EZDrawer__"] {
 			color: white;
 		}
 
-		button[aria-label*="Pause"] {
-			color: var(--mint-9);
-		}
-
 		button[aria-label*="Disable loop"] {
 			color: var(--mint-9);
 		}
@@ -49,7 +45,15 @@ nav.container[id^="EZDrawer__"] {
 
 .handle {
 	position: absolute;
-	height: 115px;
-	width: 100%;
-	background-color: transparent;
+	top: -0.5rem;
+	left: 50%;
+	transform: translateX(-50%);
+	height: 30px;
+
+	&.minimized {
+		height: 20px;
+	}
+
+	width: 50%;
+	background-color: var(--blue-9);
 }

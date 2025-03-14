@@ -36,6 +36,7 @@ export const EpisodeDetail = () => {
     if (player?.isPlaying) {
       handlePause()
     } else {
+      console.log('hre')
       handlePlay(episode as Episode)
     }
     return

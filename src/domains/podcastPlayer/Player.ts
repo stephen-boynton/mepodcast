@@ -1,5 +1,10 @@
 import { db } from '@/db'
 import { saveProgress } from '@/db/operations'
+import {
+  getCurrentlyPlaying,
+  removeCurrentlyPlaying,
+  saveCurrentlyPlaying
+} from '@/db/operations/currentlyPlaying'
 import { Logger } from '@/lib/Logger'
 import { Episode } from '@/models/Episode'
 import { Progress } from '@/models/Progress'
@@ -9,6 +14,7 @@ export class PodcastPlayer {
   #player: HTMLAudioElement
   #currentEpisode?: Episode
   #progress?: Progress & { id?: number }
+  isInitialized = false
 
   private constructor(ref: HTMLAudioElement) {
     this.#player = ref
@@ -34,13 +40,31 @@ export class PodcastPlayer {
     return PodcastPlayer.#instance
   }
 
+  async initialize() {
+    const currentlyPlaying = await getCurrentlyPlaying()
+    if (currentlyPlaying?.audioUrl) {
+      this.#player.src = currentlyPlaying.audioUrl
+      this.#currentEpisode = currentlyPlaying
+      await this.load()
+      this.isInitialized = true
+    }
+  }
+
   async play(episode?: Episode) {
     if (!episode || this.#currentEpisode?.uuid === episode?.uuid) {
       Logger.debug('Already playing episode', this.#currentEpisode)
       return await this.#player.play()
     }
+
+    if (this.#currentEpisode && this.#currentEpisode.uuid !== episode?.uuid) {
+      console.log(this.#currentEpisode, episode)
+      await removeCurrentlyPlaying()
+    }
+
+    saveCurrentlyPlaying({ ...episode, active: true })
     Logger.debug('Playing episode', episode)
     this.#currentEpisode = episode
+
     await this.load()
     await this.#player.play()
   }

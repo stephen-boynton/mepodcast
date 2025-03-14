@@ -1,5 +1,5 @@
 'use client'
-import { useContext, useMemo, createContext, useState } from 'react'
+import { useContext, useMemo, createContext, useState, useEffect } from 'react'
 import { usePodcastPlayer } from './usePodcastPlayer'
 import { SwipeableHandlers } from 'react-swipeable'
 import H5AudioPlayer from 'react-h5-audio-player'
@@ -67,16 +67,24 @@ export const DrawerStateProvider = ({
     useAudioActions({
       drawerState,
       minimizeDrawer,
+      openDrawer,
       isInitialized: initialized,
       setEpisode,
       player
     })
+
+  useEffect(() => {
+    if (player?.isInitialized && !episode) {
+      setEpisode(episode)
+    }
+  }, [setEpisode, player, episode])
 
   const value = useMemo(
     () => ({
       closeDrawer,
       drawerHeight,
       drawerState,
+      episode,
       handleCompleted,
       handleListenInterval,
       handlePause,
@@ -94,6 +102,7 @@ export const DrawerStateProvider = ({
       closeDrawer,
       drawerHeight,
       drawerState,
+      episode,
       handleCompleted,
       handleListenInterval,
       handlePause,
