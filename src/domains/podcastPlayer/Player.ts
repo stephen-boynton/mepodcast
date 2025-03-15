@@ -57,7 +57,6 @@ export class PodcastPlayer {
     }
 
     if (this.#currentEpisode && this.#currentEpisode.uuid !== episode?.uuid) {
-      console.log(this.#currentEpisode, episode)
       await removeCurrentlyPlaying()
     }
 

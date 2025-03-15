@@ -9,7 +9,7 @@ import { Episode } from '@/models/Episode'
 import Image from 'next/image'
 import { PlaylistTab } from './PlaylistTab'
 import cn from 'classnames'
-import { useSelectedEpisode } from '../SelectedEpisodeContext'
+import { usePlaylists } from '@/domains/playlist/usePlaylists'
 
 const Drawer = dynamic(() => import('react-modern-drawer'), { ssr: false })
 
@@ -27,7 +27,6 @@ export const DrawerPlayer: React.FC = () => {
   const {
     drawerHeight,
     drawerState,
-    // episode,
     handleCompleted,
     handleListenInterval,
     handlePause,
@@ -36,14 +35,11 @@ export const DrawerPlayer: React.FC = () => {
     isInitialized,
     swipeHandlers
   } = useDrawerPlayer()
-  const { episode } = useSelectedEpisode()
+  const { playlists, currentPlaylist, autoPlaylist } = usePlaylists()
   const isOpen = drawerState === 'open'
   const isMinimized = drawerState === 'minimized'
-  console.log({ isMinimized, episode })
 
-  if (!episode) {
-    return null
-  }
+  const episode = currentPlaylist?.getCurrent() || autoPlaylist?.getCurrent()
 
   return (
     <Drawer
@@ -69,9 +65,9 @@ export const DrawerPlayer: React.FC = () => {
               })}
               {...swipeHandlers}
             />
-            {isOpen && <EpisodeDetailsTop episode={episode} />}
+            {isOpen && episode && <EpisodeDetailsTop episode={episode} />}
             <Flex>
-              {episode.imageUrl && (
+              {episode?.imageUrl && (
                 <Image
                   src={episode.imageUrl || ''}
                   alt={episode.name || 'Podcast Image'}
@@ -88,10 +84,15 @@ export const DrawerPlayer: React.FC = () => {
                 handlePlay={handlePlay}
                 initializePlayer={initializePlayer}
                 isInitialized={isInitialized}
-                src={episode.audioUrl}
+                src={episode?.audioUrl}
               />
             </Flex>
-            {isOpen && <PlaylistTab />}
+            {isOpen && playlists && currentPlaylist && (
+              <PlaylistTab
+                currentPlaylist={currentPlaylist}
+                playlists={playlists}
+              />
+            )}
           </Flex>
         </Box>
       </Theme>

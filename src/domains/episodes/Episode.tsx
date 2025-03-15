@@ -10,10 +10,12 @@ import { useParams } from 'next/navigation'
 import { Episode } from '@/models/Episode'
 import { ControlPanel } from './ControlPanel'
 import { useEpisodeDetail } from './useEpisodeDetails'
+import { usePlaylists } from '../playlist/usePlaylists'
 
 export const EpisodeDetail = () => {
   const { id } = useParams()
   const { handlePlay, player, handlePause } = useDrawerPlayer()
+  const { addAsCurrentlyPlaying } = usePlaylists()
   const { data: episode } = useEpisodeDetail({
     uuid: id as string
   })
@@ -32,12 +34,14 @@ export const EpisodeDetail = () => {
   const showUrl = websiteUrl || series?.websiteUrl
   const image = imageUrl || series?.imageUrl
 
-  const handleAction = () => {
+  const handleAction = async () => {
     if (player?.isPlaying) {
       handlePause()
     } else {
-      console.log('hre')
-      handlePlay(episode as Episode)
+      if (addAsCurrentlyPlaying) {
+        const selected = await addAsCurrentlyPlaying(episode as Episode)
+        handlePlay(selected)
+      }
     }
     return
   }
@@ -59,7 +63,7 @@ export const EpisodeDetail = () => {
           className={styles.image}
         />
         <ControlPanel
-          handleAction={handleAction}
+          handlePlayPause={handleAction}
           isPlaying={Boolean(player?.isPlaying)}
         />
       </Flex>

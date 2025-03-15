@@ -1,6 +1,13 @@
+import { PlaylistData } from '@/db/Database'
 import { Box, Tabs, Text } from '@radix-ui/themes'
 
-export const PlaylistTab = () => {
+export const PlaylistTab = ({
+  playlists,
+  currentPlaylist
+}: {
+  playlists: PlaylistData[]
+  currentPlaylist: PlaylistData
+}) => {
   return (
     <Tabs.Root defaultValue="current">
       <Tabs.List>
@@ -14,11 +21,22 @@ export const PlaylistTab = () => {
 
       <Box pt="3">
         <Tabs.Content value="current">
-          <Text size="2">Make changes to your account.</Text>
+          <Box>
+            <Text size="2">{currentPlaylist.name}</Text>
+            <Text size="2">{currentPlaylist.episodes.length} episodes</Text>
+          </Box>
         </Tabs.Content>
 
         <Tabs.Content value="other">
-          <Text size="2">Access and update your documents.</Text>
+          <Text size="2">Other Playlists</Text>
+          {playlists.map((playlist) => {
+            return (
+              <Box key={playlist.id}>
+                <Text size="2">{playlist.name}</Text>
+                <Text size="2">{playlist.episodes.length} episodes</Text>
+              </Box>
+            )
+          })}
         </Tabs.Content>
       </Box>
     </Tabs.Root>

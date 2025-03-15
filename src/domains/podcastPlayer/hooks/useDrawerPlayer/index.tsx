@@ -1,13 +1,13 @@
 'use client'
 import { useContext, useMemo, createContext, useState, useEffect } from 'react'
-import { usePodcastPlayer } from './usePodcastPlayer'
+import { usePodcastPlayer } from '../usePodcastPlayer'
 import { SwipeableHandlers } from 'react-swipeable'
 import H5AudioPlayer from 'react-h5-audio-player'
 import { Episode } from '@/models/Episode'
-import { useDrawerHandlers } from './useDrawerHandlers'
-import { useAudioActions } from './useAudioActions'
+import { useDrawerHandlers } from '../useDrawerHnadlers'
+import { useAudioActions } from '../useAudioActions'
 import { Maybe } from '@/types/shared'
-import { PodcastPlayer } from '../Player'
+import { PodcastPlayer } from '../../Player'
 
 export type DrawerState = 'open' | 'minimized' | 'closed'
 

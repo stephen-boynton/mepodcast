@@ -51,7 +51,7 @@ export const useAudioActions = ({
     if (player) {
       player.complete()
     }
-  }, [, player])
+  }, [player])
 
   return {
     handlePlay,

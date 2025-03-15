@@ -22,7 +22,6 @@ export const EpisodeList = ({
   hasMorePages: boolean
   imgSrc: string
 }) => {
-  console.log({ episodes })
   return (
     <Flex direction="column">
       <Heading as="h3" mb="4" weight="bold">

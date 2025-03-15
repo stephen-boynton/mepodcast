@@ -57,3 +57,32 @@ nav.container[id^="EZDrawer__"] {
 	width: 50%;
 	background-color: var(--blue-9);
 }
+
+.loadingSpinner {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+
+	::after {
+		content: " ";
+		display: block;
+		width: 30px;
+		height: 30px;
+		margin: 8px;
+		border-radius: 50%;
+		border: 6px solid var(--blue-9);
+		border-color: var(--blue-9) transparent var(--blue-9) transparent;
+		animation: lds-dual-ring 1.2s linear infinite;
+	}
+}
+
+@keyframes lds-dual-ring {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
+}

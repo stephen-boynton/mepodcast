@@ -23,13 +23,11 @@ export async function updateProgress(
 export async function saveProgress(progress: Progress) {
   const savedProgress = await getProgress(progress?.episodeUuid)
   if (savedProgress) {
-    console.log({ savedProgress, progress })
     return await updateProgress({
       ...savedProgress,
       ...progress
     })
   }
-  console.log({ progress })
   return await createProgress(progress)
 }
 

@@ -8,11 +8,21 @@ import {
 import { Button, ButtonProps, Flex } from '@radix-ui/themes'
 import styles from './ControlPanel.style.module.scss'
 import { JSX } from 'react'
+import { PlaylistContext } from '../playlist/usePlaylists'
 
-const createButtons = ({ isPlaying }: { isPlaying: boolean }) => [
+const createButtons = ({
+  isPlaying,
+  handlePlayPause,
+  addAsPlayNext
+}: {
+  isPlaying: boolean
+  handlePlayPause: () => void
+  addAsPlayNext: () => void
+}) => [
   {
     action: isPlaying ? 'Pause' : 'Play',
     variant: 'primary',
+    handleAction: handlePlayPause,
     icon: isPlaying ? (
       <PauseIcon name="pause" width={25} height={25} />
     ) : (
@@ -22,11 +32,13 @@ const createButtons = ({ isPlaying }: { isPlaying: boolean }) => [
   {
     action: 'Play Next',
     variant: 'outline',
+    handleAction: addAsPlayNext,
     icon: <CardStackPlusIcon name="pause" width={25} height={25} />
   },
   {
     action: 'Playlist',
     variant: 'outline',
+    handleAction: () => console.log('Playlist'),
     icon: <PlusIcon name="download" width={25} height={25} />
   },
   {
@@ -60,32 +72,25 @@ const BuildButton = ({
   )
 }
 
-export const ControlPanel = ({
-  handleAction,
-  isPlaying
-}: {
+type ControlPanelProps = Partial<PlaylistContext> & {
   handleAction: () => void
   isPlaying: boolean
-}) => {
-  const Icon = () =>
-    !isPlaying ? (
-      <PlayIcon
-        name="play"
-        width={25}
-        height={25}
-        className={styles.playIcon}
-      />
-    ) : (
-      <PauseIcon
-        name="pause"
-        width={25}
-        height={25}
-        className={styles.playIcon}
-      />
-    )
+}
+
+export const ControlPanel = ({
+  handlePlayPause,
+  isPlaying,
+  addAsPlayNext,
+  addEpisodeToPlaylist
+}: ControlPanelProps) => {
   return (
     <Flex px="4" width="100%" gap="4" direction="column" align="stretch">
-      {createButtons({ isPlaying }).map(({ action, icon, variant }) => (
+      {createButtons({
+        isPlaying,
+        handlePlayPause,
+        addAsPlayNext,
+        addEpisodeToPlaylist
+      }).map(({ action, icon, variant, handleAction }) => (
         <BuildButton
           key={action}
           icon={icon}

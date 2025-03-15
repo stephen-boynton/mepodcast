@@ -6,9 +6,9 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import { NavBar } from '@/components/NavBar'
 import { Container, Theme } from '@radix-ui/themes'
 import { DrawerPlayer } from '@/domains/podcastPlayer/DrawerPlayer'
-import { SelectedEpisodeProvider } from '@/domains/podcastPlayer/SelectedEpisodeContext'
 import { DrawerStateProvider } from '@/domains/podcastPlayer/hooks/useDrawerPlayer'
 import { ApolloWrapper } from '@/lib/gql/makeClient'
+import { PlaylistProvider } from '@/domains/playlist/usePlaylists'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -45,14 +45,14 @@ export default function RootLayout({
         >
           <NavBar />
           <ApolloWrapper>
-            <SelectedEpisodeProvider>
-              <DrawerStateProvider>
+            <DrawerStateProvider>
+              <PlaylistProvider>
                 <Container py="3" px="3" size="4">
                   {children}
                   <DrawerPlayer />
                 </Container>
-              </DrawerStateProvider>
-            </SelectedEpisodeProvider>
+              </PlaylistProvider>
+            </DrawerStateProvider>
           </ApolloWrapper>
         </Theme>
       </body>
