@@ -8,10 +8,10 @@ import {
   //   updateAutoPlaylist,
   updatePlaylist
 } from '@/db/operations/playlist'
-import { Episode } from './Episode'
 import { merge } from 'es-toolkit'
 import { PlaylistData } from '@/db/Database'
 import { Logger } from '@/lib/Logger'
+import { Episode } from './Episode'
 
 type Cboolean = 1 | 0
 
@@ -19,13 +19,13 @@ const TRUE: Cboolean = 1
 const FALSE: Cboolean = 0
 
 export class Playlist {
-  id?: number
-  name: string = 'My-Playlist'
+  cursor: number = 0
   description?: string
   episodes: Episode[] = []
+  id?: number
   isAutoPlaylist: Cboolean = FALSE
-  cursor: number = 0
   isCurrentPlaylist: Cboolean = FALSE
+  name: string = 'My-Playlist'
 
   constructor(playlist: Partial<Playlist>) {
     Object.assign(this, playlist)
@@ -108,10 +108,14 @@ export class Playlist {
   }
 
   changeEpisodeOrder(uuid: string, index: number) {
-    const episode = this.episodes.find((episode) => episode.uuid === uuid)
-    if (episode) {
-      this.episodes.splice(index, 0, episode)
-      this.episodes.splice(this.episodes.indexOf(episode), 1)
+    const episodeToMove = this.episodes.find((episode) => episode.uuid === uuid)
+    const currentIndex = this.episodes.findIndex(
+      (episode) => episode.uuid === uuid
+    )
+
+    if (episodeToMove) {
+      this.episodes.splice(currentIndex, 1)
+      this.episodes.splice(index, 0, episodeToMove)
     }
   }
 
@@ -141,4 +145,8 @@ export class Playlist {
   async save() {
     await updatePlaylist(this)
   }
+}
+
+export const initializePlaylist = (playlist: Partial<Playlist>) => {
+  return new Playlist(playlist)
 }

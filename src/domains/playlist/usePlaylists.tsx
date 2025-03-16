@@ -17,6 +17,7 @@ import {
   useState
 } from 'react'
 import { Logger } from '@/lib/Logger'
+import { playlistController } from '@/controllers/PlaylistController'
 
 type CreatePlaylistArgs = {
   name: string
@@ -52,6 +53,8 @@ const PlaylistContext = createContext<Partial<PlaylistContext>>({
 
 export const PlaylistProvider = ({ children }: React.PropsWithChildren) => {
   const [initialized, setInitialized] = useState(false)
+  const check = playlistController.getAutoPlaylist()
+  console.log({ check })
   const playlists = useLiveQuery(() => getPlaylists(), [], [])
   const currentPlaylist = useLiveQuery(() => getPlaylist(), [], null)
   const autoPlaylist = useLiveQuery(() => getAutoPlaylist(), [], null)

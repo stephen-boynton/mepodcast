@@ -28,6 +28,7 @@ export class Episode {
     this.seriesName = series?.name || null
     this.authorName = series?.authorName || null
   }
+
   static isPlayable(episode: Partial<Episode> = {}): boolean {
     const { audioUrl, name, uuid } = episode
     return Boolean(audioUrl && name && uuid)

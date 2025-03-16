@@ -34,7 +34,8 @@
     "react-simply-carousel": "^9.1.8",
     "react-swipeable": "^7.0.2",
     "sanitize-html": "^2.14.0",
-    "sass": "^1.83.4"
+    "sass": "^1.83.4",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.4",

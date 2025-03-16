@@ -1,11 +1,11 @@
 import { Episode } from '@/models/Episode'
 import { Maybe } from '@/types/shared'
 import { useCallback } from 'react'
-import { PodcastPlayer } from '../Player'
+import { PodcastPlayer } from '../../../models/Player'
 
 export const useAudioActions = ({
   drawerState,
-  minimizeDrawer,
+  //   minimizeDrawer,
   openDrawer,
   setEpisode,
   player

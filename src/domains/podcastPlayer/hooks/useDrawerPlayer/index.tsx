@@ -7,7 +7,7 @@ import { Episode } from '@/models/Episode'
 import { useDrawerHandlers } from '../useDrawerHnadlers'
 import { useAudioActions } from '../useAudioActions'
 import { Maybe } from '@/types/shared'
-import { PodcastPlayer } from '../../Player'
+import { PodcastPlayer } from '../../../../models/Player'
 
 export type DrawerState = 'open' | 'minimized' | 'closed'
 

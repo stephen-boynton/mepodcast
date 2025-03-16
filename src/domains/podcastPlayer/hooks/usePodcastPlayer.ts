@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { PodcastPlayer } from '../Player'
+import { PodcastPlayer } from '../../../models/Player'
 import H5AudioPlayer from 'react-h5-audio-player'
 import { Maybe } from '@/types/shared'
 
