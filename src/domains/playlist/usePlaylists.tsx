@@ -1,12 +1,6 @@
 'use client'
 import { Playlist } from '@/models/Playlist'
 import { Episode } from '@/models/Episode'
-import {
-  getAutoPlaylist,
-  getPlaylist,
-  getPlaylists
-} from '@/db/operations/playlist'
-import { useLiveQuery } from 'dexie-react-hooks'
 import { PlaylistData } from '@/db/Database'
 import {
   createContext,
@@ -18,6 +12,7 @@ import {
 } from 'react'
 import { Logger } from '@/lib/Logger'
 import { playlistController } from '@/controllers/PlaylistController'
+import { saveCurrentlyPlaying } from '@/db/operations/currentlyPlaying'
 
 type CreatePlaylistArgs = {
   name: string
@@ -26,38 +21,37 @@ type CreatePlaylistArgs = {
 }
 
 export type PlaylistContext = {
-  updatePlaylist: (playlist: PlaylistData) => Promise<void>
-  updateAutoPlaylist: (playlist: PlaylistData) => Promise<void>
   addAsCurrentlyPlaying: (episode: Episode) => Promise<Episode>
-  createPlaylist: (args: CreatePlaylistArgs) => Promise<Playlist>
-  createAutoPlaylist: () => Promise<Playlist>
+  addAsPlayNext: (episode: Episode) => void
+  addEpisodeToPlaylist: (episode: Episode) => void
   changeEpisodeOrder: (uuid: string, index: number) => Promise<void>
   clearPlaylist: () => Promise<void>
-  transferCurrentPlayist: (playlist: PlaylistData) => Promise<void>
-  addAsPlayNext: (episode: Episode) => void
+  createPlaylist: (args: CreatePlaylistArgs) => Promise<Playlist>
   removeEpisodeFromPlaylist: (uuid: string) => void
-  addEpisodeToPlaylist: (episode: Episode) => void
-  autoPlaylist: Playlist | null
-  currentPlaylist: Playlist | null
+  transferCurrentPlayist: (playlist: PlaylistData) => Promise<void>
+  updateAutoPlaylist: (playlist: PlaylistData) => Promise<void>
+  updatePlaylist: (playlist: PlaylistData) => Promise<void>
+  currentEpisode: Episode | null
+  playlistInitialized: boolean
   playlists: PlaylistData[]
+  selectedPlaylist: Playlist | null
 }
 
 const PlaylistContext = createContext<Partial<PlaylistContext>>({
   addAsPlayNext: () => {},
   removeEpisodeFromPlaylist: () => {},
   addEpisodeToPlaylist: () => {},
-  autoPlaylist: null,
-  currentPlaylist: null,
+  playlistInitialized: false,
+  selectedPlaylist: null,
   playlists: []
 })
 
 export const PlaylistProvider = ({ children }: React.PropsWithChildren) => {
   const [initialized, setInitialized] = useState(false)
-  const check = playlistController.getAutoPlaylist()
-  console.log({ check })
-  const playlists = useLiveQuery(() => getPlaylists(), [], [])
-  const currentPlaylist = useLiveQuery(() => getPlaylist(), [], null)
-  const autoPlaylist = useLiveQuery(() => getAutoPlaylist(), [], null)
+  const [currentEpisode, setCurrentEpisode] = useState<Episode | null>(null)
+  const playlists = playlistController.getPlaylists()
+  const selectedPlaylist = playlistController.getSelectedPlaylist()
+  const autoPlaylist = playlistController.getAutoPlaylist()
 
   const createPlaylist = useCallback(
     async ({ name, description, episode }: CreatePlaylistArgs) => {
@@ -70,24 +64,16 @@ export const PlaylistProvider = ({ children }: React.PropsWithChildren) => {
     []
   )
 
-  const createAutoPlaylist = useCallback(async () => {
-    return await Playlist.createAutoPlaylist({
-      name: 'Auto-Playlist',
-      description: 'Auto-Playlist',
-      episodes: []
-    })
-  }, [])
-
   const changeEpisodeOrder = useCallback(
     async (uuid: string, index: number) => {
-      await currentPlaylist?.changeEpisodeOrder(uuid, index)
+      await selectedPlaylist?.changeEpisodeOrder(uuid, index)
     },
-    [currentPlaylist]
+    [selectedPlaylist]
   )
 
   const clearPlaylist = useCallback(async () => {
-    await currentPlaylist?.clearPlaylist()
-  }, [currentPlaylist])
+    await selectedPlaylist?.clearPlaylist()
+  }, [selectedPlaylist])
 
   const transferCurrentPlayist = useCallback(
     async (newPlaylist: PlaylistData) => {
@@ -98,91 +84,101 @@ export const PlaylistProvider = ({ children }: React.PropsWithChildren) => {
 
   const removeEpisodeFromPlaylist = useCallback(
     async (uuid: string) => {
-      await currentPlaylist?.removeEpisodeFromPlaylist(uuid)
+      await selectedPlaylist?.removeEpisodeFromPlaylist(uuid)
     },
-    [currentPlaylist]
+    [selectedPlaylist]
   )
 
   const addEpisodeToPlaylist = useCallback(
     async (episode: Episode) => {
-      await currentPlaylist?.addEpisodeToPlaylist(episode)
+      await selectedPlaylist?.addEpisodeToPlaylist(episode)
     },
-    [currentPlaylist]
+    [selectedPlaylist]
   )
 
   const addAsPlayNext = useCallback(
     async (episode: Episode) => {
-      await currentPlaylist?.addAsPlayNext(episode)
+      await selectedPlaylist?.addAsPlayNext(episode)
     },
-    [currentPlaylist]
+    [selectedPlaylist]
   )
 
   const addAsCurrentlyPlaying = useCallback(
     async (episode: Episode) => {
-      if (!currentPlaylist) {
+      if (!selectedPlaylist) {
         Logger.error('No current playlist')
         return
       }
 
-      const exists = currentPlaylist?.episodes.find(
+      const exists = selectedPlaylist?.episodes.find(
         (ep) => ep.uuid === episode.uuid
       )
 
       if (exists) {
-        await currentPlaylist?.changeEpisodeOrder(episode.uuid, 0)
-        currentPlaylist.cursor = 0
+        Logger.debug('Episode already exists in playlist')
+        await selectedPlaylist?.changeEpisodeOrder(episode.uuid, 0)
+        selectedPlaylist.cursor = 0
       } else {
-        await currentPlaylist?.addEpisodeToPlaylist(episode)
-        currentPlaylist.cursor = currentPlaylist.episodes.length
-      }
+        if (selectedPlaylist.isAutoPlaylist) {
+          Logger.debug('Adding episode to (selected) auto playlist')
+          await selectedPlaylist?.addEpisodeToPlaylist(episode)
+          selectedPlaylist.cursor = selectedPlaylist.episodes.length
+          await selectedPlaylist?.addAsCurrentlyPlaying(episode)
+        } else {
+          if (!autoPlaylist) {
+            Logger.error('No auto playlist')
+            return
+          }
 
-      await currentPlaylist.save()
-      return currentPlaylist.getCurrent()
+          Logger.debug('Adding episode to (moving selcected) auto playlist')
+          await autoPlaylist?.makeCurrentPlaylist()
+          autoPlaylist.cursor = autoPlaylist.episodes.length
+          await autoPlaylist?.addAsCurrentlyPlaying(episode)
+        }
+      }
     },
-    [currentPlaylist]
+    [selectedPlaylist, autoPlaylist]
   )
 
   useEffect(() => {
-    if (initialized) return
-    if (autoPlaylist === null && !initialized) {
-      createAutoPlaylist()
-      Logger.debug('Initializzed Auto Playlist')
-      return
-    }
-
-    if (autoPlaylist && currentPlaylist === null && !initialized) {
-      Playlist.transferCurrentPlayist(autoPlaylist)
+    if (autoPlaylist && selectedPlaylist && !initialized) {
+      Logger.debug('Loaded Selected Playlist')
       setInitialized(true)
+      selectedPlaylist.makeCurrentPlaylist()
+      const current = selectedPlaylist.getCurrent()
+      if (current) {
+        setCurrentEpisode(current)
+      }
     }
-  }, [autoPlaylist, createAutoPlaylist, currentPlaylist, initialized])
+  }, [autoPlaylist, selectedPlaylist, initialized])
 
   const value = useMemo(
     () => ({
       addAsCurrentlyPlaying,
       addAsPlayNext,
       addEpisodeToPlaylist,
-      autoPlaylist,
-      createAutoPlaylist,
       createPlaylist,
       changeEpisodeOrder,
       clearPlaylist,
+      currentEpisode,
+      playlistsInitialized: initialized,
       removeEpisodeFromPlaylist,
       transferCurrentPlayist,
-      currentPlaylist,
+      selectedPlaylist,
       playlists
     }),
     [
       addAsCurrentlyPlaying,
       addAsPlayNext,
-      autoPlaylist,
-      createAutoPlaylist,
       addEpisodeToPlaylist,
       createPlaylist,
       changeEpisodeOrder,
       clearPlaylist,
+      currentEpisode,
+      initialized,
       removeEpisodeFromPlaylist,
       transferCurrentPlayist,
-      currentPlaylist,
+      selectedPlaylist,
       playlists
     ]
   )

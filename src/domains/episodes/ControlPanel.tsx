@@ -73,7 +73,9 @@ const BuildButton = ({
 }
 
 type ControlPanelProps = Partial<PlaylistContext> & {
-  handleAction: () => void
+  handlePlayPause: () => void
+  addAsPlayNext: () => void
+  addEpisodeToPlaylist: () => void
   isPlaying: boolean
 }
 

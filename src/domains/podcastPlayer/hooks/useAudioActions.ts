@@ -7,12 +7,10 @@ export const useAudioActions = ({
   drawerState,
   //   minimizeDrawer,
   openDrawer,
-  setEpisode,
   player
 }: {
   drawerState: string
   isInitialized: boolean
-  setEpisode: (episode: Maybe<Episode>) => void
   minimizeDrawer: () => void
   openDrawer: () => void
   player: Maybe<PodcastPlayer>
@@ -24,14 +22,10 @@ export const useAudioActions = ({
           openDrawer()
         }
 
-        if (episode) {
-          setEpisode(episode)
-        }
-
         player.play(episode)
       }
     },
-    [player, drawerState, openDrawer, setEpisode]
+    [player, drawerState, openDrawer]
   )
 
   const handleListenInterval = useCallback(() => {

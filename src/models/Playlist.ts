@@ -78,12 +78,18 @@ export class Playlist {
     return
   }
 
+  async makeCurrentPlaylist() {
+    await unsetAsCurrentPlaylist()
+    await setAsCurrentPlaylist(this.id)
+    await this.save()
+  }
+
   addEpisodeToPlaylist(episode: Episode) {
     this.episodes.push(episode)
     this.save()
   }
 
-  addAsCurrentlyPlaying(episode: Episode) {
+  async addAsCurrentlyPlaying(episode: Episode) {
     this.episodes.unshift(episode)
     this.cursor = 0
     this.save()

@@ -15,10 +15,19 @@ import { usePlaylists } from '../playlist/usePlaylists'
 export const EpisodeDetail = () => {
   const { id } = useParams()
   const { handlePlay, player, handlePause } = useDrawerPlayer()
-  const { addAsCurrentlyPlaying } = usePlaylists()
+  const {
+    addAsCurrentlyPlaying,
+    selectedPlaylist,
+    addAsPlayNext,
+    currentEpisode
+  } = usePlaylists()
   const { data: episode } = useEpisodeDetail({
     uuid: id as string
   })
+
+  const isInSelectedPlaylist = selectedPlaylist?.episodes.some(
+    (e) => e.uuid === episode?.uuid
+  )
 
   const {
     websiteUrl,
@@ -37,13 +46,12 @@ export const EpisodeDetail = () => {
   const handleAction = async () => {
     if (player?.isPlaying) {
       handlePause()
-    } else {
-      if (addAsCurrentlyPlaying) {
-        const selected = await addAsCurrentlyPlaying(episode as Episode)
-        handlePlay(selected)
-      }
+    } else if (isInSelectedPlaylist && currentEpisode?.uuid === episode?.uuid) {
+      handlePlay()
+    } else if (addAsCurrentlyPlaying) {
+      const selected = await addAsCurrentlyPlaying(episode as Episode)
+      handlePlay(selected)
     }
-    return
   }
 
   return (
@@ -63,6 +71,7 @@ export const EpisodeDetail = () => {
           className={styles.image}
         />
         <ControlPanel
+          addAsPlayNext={addAsPlayNext}
           handlePlayPause={handleAction}
           isPlaying={Boolean(player?.isPlaying)}
         />
