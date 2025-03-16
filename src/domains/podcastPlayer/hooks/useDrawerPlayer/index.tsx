@@ -80,7 +80,7 @@ export const DrawerStateProvider = ({
       handleListenInterval,
       handlePause,
       handlePlay,
-      isPlaying: player?.isPlaying || false,
+      isPlaying: player?.isPlaying() || false,
       isInitialized: initialized,
       minimizeDrawer,
       openDrawer,

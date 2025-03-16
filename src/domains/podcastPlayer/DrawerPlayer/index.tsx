@@ -10,6 +10,7 @@ import Image from 'next/image'
 import { PlaylistTab } from './PlaylistTab'
 import cn from 'classnames'
 import { usePlaylists } from '@/domains/playlist/usePlaylists'
+import { useEffect } from 'react'
 
 const Drawer = dynamic(() => import('react-modern-drawer'), { ssr: false })
 
@@ -32,14 +33,20 @@ export const DrawerPlayer: React.FC = () => {
     handlePause,
     handlePlay,
     initializePlayer,
+    player,
     isInitialized,
     swipeHandlers
   } = useDrawerPlayer()
-  const { playlists, currentPlaylist, autoPlaylist } = usePlaylists()
+  const { playlists, selectedPlaylist } = usePlaylists()
   const isOpen = drawerState === 'open'
   const isMinimized = drawerState === 'minimized'
+  const episode = selectedPlaylist?.getCurrent()
 
-  const episode = currentPlaylist?.getCurrent() || autoPlaylist?.getCurrent()
+  useEffect(() => {
+    if (isInitialized) {
+      player?.initialize(episode)
+    }
+  }, [isInitialized, player, episode])
 
   return (
     <Drawer
@@ -87,9 +94,9 @@ export const DrawerPlayer: React.FC = () => {
                 src={episode?.audioUrl}
               />
             </Flex>
-            {isOpen && playlists && currentPlaylist && (
+            {isOpen && playlists && selectedPlaylist && (
               <PlaylistTab
-                currentPlaylist={currentPlaylist}
+                currentPlaylist={selectedPlaylist}
                 playlists={playlists}
               />
             )}

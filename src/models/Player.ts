@@ -1,10 +1,6 @@
 import { db } from '@/db'
 import { saveProgress } from '@/db/operations'
-import {
-  getCurrentlyPlaying,
-  removeCurrentlyPlaying,
-  saveCurrentlyPlaying
-} from '@/db/operations/currentlyPlaying'
+import { removeCurrentlyPlaying } from '@/db/operations/currentlyPlaying'
 import { Logger } from '@/lib/Logger'
 import { Episode } from '@/models/Episode'
 import { Progress } from '@/models/Progress'
@@ -17,11 +13,12 @@ export class PodcastPlayer {
   isInitialized = false
 
   private constructor(ref: HTMLAudioElement) {
+    if (PodcastPlayer.#instance) {
+      Logger.debug('PLayer: Returning existing player')
+      return PodcastPlayer.#instance
+    }
+    Logger.debug('Player: Creating player', ref)
     this.#player = ref
-  }
-
-  get isPlaying() {
-    return !this.#player.paused
   }
 
   get currentTime() {
@@ -40,28 +37,46 @@ export class PodcastPlayer {
     return PodcastPlayer.#instance
   }
 
-  async initialize() {
-    const currentlyPlaying = await getCurrentlyPlaying()
+  isPlayingSameEpisode(episodeUuid: string) {
+    return this.isPlaying() && this.#currentEpisode?.uuid === episodeUuid
+  }
+
+  isPlaying() {
+    return !this.#player.paused
+  }
+
+  async initialize(currentlyPlaying?: Episode) {
     if (currentlyPlaying?.audioUrl) {
       this.#player.src = currentlyPlaying.audioUrl
       this.#currentEpisode = currentlyPlaying
       await this.load()
-      this.isInitialized = true
     }
+    this.isInitialized = true
   }
 
   async play(episode?: Episode) {
-    if (!episode || this.#currentEpisode?.uuid === episode?.uuid) {
-      Logger.debug('Already playing episode', this.#currentEpisode)
-      return await this.#player.play()
+    if (this.isPlaying()) {
+      return
+    }
+
+    if (this.isPlayingSameEpisode(episode?.uuid as string)) {
+      Logger.debug('Player: Already playing episode', this.#currentEpisode)
+      return
+    }
+
+    if (!episode) {
+      Logger.debug('Player: No episode provided')
+      if (this.#currentEpisode && this.isLoaded()) {
+        return await this.#player.play()
+      }
+      Logger.error('Player: No episode loaded')
     }
 
     if (this.#currentEpisode && this.#currentEpisode.uuid !== episode?.uuid) {
       await removeCurrentlyPlaying()
     }
 
-    saveCurrentlyPlaying({ ...episode, active: true })
-    Logger.debug('Playing episode', episode)
+    Logger.debug('Player: Playing episode', episode)
     this.#currentEpisode = episode
 
     await this.load()

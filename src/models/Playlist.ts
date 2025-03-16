@@ -54,13 +54,11 @@ export class Playlist {
       await deleteAutoPlaylist()
       const newPlaylist = new Playlist({ ...playlist, isAutoPlaylist: TRUE })
       const id = await createAutoPlaylist(newPlaylist)
-      console.log({ id })
       newPlaylist.id = id
       return newPlaylist
     } else {
       const newPlaylist = new Playlist({ ...playlist, isAutoPlaylist: TRUE })
       const id = await createAutoPlaylist(newPlaylist)
-      console.log({ id })
       newPlaylist.id = id
       return newPlaylist
     }

@@ -17,7 +17,7 @@ export const useAudioActions = ({
 }) => {
   const handlePlay = useCallback(
     (episode?: Episode) => {
-      if (player && !player.isPlaying) {
+      if (player && !player.isPlaying()) {
         if (drawerState !== 'open' && drawerState !== 'minimized') {
           openDrawer()
         }

@@ -141,16 +141,15 @@ export const PlaylistProvider = ({ children }: React.PropsWithChildren) => {
   )
 
   useEffect(() => {
-    if (autoPlaylist && selectedPlaylist && !initialized) {
+    if (selectedPlaylist && !initialized) {
       Logger.debug('Loaded Selected Playlist')
       setInitialized(true)
-      selectedPlaylist.makeCurrentPlaylist()
-      const current = selectedPlaylist.getCurrent()
-      if (current) {
-        setCurrentEpisode(current)
+      const currentEpisode = selectedPlaylist.getCurrent()
+      if (currentEpisode) {
+        setCurrentEpisode(currentEpisode)
       }
     }
-  }, [autoPlaylist, selectedPlaylist, initialized])
+  }, [selectedPlaylist, initialized])
 
   const value = useMemo(
     () => ({

@@ -44,7 +44,7 @@ export const EpisodeDetail = () => {
   const image = imageUrl || series?.imageUrl
 
   const handleAction = async () => {
-    if (player?.isPlaying) {
+    if (player?.isPlaying()) {
       handlePause()
     } else if (isInSelectedPlaylist && currentEpisode?.uuid === episode?.uuid) {
       handlePlay()
@@ -73,7 +73,7 @@ export const EpisodeDetail = () => {
         <ControlPanel
           addAsPlayNext={addAsPlayNext}
           handlePlayPause={handleAction}
-          isPlaying={Boolean(player?.isPlaying)}
+          isPlaying={Boolean(player?.isPlaying())}
         />
       </Flex>
       <Flex direction="column" className={styles.descriptionContainer}>
