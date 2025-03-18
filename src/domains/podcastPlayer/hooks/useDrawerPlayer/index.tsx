@@ -9,9 +9,10 @@ import { useAudioActions } from '../useAudioActions'
 import { Maybe } from '@/types/shared'
 import { PodcastPlayer } from '../../../../models/Player'
 
-export type DrawerState = 'open' | 'minimized' | 'closed'
+export type DrawerState = 'open' | 'minimized' | 'closed' | 'button'
 
 type DrawerPlayerState = {
+  buttonDrawer: () => void
   closeDrawer: () => void
   drawerHeight: number | string
   drawerState: DrawerState
@@ -29,6 +30,7 @@ type DrawerPlayerState = {
 }
 
 const DrawwerPlayerState = createContext<DrawerPlayerState>({
+  buttonDrawer: () => {},
   closeDrawer: () => {},
   drawerHeight: 0,
   drawerState: 'closed',
@@ -51,8 +53,9 @@ export const DrawerStateProvider = ({
   children: React.ReactNode
 }) => {
   const { player, initializePlayer, initialized } = usePodcastPlayer()
-
+  const isPlaying = player?.isPlaying()
   const {
+    buttonDrawer,
     drawerState,
     minimizeDrawer,
     openDrawer,
@@ -60,7 +63,7 @@ export const DrawerStateProvider = ({
     swipeHandlers,
     drawerHeight,
     setDrawerState
-  } = useDrawerHandlers()
+  } = useDrawerHandlers({ isPlaying })
 
   const { handleCompleted, handleListenInterval, handlePause, handlePlay } =
     useAudioActions({
@@ -73,6 +76,7 @@ export const DrawerStateProvider = ({
 
   const value = useMemo(
     () => ({
+      buttonDrawer,
       closeDrawer,
       drawerHeight,
       drawerState,
@@ -80,7 +84,7 @@ export const DrawerStateProvider = ({
       handleListenInterval,
       handlePause,
       handlePlay,
-      isPlaying: player?.isPlaying() || false,
+      isPlaying,
       isInitialized: initialized,
       minimizeDrawer,
       openDrawer,
@@ -90,6 +94,7 @@ export const DrawerStateProvider = ({
       swipeHandlers
     }),
     [
+      buttonDrawer,
       closeDrawer,
       drawerHeight,
       drawerState,
@@ -98,6 +103,7 @@ export const DrawerStateProvider = ({
       handlePause,
       handlePlay,
       initialized,
+      isPlaying,
       minimizeDrawer,
       openDrawer,
       player,

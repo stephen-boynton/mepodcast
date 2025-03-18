@@ -67,6 +67,7 @@ export class PodcastPlayer {
     if (!episode) {
       Logger.debug('Player: No episode provided')
       if (this.#currentEpisode && this.isLoaded()) {
+        Logger.debug('Player: Resuming episode', this.#currentEpisode)
         return await this.#player.play()
       }
       Logger.error('Player: No episode loaded')
@@ -79,18 +80,32 @@ export class PodcastPlayer {
     Logger.debug('Player: Playing episode', episode)
     this.#currentEpisode = episode
 
-    await this.load()
-    await this.#player.play()
+    await this.load(episode).then(() => this.#player.play())
   }
 
-  async load() {
-    if (!this.#currentEpisode?.audioUrl) {
-      Logger.error('No episode loaded')
+  async load(_episode?: Episode) {
+    if (!_episode?.audioUrl && !this.#currentEpisode?.audioUrl) {
+      Logger.error('Player no episdoe to load')
+      return
+    }
+
+    if (
+      this.#player.src === _episode?.audioUrl ||
+      this.#player.src === this.#currentEpisode?.audioUrl
+    ) {
+      Logger.debug('Player: Episode already loaded')
+      return
+    }
+
+    const episode = _episode || this.#currentEpisode
+
+    if (!episode?.audioUrl || !episode?.uuid) {
+      Logger.error('Player: No episode to load')
       return
     }
 
     const currentProgress = await db.progress.get({
-      episodeUuid: this.#currentEpisode.uuid
+      episodeUuid: episode?.uuid
     })
 
     Logger.debug('Current progress', currentProgress)
@@ -100,15 +115,15 @@ export class PodcastPlayer {
       this.#progress = currentProgress
     } else {
       this.#progress = {
-        episodeUuid: this.#currentEpisode.uuid,
-        seriesUuid: this.#currentEpisode.seriesUuid as string,
+        episodeUuid: episode?.uuid,
+        seriesUuid: episode?.seriesUuid as string,
         completed: false,
         episodeProgress: 0
       }
     }
 
-    this.#player.src = this.#currentEpisode.audioUrl
-    Logger.debug('Loading episode', this.#currentEpisode)
+    this.#player.src = episode.audioUrl
+    Logger.debug('Loading episode', episode)
     await this.#player.load()
   }
 

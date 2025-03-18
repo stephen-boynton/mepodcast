@@ -28,6 +28,7 @@ export const updatePlaylist = async (playlist: PlaylistData) => {
   if (!playlist.id) {
     Logger.error('Playlist has no id')
   }
+
   return await db.playlists.put(playlist)
 }
 

@@ -1,0 +1,79 @@
+.container {
+	z-index: 100;
+	position: fixed;
+	bottom: 50px;
+	right: 50px;
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	background-color: var(--blue-9);
+	color: white;
+	border: none;
+	font-size: 24px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+
+	&.pulse {
+		animation: pulse 2s infinite;
+		transition: transform 0.2s, background-color 0.3s;
+	}
+
+	&.slideRight {
+		animation: slideRight 1s ease-in-out forwards 1;
+	}
+
+	&.slideLeft {
+		animation: slideLeft 1s ease-in-out forwards 1;
+	}
+}
+
+.container:hover {
+	transform: scale(1.1);
+	background-color: var(--blue-9);
+}
+
+@keyframes slideRight {
+	0% {
+		right: 50px;
+	}
+
+	100% {
+		right: -40px;
+	}
+}
+
+@keyframes slideLeft {
+	0% {
+		right: -40px;
+	}
+
+	100% {
+		right: 50px;
+	}
+}
+
+@keyframes pulse {
+	0% {
+		background-color: var(--blue-5);
+	}
+
+	50% {
+		background-color: var(--blue-9);
+	}
+
+	100% {
+		background-color: var(--blue-5);
+	}
+}
+
+.wrapper {
+	z-index: 100;
+	position: fixed;
+	bottom: 50px;
+	left: 0;
+	width: 100%;
+	height: 60px;
+}

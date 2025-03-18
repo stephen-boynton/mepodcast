@@ -83,6 +83,12 @@ export class Playlist {
   }
 
   addEpisodeToPlaylist(episode: Episode) {
+    const has = this.episodes
+      .map((e) => {
+        return e.uuid
+      })
+      .includes(episode.uuid)
+    if (has) return
     this.episodes.push(episode)
     this.save()
   }
@@ -95,6 +101,7 @@ export class Playlist {
 
   addAsPlayNext(episode: Episode): void {
     if (this.episodes.length) {
+      console.log({ episode, this: this.episodes })
       const [playing, ...rest] = this.episodes
       this.episodes = [playing, episode, ...rest]
     } else {

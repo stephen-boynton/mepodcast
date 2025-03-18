@@ -116,12 +116,11 @@ export const PlaylistProvider = ({ children }: React.PropsWithChildren) => {
 
       if (exists) {
         Logger.debug('Episode already exists in playlist')
-        await selectedPlaylist?.changeEpisodeOrder(episode.uuid, 0)
+        await selectedPlaylist?.changeEpisodeOrder(exists.uuid, 0)
         selectedPlaylist.cursor = 0
       } else {
         if (selectedPlaylist.isAutoPlaylist) {
           Logger.debug('Adding episode to (selected) auto playlist')
-          await selectedPlaylist?.addEpisodeToPlaylist(episode)
           selectedPlaylist.cursor = selectedPlaylist.episodes.length
           await selectedPlaylist?.addAsCurrentlyPlaying(episode)
         } else {

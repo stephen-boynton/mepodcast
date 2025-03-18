@@ -5,6 +5,18 @@ import styles from './PodcastPlayer.style.module.scss'
 import { Maybe } from 'graphql/jsutils/Maybe'
 import { Box } from '@radix-ui/themes'
 import { Logger } from '@/lib/Logger'
+import { once } from 'es-toolkit'
+
+const s = (
+  isInitialized: boolean,
+  initializePlayer: (player: H5AudioPlayer) => void
+) =>
+  once((instance: H5AudioPlayer) => {
+    if (instance && !isInitialized) {
+      Logger.debug('Initializing Player')
+      initializePlayer(instance)
+    }
+  })
 
 type PodcastPlayerProps = {
   src: Maybe<string>
@@ -28,7 +40,7 @@ export const PodcastPlayer = ({
   isInitialized
 }: PodcastPlayerProps) => {
   return (
-    <Box className={styles.container} onTouchMove={(e) => e.preventDefault()}>
+    <Box className={styles.container}>
       <AudioPlayer
         className={styles.audioPlayer}
         onPause={handlePause}
@@ -38,12 +50,7 @@ export const PodcastPlayer = ({
         onEnded={handleCompleted}
         listenInterval={5000}
         src={src || undefined}
-        ref={(instance) => {
-          if (instance && !isInitialized) {
-            Logger.debug('Initializing Player')
-            initializePlayer(instance)
-          }
-        }}
+        ref={s(isInitialized, initializePlayer)}
       />
     </Box>
   )

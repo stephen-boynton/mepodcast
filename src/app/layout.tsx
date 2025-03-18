@@ -9,6 +9,8 @@ import { DrawerPlayer } from '@/domains/podcastPlayer/DrawerPlayer'
 import { DrawerStateProvider } from '@/domains/podcastPlayer/hooks/useDrawerPlayer'
 import { ApolloWrapper } from '@/lib/gql/makeClient'
 import { PlaylistProvider } from '@/domains/playlist/usePlaylists'
+import FloatingPlayButton from '@/components/FloatingPlayButton'
+import { ButtonPlayer } from '@/domains/podcastPlayer/ButtonPlayer'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -47,6 +49,7 @@ export default function RootLayout({
           <ApolloWrapper>
             <DrawerStateProvider>
               <PlaylistProvider>
+                <ButtonPlayer />
                 <Container py="3" px="3" size="4">
                   {children}
                   <DrawerPlayer />

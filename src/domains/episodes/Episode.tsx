@@ -48,10 +48,18 @@ export const EpisodeDetail = () => {
       handlePause()
     } else if (isInSelectedPlaylist && currentEpisode?.uuid === episode?.uuid) {
       handlePlay()
-    } else if (addAsCurrentlyPlaying) {
-      const selected = await addAsCurrentlyPlaying(episode as Episode)
-      handlePlay(selected)
+    } else {
+      await addAsCurrentlyPlaying?.(episode as Episode)
+      handlePlay(episode)
     }
+  }
+
+  const handleAddAsPlayNext = () => {
+    addAsPlayNext?.(episode as Episode)
+  }
+
+  const handleAddEpisodeToPlaylist = () => {
+    addAsCurrentlyPlaying?.(episode as Episode)
   }
 
   return (
@@ -71,7 +79,8 @@ export const EpisodeDetail = () => {
           className={styles.image}
         />
         <ControlPanel
-          addAsPlayNext={addAsPlayNext}
+          addEpisodeToPlaylist={handleAddEpisodeToPlaylist}
+          addAsPlayNext={handleAddAsPlayNext}
           handlePlayPause={handleAction}
           isPlaying={Boolean(player?.isPlaying())}
         />

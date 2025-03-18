@@ -3,12 +3,13 @@ import { SwipeEventData, useSwipeable } from 'react-swipeable'
 import { DrawerState } from './useDrawerPlayer'
 
 const HEIGHTS: Record<DrawerState, number | string> = {
-  open: '90vh',
+  open: '95vh',
   minimized: 125,
-  closed: 0
+  closed: 0,
+  button: 0
 }
 
-export const useDrawerHandlers = () => {
+export const useDrawerHandlers = ({ isPlaying }: { isPlaying: boolean }) => {
   const [drawerState, setDrawerState] = useState<DrawerState>('closed')
   const [drawerHeight, setHeight] = useState(HEIGHTS.closed)
 
@@ -27,6 +28,11 @@ export const useDrawerHandlers = () => {
     setDrawerState('minimized')
   }, [])
 
+  const buttonDrawer = useCallback(() => {
+    setHeight(HEIGHTS.button)
+    setDrawerState('button')
+  }, [])
+
   const handleSwipeUp = useCallback(() => {
     if (drawerState === 'closed') {
       minimizeDrawer()
@@ -37,11 +43,15 @@ export const useDrawerHandlers = () => {
 
   const handleSwipeDown = useCallback(() => {
     if (drawerState === 'minimized') {
+      if (isPlaying) {
+        buttonDrawer()
+        return
+      }
       closeDrawer()
     } else {
       minimizeDrawer()
     }
-  }, [closeDrawer, minimizeDrawer, drawerState])
+  }, [closeDrawer, minimizeDrawer, drawerState, buttonDrawer])
 
   const swipeHandlers = useSwipeable({
     preventScrollOnSwipe: true,
@@ -54,6 +64,7 @@ export const useDrawerHandlers = () => {
     }
   })
   return {
+    buttonDrawer,
     closeDrawer,
     drawerHeight,
     drawerState,
