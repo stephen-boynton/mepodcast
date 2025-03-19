@@ -1,5 +1,5 @@
 'use client'
-import { Flex, Heading, Text } from '@radix-ui/themes'
+import { Flex, Heading, IconButton, Text } from '@radix-ui/themes'
 import { EpisodeList } from '../episodes/EpisodeList'
 import Image from 'next/image'
 import styles from './Series.style.module.scss'
@@ -7,6 +7,43 @@ import { LinkOut } from '@/components/Link/LinkOut'
 import { truncate } from '@/utils'
 import { useSeriesDetails } from './hooks/useSeriesDetails'
 import useInfiniteScroll from 'react-infinite-scroll-hook'
+import { MinusCircledIcon, PlusCircledIcon } from '@radix-ui/react-icons'
+import { useSubscribedSeries } from './hooks/useSubscribedSeries'
+import { useAddToFavoriteSeries } from '../favoriteSeries/useAddToUserList'
+import { Series } from '@/models/Series'
+
+type AddButtonProps = {
+  addSeries: (series: Series) => void
+  removeSeries: (uuid: string) => void
+  isSubscribed: boolean
+  series: Series
+}
+
+const AddRemoveButton = ({
+  addSeries,
+  removeSeries,
+  series,
+  isSubscribed
+}: AddButtonProps) => {
+  const handleClick = async () => {
+    console.log('blooooop')
+    return isSubscribed ? removeSeries(series?.uuid) : addSeries(series)
+  }
+  return (
+    <IconButton
+      color="mint"
+      variant="ghost"
+      onClick={handleClick}
+      className={styles.button}
+    >
+      {isSubscribed ? (
+        <MinusCircledIcon width={25} height={25} />
+      ) : (
+        <PlusCircledIcon width={25} height={25} />
+      )}
+    </IconButton>
+  )
+}
 
 export const SeriesDetails = ({
   uuid,
@@ -16,6 +53,9 @@ export const SeriesDetails = ({
   showImage?: boolean
 }) => {
   const { data, loading, error, loadMore } = useSeriesDetails({ uuid })
+  const { addSeries, removeSeries, isSubscribed } = useAddToFavoriteSeries({
+    series: data
+  })
 
   const [sentryRef] = useInfiniteScroll({
     onLoadMore: loadMore,
@@ -33,9 +73,17 @@ export const SeriesDetails = ({
 
   return (
     <Flex className={styles.container}>
-      <Heading as="h2" size="6">
-        {data.name}
-      </Heading>
+      <Flex align="center" justify="between">
+        <Heading as="h2" size="6">
+          {data.name}
+        </Heading>
+        <AddRemoveButton
+          addSeries={addSeries}
+          removeSeries={removeSeries}
+          series={data}
+          isSubscribed={isSubscribed}
+        />
+      </Flex>
       <Flex direction="column" className={styles.description}>
         {showImage && (
           <Image
@@ -47,7 +95,9 @@ export const SeriesDetails = ({
           />
         )}
         <Flex direction="column" className={styles.descriptionText}>
-          <Text wrap="pretty">{truncate(data.description, 200)}</Text>
+          <Flex align="start">
+            <Text wrap="pretty">{truncate(data.description, 200)}</Text>
+          </Flex>
           <LinkOut href={data.websiteUrl || ''}>More details.</LinkOut>
         </Flex>
       </Flex>
