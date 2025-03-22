@@ -16,7 +16,7 @@ const FloatingPlayButton = ({
   isPlaying: boolean
 }) => {
   const [isHiding, setIsHiding] = useState(false)
-
+  console.log({ isPlaying })
   const handleSwiping = ({ deltaX, deltaY }: SwipeEventData) => {
     const absX = Math.abs(deltaX)
     const absY = Math.abs(deltaY)

@@ -8,7 +8,6 @@ import { truncate } from '@/utils'
 import { useSeriesDetails } from './hooks/useSeriesDetails'
 import useInfiniteScroll from 'react-infinite-scroll-hook'
 import { MinusCircledIcon, PlusCircledIcon } from '@radix-ui/react-icons'
-import { useSubscribedSeries } from './hooks/useSubscribedSeries'
 import { useAddToFavoriteSeries } from '../favoriteSeries/useAddToUserList'
 import { Series } from '@/models/Series'
 
@@ -26,9 +25,9 @@ const AddRemoveButton = ({
   isSubscribed
 }: AddButtonProps) => {
   const handleClick = async () => {
-    console.log('blooooop')
     return isSubscribed ? removeSeries(series?.uuid) : addSeries(series)
   }
+
   return (
     <IconButton
       color="mint"

@@ -106,6 +106,7 @@ export const PlaylistProvider = ({ children }: React.PropsWithChildren) => {
   const addAsCurrentlyPlaying = useCallback(
     async (episode: Episode) => {
       if (!selectedPlaylist) {
+        console.log({ selectedPlaylist, autoPlaylist })
         Logger.error('No current playlist')
         return
       }
