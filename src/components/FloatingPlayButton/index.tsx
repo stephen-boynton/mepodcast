@@ -7,16 +7,19 @@ import { SwipeEventData, useSwipeable } from 'react-swipeable'
 const SWIPE_THRESHOLD = 20 // Minimum movement needed to register a swipe
 const DOMINANT_AXIS_RATIO = 1.5 // Ensure the dominant direction is strong enough
 
+type FloatingPlayButtonProps = {
+  onClick?: () => void
+  isPlaying: boolean
+  onSwipeUp: () => void
+}
+
 const FloatingPlayButton = ({
   onClick,
   onSwipeUp,
   isPlaying
-}: {
-  onClick?: () => void
-  isPlaying: boolean
-}) => {
+}: FloatingPlayButtonProps) => {
   const [isHiding, setIsHiding] = useState(false)
-  console.log({ isPlaying })
+
   const handleSwiping = ({ deltaX, deltaY }: SwipeEventData) => {
     const absX = Math.abs(deltaX)
     const absY = Math.abs(deltaY)

@@ -22,6 +22,7 @@ type DrawerPlayerState = {
   handlePlay: (episode?: Episode) => void
   initializePlayer: (player: H5AudioPlayer) => void
   isInitialized: boolean
+  isPlaying?: boolean
   minimizeDrawer: () => void
   openDrawer: () => void
   player: Maybe<PodcastPlayer>
@@ -40,6 +41,7 @@ const DrawwerPlayerState = createContext<DrawerPlayerState>({
   handlePlay: () => {},
   initializePlayer: () => {},
   isInitialized: false,
+  isPlaying: false,
   minimizeDrawer: () => {},
   openDrawer: () => {},
   player: null,
@@ -52,8 +54,9 @@ export const DrawerStateProvider = ({
 }: {
   children: React.ReactNode
 }) => {
-  const { player, initializePlayer, initialized } = usePodcastPlayer()
-  const isPlaying = player?.isPlaying()
+  const { player, initializePlayer, initialized, isPlaying } =
+    usePodcastPlayer()
+
   const {
     buttonDrawer,
     drawerState,
@@ -63,7 +66,7 @@ export const DrawerStateProvider = ({
     swipeHandlers,
     drawerHeight,
     setDrawerState
-  } = useDrawerHandlers({ isPlaying })
+  } = useDrawerHandlers({ isLoaded: player?.isLoaded() })
 
   const { handleCompleted, handleListenInterval, handlePause, handlePlay } =
     useAudioActions({
@@ -74,8 +77,9 @@ export const DrawerStateProvider = ({
       player
     })
 
-  const value = useMemo(
-    () => ({
+  const value = useMemo(() => {
+    console.log('we runnin')
+    return {
       buttonDrawer,
       closeDrawer,
       drawerHeight,
@@ -84,25 +88,7 @@ export const DrawerStateProvider = ({
       handleListenInterval,
       handlePause,
       handlePlay,
-      isPlaying,
       isInitialized: initialized,
-      minimizeDrawer,
-      openDrawer,
-      player,
-      initializePlayer,
-      setDrawerState,
-      swipeHandlers
-    }),
-    [
-      buttonDrawer,
-      closeDrawer,
-      drawerHeight,
-      drawerState,
-      handleCompleted,
-      handleListenInterval,
-      handlePause,
-      handlePlay,
-      initialized,
       isPlaying,
       minimizeDrawer,
       openDrawer,
@@ -110,8 +96,25 @@ export const DrawerStateProvider = ({
       initializePlayer,
       setDrawerState,
       swipeHandlers
-    ]
-  )
+    }
+  }, [
+    buttonDrawer,
+    closeDrawer,
+    drawerHeight,
+    drawerState,
+    handleCompleted,
+    handleListenInterval,
+    handlePause,
+    handlePlay,
+    initialized,
+    isPlaying,
+    minimizeDrawer,
+    openDrawer,
+    player,
+    initializePlayer,
+    setDrawerState,
+    swipeHandlers
+  ])
   return (
     <DrawwerPlayerState.Provider value={value}>
       {children}

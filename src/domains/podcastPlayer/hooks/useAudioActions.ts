@@ -5,7 +5,6 @@ import { PodcastPlayer } from '../../../models/Player'
 
 export const useAudioActions = ({
   drawerState,
-  //   minimizeDrawer,
   openDrawer,
   player
 }: {
@@ -17,8 +16,12 @@ export const useAudioActions = ({
 }) => {
   const handlePlay = useCallback(
     (episode?: Episode) => {
-      if (player && !player.isPlaying()) {
-        if (drawerState !== 'open' && drawerState !== 'minimized') {
+      if (player && !player.isPlaying) {
+        if (
+          drawerState !== 'open' &&
+          drawerState !== 'minimized' &&
+          drawerState !== 'button'
+        ) {
           openDrawer()
         }
 

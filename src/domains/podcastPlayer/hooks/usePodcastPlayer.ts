@@ -6,17 +6,19 @@ import { Maybe } from '@/types/shared'
 
 export const usePodcastPlayer = () => {
   const [player, setPlayer] = useState<Maybe<PodcastPlayer>>(null)
+  const [isPlaying, setPlaying] = useState(false)
   const [initialized, setInitialized] = useState(false)
 
   const initializePlayer = (element: H5AudioPlayer) => {
     if (initialized) return
-    setPlayer(PodcastPlayer.create(element?.audio.current))
+    setPlayer(PodcastPlayer.create(element?.audio.current, setPlaying))
     setInitialized(true)
   }
 
   return {
     player,
     initializePlayer,
-    initialized
+    initialized,
+    isPlaying
   }
 }

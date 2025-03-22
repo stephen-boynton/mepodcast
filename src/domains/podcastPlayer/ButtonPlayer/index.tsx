@@ -7,8 +7,7 @@ export const ButtonPlayer = () => {
   const showButton = drawerState === 'button'
 
   const onClick = () => {
-    if (player?.isPlaying()) {
-      console.log('pausing')
+    if (player && isPlaying) {
       player.pause()
       return
     }
@@ -20,7 +19,7 @@ export const ButtonPlayer = () => {
     showButton && (
       <FloatingPlayButton
         onSwipeUp={minimizeDrawer}
-        isPlaying={isPlaying}
+        isPlaying={Boolean(isPlaying)}
         onClick={onClick}
       />
     )

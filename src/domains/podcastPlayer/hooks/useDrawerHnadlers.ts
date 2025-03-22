@@ -9,7 +9,7 @@ const HEIGHTS: Record<DrawerState, number | string> = {
   button: 0
 }
 
-export const useDrawerHandlers = ({ isPlaying }: { isPlaying: boolean }) => {
+export const useDrawerHandlers = ({ isLoaded }: { isLoaded?: boolean }) => {
   const [drawerState, setDrawerState] = useState<DrawerState>('closed')
   const [drawerHeight, setHeight] = useState(HEIGHTS.closed)
 
@@ -43,7 +43,7 @@ export const useDrawerHandlers = ({ isPlaying }: { isPlaying: boolean }) => {
 
   const handleSwipeDown = useCallback(() => {
     if (drawerState === 'minimized') {
-      if (isPlaying) {
+      if (isLoaded) {
         buttonDrawer()
         return
       }
@@ -51,7 +51,7 @@ export const useDrawerHandlers = ({ isPlaying }: { isPlaying: boolean }) => {
     } else {
       minimizeDrawer()
     }
-  }, [closeDrawer, minimizeDrawer, drawerState, buttonDrawer])
+  }, [closeDrawer, minimizeDrawer, drawerState, buttonDrawer, isLoaded])
 
   const swipeHandlers = useSwipeable({
     preventScrollOnSwipe: true,

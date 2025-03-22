@@ -4,6 +4,7 @@ import { removeCurrentlyPlaying } from '@/db/operations/currentlyPlaying'
 import { Logger } from '@/lib/Logger'
 import { Episode } from '@/models/Episode'
 import { Progress } from '@/models/Progress'
+import { Dispatch, SetStateAction } from 'react'
 
 export class PodcastPlayer {
   static #instance: PodcastPlayer
@@ -11,14 +12,19 @@ export class PodcastPlayer {
   #currentEpisode?: Episode
   #progress?: Progress & { id?: number }
   isInitialized = false
+  onPlayStateChange?: Dispatch<SetStateAction<boolean>>
 
-  private constructor(ref: HTMLAudioElement) {
+  private constructor(
+    ref: HTMLAudioElement,
+    onPlayStateChange?: Dispatch<SetStateAction<boolean>>
+  ) {
     if (PodcastPlayer.#instance) {
       Logger.debug('PLayer: Returning existing player')
       return PodcastPlayer.#instance
     }
     Logger.debug('Player: Creating player', ref)
     this.#player = ref
+    this.onPlayStateChange = onPlayStateChange
   }
 
   get currentTime() {
@@ -29,19 +35,22 @@ export class PodcastPlayer {
     this.#player.currentTime = time
   }
 
-  public static create(player: HTMLAudioElement): PodcastPlayer {
+  public static create(
+    player: HTMLAudioElement,
+    onPlayStateChange?: Dispatch<SetStateAction<boolean>>
+  ): PodcastPlayer {
     if (!PodcastPlayer.#instance) {
-      PodcastPlayer.#instance = new PodcastPlayer(player)
+      PodcastPlayer.#instance = new PodcastPlayer(player, onPlayStateChange)
     }
 
     return PodcastPlayer.#instance
   }
 
   isPlayingSameEpisode(episodeUuid: string) {
-    return this.isPlaying() && this.#currentEpisode?.uuid === episodeUuid
+    return this.isPlaying && this.#currentEpisode?.uuid === episodeUuid
   }
 
-  isPlaying() {
+  get isPlaying() {
     return !this.#player.paused
   }
 
@@ -55,7 +64,7 @@ export class PodcastPlayer {
   }
 
   async play(episode?: Episode) {
-    if (this.isPlaying()) {
+    if (this.isPlaying) {
       return
     }
 
@@ -68,6 +77,7 @@ export class PodcastPlayer {
       Logger.debug('Player: No episode provided')
       if (this.#currentEpisode && this.isLoaded()) {
         Logger.debug('Player: Resuming episode', this.#currentEpisode)
+        this.onPlayStateChange?.(true)
         return await this.#player.play()
       }
       Logger.error('Player: No episode loaded')
@@ -79,7 +89,7 @@ export class PodcastPlayer {
 
     Logger.debug('Player: Playing episode', episode)
     this.#currentEpisode = episode
-
+    this.onPlayStateChange?.(true)
     await this.load(episode).then(() => this.#player.play())
   }
 
@@ -131,6 +141,7 @@ export class PodcastPlayer {
     if (!this.#progress) return
     Logger.debug('Completing episode', this.#progress)
     this.#player.currentTime = this.#player.duration
+    this.onPlayStateChange?.(false)
     this.saveProgress()
     db.progress.update(this.#progress.id, { completed: true })
   }
@@ -143,10 +154,12 @@ export class PodcastPlayer {
   }
 
   pause() {
+    this.onPlayStateChange?.(false)
     this.#player.pause()
   }
 
   stop() {
+    this.onPlayStateChange?.(false)
     this.#player.pause()
     this.#player.currentTime = 0
   }
