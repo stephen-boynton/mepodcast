@@ -11,23 +11,21 @@ import { JSX } from 'react'
 import { PlaylistContext } from '../playlist/usePlaylists'
 
 const createButtons = ({
-  isPlaying,
   handlePlayPause,
-  addAsPlayNext
+  addAsPlayNext,
+  disablePlay
 }: {
   isPlaying: boolean
   handlePlayPause: () => void
   addAsPlayNext: () => void
+  disablePlay?: boolean
 }) => [
   {
-    action: isPlaying ? 'Pause' : 'Play',
+    disabled: disablePlay,
+    action: 'Play',
     variant: 'primary',
     handleAction: handlePlayPause,
-    icon: isPlaying ? (
-      <PauseIcon name="pause" width={25} height={25} />
-    ) : (
-      <PlayIcon name="play" width={25} height={25} />
-    )
+    icon: <PlayIcon name="play" width={25} height={25} />
   },
   {
     action: 'Play Next',
@@ -53,14 +51,17 @@ const BuildButton = ({
   size,
   icon,
   handleAction,
-  action
+  action,
+  disabled
 }: ButtonProps & {
   handleAction: () => void
   action: string
   icon: JSX.Element
+  disabled?: boolean
 }) => {
   return (
     <Button
+      disabled={disabled}
       variant={variant}
       size={size}
       onClick={handleAction}
@@ -77,13 +78,15 @@ type ControlPanelProps = Partial<PlaylistContext> & {
   addAsPlayNext: () => void
   addEpisodeToPlaylist: () => void
   isPlaying: boolean
+  disablePlay: boolean
 }
 
 export const ControlPanel = ({
   handlePlayPause,
   isPlaying,
   addAsPlayNext,
-  addEpisodeToPlaylist
+  addEpisodeToPlaylist,
+  disablePlay
 }: ControlPanelProps) => {
   return (
     <Flex px="4" width="100%" gap="4" direction="column" align="stretch">
@@ -91,13 +94,15 @@ export const ControlPanel = ({
         isPlaying,
         handlePlayPause,
         addAsPlayNext,
-        addEpisodeToPlaylist
-      }).map(({ action, icon, variant, handleAction }) => (
+        addEpisodeToPlaylist,
+        disablePlay
+      }).map(({ action, icon, variant, handleAction, disabled }) => (
         <BuildButton
           key={action}
           icon={icon}
           handleAction={handleAction}
           action={action}
+          disabled={disabled}
           variant={variant as ButtonProps['variant']}
           size={'6' as ButtonProps['size']}
         />

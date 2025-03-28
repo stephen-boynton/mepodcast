@@ -11,23 +11,19 @@ import { Episode } from '@/models/Episode'
 import { ControlPanel } from './ControlPanel'
 import { useEpisodeDetail } from './useEpisodeDetails'
 import { usePlaylists } from '../playlist/usePlaylists'
+import { useState } from 'react'
 
 export const EpisodeDetail = () => {
+  const [disabled, setDisabled] = useState(false)
   const { id } = useParams()
-  const { handlePlay, player, handlePause } = useDrawerPlayer()
-  const {
-    addAsCurrentlyPlaying,
-    selectedPlaylist,
-    addAsPlayNext,
-    currentEpisode
-  } = usePlaylists()
+  const { handlePlay, player } = useDrawerPlayer()
+  const { addAsCurrentlyPlaying, addAsPlayNext, currentEpisode } =
+    usePlaylists()
   const { data: episode } = useEpisodeDetail({
     uuid: id as string
   })
 
-  const isInSelectedPlaylist = selectedPlaylist?.episodes.some(
-    (e) => e.uuid === episode?.uuid
-  )
+  const isCurrentEpisode = currentEpisode?.uuid === episode?.uuid
 
   const {
     websiteUrl,
@@ -44,10 +40,8 @@ export const EpisodeDetail = () => {
   const image = imageUrl || series?.imageUrl
 
   const handleAction = async () => {
-    if (player?.isPlaying) {
-      handlePause()
-    } else if (isInSelectedPlaylist && currentEpisode?.uuid === episode?.uuid) {
-      handlePlay()
+    if (isCurrentEpisode) {
+      setDisabled(true)
     } else {
       await addAsCurrentlyPlaying?.(episode as Episode)
       handlePlay(episode)
@@ -79,6 +73,7 @@ export const EpisodeDetail = () => {
           className={styles.image}
         />
         <ControlPanel
+          disablePlay={disabled}
           addEpisodeToPlaylist={handleAddEpisodeToPlaylist}
           addAsPlayNext={handleAddAsPlayNext}
           handlePlayPause={handleAction}

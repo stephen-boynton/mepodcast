@@ -33,6 +33,10 @@ export class Episode {
     const { audioUrl, name, uuid } = episode
     return Boolean(audioUrl && name && uuid)
   }
+
+  get id() {
+    return this.uuid
+  }
 }
 
 export function createEpisode(episode: Episode) {

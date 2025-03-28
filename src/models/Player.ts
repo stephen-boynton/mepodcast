@@ -13,10 +13,12 @@ export class PodcastPlayer {
   #progress?: Progress & { id?: number }
   isInitialized = false
   onPlayStateChange?: Dispatch<SetStateAction<boolean>>
+  onLoadedChange?: Dispatch<SetStateAction<boolean>>
 
   private constructor(
     ref: HTMLAudioElement,
-    onPlayStateChange?: Dispatch<SetStateAction<boolean>>
+    onPlayStateChange?: Dispatch<SetStateAction<boolean>>,
+    onLoadedChange?: Dispatch<SetStateAction<boolean>>
   ) {
     if (PodcastPlayer.#instance) {
       Logger.debug('PLayer: Returning existing player')
@@ -25,6 +27,7 @@ export class PodcastPlayer {
     Logger.debug('Player: Creating player', ref)
     this.#player = ref
     this.onPlayStateChange = onPlayStateChange
+    this.onLoadedChange = onLoadedChange
   }
 
   get currentTime() {
@@ -37,10 +40,15 @@ export class PodcastPlayer {
 
   public static create(
     player: HTMLAudioElement,
-    onPlayStateChange?: Dispatch<SetStateAction<boolean>>
+    onPlayStateChange?: Dispatch<SetStateAction<boolean>>,
+    onLoadedChange?: Dispatch<SetStateAction<boolean>>
   ): PodcastPlayer {
     if (!PodcastPlayer.#instance) {
-      PodcastPlayer.#instance = new PodcastPlayer(player, onPlayStateChange)
+      PodcastPlayer.#instance = new PodcastPlayer(
+        player,
+        onPlayStateChange,
+        onLoadedChange
+      )
     }
 
     return PodcastPlayer.#instance
@@ -104,6 +112,7 @@ export class PodcastPlayer {
       this.#player.src === this.#currentEpisode?.audioUrl
     ) {
       Logger.debug('Player: Episode already loaded')
+      this.onLoadedChange?.(true)
       return
     }
 
@@ -134,6 +143,7 @@ export class PodcastPlayer {
 
     this.#player.src = episode.audioUrl
     Logger.debug('Loading episode', episode)
+    this.onLoadedChange?.(true)
     await this.#player.load()
   }
 

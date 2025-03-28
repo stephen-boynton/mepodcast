@@ -83,31 +83,52 @@ export class Playlist {
   }
 
   addEpisodeToPlaylist(episode: Episode) {
-    const has = this.episodes
-      .map((e) => {
-        return e.uuid
-      })
-      .includes(episode.uuid)
-    if (has) return
+    if (this.alreadyHasEpisode(episode.uuid)) return
     this.episodes.push(episode)
     this.save()
   }
 
   async addAsCurrentlyPlaying(episode: Episode) {
-    this.episodes.unshift(episode)
+    if (!episode) {
+      Logger.error('Playlist: No episode provided')
+      return
+    }
+    const has = this.alreadyHasEpisode(episode.uuid)
+    if (has) {
+      this.changeEpisodeOrder(episode.uuid, 0)
+    } else {
+      this.episodes.unshift(episode)
+    }
     this.cursor = 0
     this.save()
   }
 
   addAsPlayNext(episode: Episode): void {
+    const has = this.alreadyHasEpisode(episode.uuid)
+    if (has) {
+      const existing = this.episodes.find((e) => e.uuid === episode.uuid)
+      if (!existing) {
+        Logger.error('Playlist: Episode does not exist')
+        return
+      }
+      Logger.debug('Playlist: Adding episode as play next')
+      const [playing, ...rest] = this.episodes
+      this.episodes = [playing, existing, ...rest]
+      return
+    }
     if (this.episodes.length) {
-      console.log({ episode, this: this.episodes })
+      Logger.debug('Playlist: Adding episode as play next')
       const [playing, ...rest] = this.episodes
       this.episodes = [playing, episode, ...rest]
     } else {
+      Logger.debug('Playlist: Adding episode as only episode')
       this.episodes = [episode]
     }
     this.save()
+  }
+
+  alreadyHasEpisode(uuid: string) {
+    return this.episodes.map((episode) => episode.uuid).includes(uuid)
   }
 
   removeEpisodeFromPlaylist(uuid: string) {
@@ -150,6 +171,22 @@ export class Playlist {
         this.cursor = 0
       }
       return this.episodes[this.cursor]
+    }
+  }
+
+  rewriteList(episodes: Episode[]) {
+    const currentIds = episodes.map((episode) => episode.uuid)
+    const existingIds = this.episodes.map((episode) => episode.uuid)
+    const hasAllSameIds = existingIds.every((id) => currentIds.includes(id))
+    Logger.debug('Attempting to rewrite playlist', {
+      currentIds,
+      existingIds,
+      hasAllSameIds
+    })
+    if (hasAllSameIds) {
+      this.episodes = episodes
+    } else {
+      Logger.error(`Playlist rewrite failed: ${currentIds} !== ${existingIds}`)
     }
   }
 

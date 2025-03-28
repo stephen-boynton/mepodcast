@@ -50,7 +50,7 @@ export const PlaylistProvider = ({ children }: React.PropsWithChildren) => {
   const [initialized, setInitialized] = useState(false)
   const [currentEpisode, setCurrentEpisode] = useState<Episode | null>(null)
   const playlists = playlistController.getPlaylists()
-  const selectedPlaylist = playlistController.getSelectedPlaylist()
+  const selectedPlaylist = playlists.find((p) => p.isCurrentPlaylist)
   const autoPlaylist = playlistController.getAutoPlaylist()
 
   const createPlaylist = useCallback(
@@ -106,7 +106,6 @@ export const PlaylistProvider = ({ children }: React.PropsWithChildren) => {
   const addAsCurrentlyPlaying = useCallback(
     async (episode: Episode) => {
       if (!selectedPlaylist) {
-        console.log({ selectedPlaylist, autoPlaylist })
         Logger.error('No current playlist')
         return
       }

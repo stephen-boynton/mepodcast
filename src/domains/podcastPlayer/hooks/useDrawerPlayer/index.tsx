@@ -54,7 +54,7 @@ export const DrawerStateProvider = ({
 }: {
   children: React.ReactNode
 }) => {
-  const { player, initializePlayer, initialized, isPlaying } =
+  const { player, initializePlayer, initialized, isPlaying, isLoaded } =
     usePodcastPlayer()
 
   const {
@@ -66,7 +66,10 @@ export const DrawerStateProvider = ({
     swipeHandlers,
     drawerHeight,
     setDrawerState
-  } = useDrawerHandlers({ isLoaded: player?.isLoaded() })
+  } = useDrawerHandlers({
+    isLoaded,
+    playerInitialized: initialized
+  })
 
   const { handleCompleted, handleListenInterval, handlePause, handlePlay } =
     useAudioActions({
@@ -78,7 +81,6 @@ export const DrawerStateProvider = ({
     })
 
   const value = useMemo(() => {
-    console.log('we runnin')
     return {
       buttonDrawer,
       closeDrawer,

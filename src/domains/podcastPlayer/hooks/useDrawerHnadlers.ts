@@ -1,15 +1,23 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { SwipeEventData, useSwipeable } from 'react-swipeable'
 import { DrawerState } from './useDrawerPlayer'
 
 const HEIGHTS: Record<DrawerState, number | string> = {
-  open: '95vh',
+  open: '90vh',
   minimized: 125,
   closed: 0,
   button: 0
 }
 
-export const useDrawerHandlers = ({ isLoaded }: { isLoaded?: boolean }) => {
+type UserDrawerHandlerProps = {
+  isLoaded?: boolean
+  playerInitialized?: boolean
+}
+
+export const useDrawerHandlers = ({
+  isLoaded,
+  playerInitialized
+}: UserDrawerHandlerProps) => {
   const [drawerState, setDrawerState] = useState<DrawerState>('closed')
   const [drawerHeight, setHeight] = useState(HEIGHTS.closed)
 
@@ -63,6 +71,17 @@ export const useDrawerHandlers = ({ isLoaded }: { isLoaded?: boolean }) => {
       }
     }
   })
+
+  useEffect(() => {
+    if (playerInitialized) {
+      console.log('playerInitialized')
+      if (isLoaded) {
+        console.log('buttonDrawer')
+        buttonDrawer()
+      }
+    }
+  }, [playerInitialized, isLoaded])
+
   return {
     buttonDrawer,
     closeDrawer,

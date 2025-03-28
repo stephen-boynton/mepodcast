@@ -1,3 +1,4 @@
+'use client'
 import { createStore } from 'zustand'
 import { Maybe } from '@/types/shared'
 import { db } from '@/db'
@@ -21,10 +22,11 @@ export type PlayerControllerState = {
 }
 
 export const playlistControllerStore = createStore<PlayerControllerState>(
-  (set) => ({
+  (set, get) => ({
     selectedPlaylist: null,
     playlists: [],
     cursor: 0,
+
     addPlaylist: async (playlist: Playlist) => {
       set((state) => ({
         playlists: [...state.playlists, playlist]
@@ -80,21 +82,35 @@ export const playlistControllerStore = createStore<PlayerControllerState>(
     },
 
     populatePlaylists: async () => {
-      const _playlists = await db.playlists.toArray()
+      const _playlists = (await db.playlists.toArray()) || []
+
       Logger.debug('Populating Playlists')
-      if (_playlists.length !== 0) {
-        const playlists = _playlists.map((p) => initializePlaylist(p))
-        const currenPlaylist = playlists.find((p) => p.isCurrentPlaylist)
-        Logger.debug('Playlists populated', playlists)
-        set({ playlists, selectedPlaylist: currenPlaylist })
-      } else {
-        const autoPlaylist = await Playlist.createAutoPlaylist({
-          name: 'Auto Playlist',
-          isCurrentPlaylist: TRUE
-        })
-        set({ playlists: [autoPlaylist], selectedPlaylist: autoPlaylist })
-        Logger.debug('New Auto Playlist populated', { autoPlaylist })
+
+      const playlists = _playlists.map((p) => initializePlaylist(p))
+      const currenPlaylist = playlists.find((p) => p?.isCurrentPlaylist)
+
+      Logger.debug('Playlists populated', playlists)
+
+      if (currenPlaylist) {
+        Logger.debug(
+          'Playlist Controller: Current Playlist found',
+          currenPlaylist
+        )
+        return set({ playlists, selectedPlaylist: currenPlaylist })
       }
+
+      const autoPlaylist = await Playlist.createAutoPlaylist({
+        name: 'Auto Playlist',
+        isCurrentPlaylist: TRUE
+      })
+
+      set((state) => ({
+        ...state,
+        playlists: [autoPlaylist],
+        selectedPlaylist: autoPlaylist
+      }))
+
+      Logger.debug('New Auto Playlist populated', get())
     },
 
     prevPlaylist() {
@@ -115,10 +131,14 @@ export class PlaylistController {
 
   constructor() {
     if (PlaylistController.#instance) {
+      // If the instance is already created, just return the existing instance.
       return PlaylistController.#instance
     }
     Logger.debug('Initializing Playlist Controller')
+    // Populate the playlists from the database when the controller is created.
     this.store.getState().populatePlaylists()
+    // Save the instance in the #instance variable.
+    PlaylistController.#instance = this
   }
 
   async addPlaylist(playlist: Playlist) {
@@ -134,6 +154,7 @@ export class PlaylistController {
   }
 
   getSelectedPlaylist() {
+    console.log('get selected playlist')
     return this.store.getState().selectedPlaylist
   }
 
@@ -150,7 +171,10 @@ export class PlaylistController {
   }
 
   selectPlaylist(playlistId: number) {
-    this.store.getState().selectPlaylist(playlistId)
+    const selected = this.store
+      .getState()
+      .playlists.find((p) => p.id === playlistId)
+    this.store.setState({ selectedPlaylist: selected })
   }
 }
 
