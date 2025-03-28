@@ -76,7 +76,7 @@ export const playlistControllerStore = createStore<PlayerControllerState>(
 
     nextPlaylist: async () => {
       set((state) => ({
-        curssor: (state.cursor += 1),
+        curssor: state.cursor++,
         selectedPlaylist: state.playlists[state.cursor]
       }))
     },

@@ -121,7 +121,6 @@ export const PlaylistProvider = ({ children }: React.PropsWithChildren) => {
       } else {
         if (selectedPlaylist.isAutoPlaylist) {
           Logger.debug('Adding episode to (selected) auto playlist')
-          selectedPlaylist.cursor = selectedPlaylist.episodes.length
           await selectedPlaylist?.addAsCurrentlyPlaying(episode)
         } else {
           if (!autoPlaylist) {

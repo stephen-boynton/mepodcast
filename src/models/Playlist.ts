@@ -19,7 +19,7 @@ const TRUE: Cboolean = 1
 const FALSE: Cboolean = 0
 
 export class Playlist {
-  cursor: number = 0
+  #cursor = 0
   description?: string
   episodes: Episode[] = []
   id?: number
@@ -88,18 +88,30 @@ export class Playlist {
     this.save()
   }
 
+  get cursor(): number {
+    return this.#cursor || 0
+  }
+
+  set cursor(cursor: number) {
+    if (cursor < 0) {
+      cursor = 0
+    }
+    this.#cursor = cursor
+  }
+
   async addAsCurrentlyPlaying(episode: Episode) {
     if (!episode) {
       Logger.error('Playlist: No episode provided')
       return
     }
     const has = this.alreadyHasEpisode(episode.uuid)
-    if (has) {
-      this.changeEpisodeOrder(episode.uuid, 0)
-    } else {
+
+    if (!has) {
       this.episodes.unshift(episode)
     }
-    this.cursor = 0
+    console.log('am I here?')
+    this.cursor = this.episodes.findIndex((e) => e.uuid === episode.uuid) || 0
+    Logger.debug(`Playlist: Adding ${episode} as currently playing`)
     this.save()
   }
 
