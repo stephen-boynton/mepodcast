@@ -1,6 +1,11 @@
 .sortable {
+	cursor: grab;
+	display: flex;
+	justify-content: stretch;
+}
 
-	button {
-		background-color: transparent;
-	}
+.sortableContainer {
+	display: flex;
+	flex-direction: column;
+	justify-content: stretch;
 }

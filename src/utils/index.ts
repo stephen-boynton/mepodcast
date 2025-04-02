@@ -4,16 +4,14 @@ import { DisplayType } from '@/types/shared'
 import sanitizeHtml from 'sanitize-html'
 
 export const truncate = (str: string, n: number) => {
-  return str.length > n ? `${str.slice(0, n - 1)}...` : str
+  return str?.length > n ? `${str.slice(0, n - 1)}...` : str
 }
 
 export const isSeries = (podcast: EpisodeDetails | SeriesDetail): boolean => {
   return 'episodes' in podcast
 }
 
-export const podcastDtoToDisplay = (
-  podcast: EpisodeDetails | SeriesDetail
-): Display => {
+export const podcastDtoToDisplay = (podcast: EpisodeDetails | SeriesDetail) => {
   const isPodcastSeries = isSeries(podcast)
 
   if (isPodcastSeries) {

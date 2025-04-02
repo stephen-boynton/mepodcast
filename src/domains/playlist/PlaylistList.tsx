@@ -38,6 +38,7 @@ export const PlaylistList = ({
         >
           <ReactSortable
             group="groupName"
+            className={styles.sortableContainer}
             disabled={isScrollable}
             animation={200}
             delay={2}
