@@ -1,4 +1,3 @@
-import { Episode } from '@/models/Episode'
 import {
   Box,
   Flex,
@@ -11,22 +10,28 @@ import { ReactSortable, SortableEvent } from 'react-sortablejs'
 import styles from './PlaylistList.style.module.scss'
 import cn from 'classnames'
 
+export type PlaylistListItem = {
+  heading: string
+  id: string
+  content: string
+}
+
 type PlaylistProps = {
-  onSwap: (rearranged: Episode[]) => void
+  onSwap: (rearranged: PlaylistListItem[]) => void
   isScrollable: boolean
-  episodeList: Episode[]
-  selectedEpisode: string
+  items: PlaylistListItem[]
+  currentId: number
 }
 
 export const PlaylistList = ({
   onSwap,
   isScrollable,
-  episodeList,
-  selectedEpisode
+  items,
+  currentId
 }: PlaylistProps) => {
   return (
     <Box>
-      <RadioCards.Root value={selectedEpisode}>
+      <RadioCards.Root value={currentId.toString()}>
         <ScrollArea
           type="always"
           scrollbars="vertical"
@@ -43,7 +48,7 @@ export const PlaylistList = ({
             animation={200}
             delay={2}
             swap
-            list={episodeList}
+            list={items}
             setList={onSwap}
             onStart={(evt: SortableEvent) => {
               evt.item.style.visibility = 'hidden'
@@ -52,15 +57,15 @@ export const PlaylistList = ({
               evt.item.style.visibility = 'visible'
             }}
           >
-            {episodeList.map((episode) => (
+            {items.map((item) => (
               <RadioCards.Item
-                id={episode.uuid}
+                id={item.id}
                 className={cn(styles.sortable, {
                   [styles.dragging]: !isScrollable
                 })}
-                value={episode.uuid}
+                value={item.id}
                 draggable={!isScrollable}
-                key={episode.uuid}
+                key={item.id}
               >
                 <Flex align="center" justify="center">
                   <Flex
@@ -69,8 +74,8 @@ export const PlaylistList = ({
                     align="stretch"
                     justify="center"
                   >
-                    <Heading size="2">{episode.authorName}</Heading>
-                    <Text size="2">{episode.name}</Text>
+                    <Heading size="2">{item.heading}</Heading>
+                    <Text size="2">{item.content}</Text>
                   </Flex>
                 </Flex>
               </RadioCards.Item>

@@ -1,6 +1,7 @@
 import { PlaylistData } from '@/db/Database'
-import { PlaylistList } from '@/domains/playlist/PlaylistList'
-import { Episode } from '@/models/Episode'
+import { PlaylistList, PlaylistListItem } from '@/domains/playlist/PlaylistList'
+import { transformToPlaylistListItem } from '@/domains/playlist/utils'
+import { sortByIds } from '@/utils'
 import { HeightIcon } from '@radix-ui/react-icons'
 import { Box, Flex, Switch, Tabs, Text } from '@radix-ui/themes'
 import { useEffect, useState } from 'react'
@@ -12,16 +13,24 @@ export const PlaylistTab = ({
   playlists: PlaylistData[]
   currentPlaylist: PlaylistData
 }) => {
-  const [list, setList] = useState<Episode[]>(currentPlaylist.episodes)
+  const [list, setList] = useState<PlaylistListItem[]>(
+    currentPlaylist.episodes.map(transformToPlaylistListItem)
+  )
   const [selectedEpisode, setSelectedEpisode] = useState<string | null>(null)
   const [isScrollable, setIsScrollable] = useState(true)
 
-  const handleSwap = (rearranged: Episode[]) => {
+  // Got to rearrange episodes based on the transformed PlaylistListItem
+  const handleSwap = (rearranged: PlaylistListItem[]) => {
+    const rearrangedEpisodes = sortByIds(
+      rearranged.map((ep) => ep.id),
+      currentPlaylist.episodes
+    )
+
     setList(rearranged)
     const currentLocation = rearranged.findIndex(
-      (ep) => ep.uuid === selectedEpisode
+      (ep) => ep.id === selectedEpisode
     )
-    currentPlaylist.rewriteList(rearranged)
+    currentPlaylist.rewriteList(rearrangedEpisodes)
     currentPlaylist.cursor = currentLocation
     currentPlaylist.save()
   }
@@ -54,10 +63,10 @@ export const PlaylistTab = ({
             <Switch onCheckedChange={() => setIsScrollable((prev) => !prev)} />
           </Flex>
           <PlaylistList
-            selectedEpisode={currentPlaylist.cursor}
+            currentId={currentPlaylist.cursor}
             onSwap={handleSwap}
             isScrollable={isScrollable}
-            episodeList={list}
+            items={list}
           />
         </Tabs.Content>
 
