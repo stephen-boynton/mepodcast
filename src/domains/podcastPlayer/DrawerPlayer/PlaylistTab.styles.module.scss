@@ -7,3 +7,28 @@
 		margin-top: 1rem;
 	}
 }
+
+.activeIcon {
+	position: absolute;
+	right: 0.5rem;
+	bottom: 0.5rem;
+	color: var(--accent-9);
+	width: 1.5rem;
+	height: 1.5rem;
+
+	animation: pulse 2s ease-in-out infinite;
+
+	@keyframes pulse {
+		0% {
+			color: var(--accent-4);
+		}
+
+		50% {
+			color: var(--accent-11);
+		}
+
+		100% {
+			color: var(--accent-4);
+		}
+	}
+}

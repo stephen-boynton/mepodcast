@@ -20,17 +20,21 @@ export type PlaylistListItem = {
 }
 
 type PlaylistProps = {
+  activeIcon: React.ReactNode
   onSwap: (rearranged: PlaylistListItem[]) => void
   isScrollable: boolean
   items: PlaylistListItem[]
   currentId: string
+  onItemSelect: (id: string) => void
 }
 
 export const PlaylistList = ({
+  activeIcon,
   onSwap,
   isScrollable,
   items,
-  currentId
+  currentId,
+  onItemSelect
 }: PlaylistProps) => {
   return (
     <Box>
@@ -43,12 +47,14 @@ export const PlaylistList = ({
           }}
         >
           {items.map((item) => (
-            <button key={item.id} className={styles.button}>
-              <Card
-                className={cn(styles.item, {
-                  [styles.active]: item.id === `${currentId}`
-                })}
-              >
+            <button
+              key={item.id}
+              className={cn(styles.button, {
+                [styles.active]: item.id === currentId
+              })}
+              onClick={() => onItemSelect(item.id)}
+            >
+              <Card className={styles.item}>
                 <Flex gap="2">
                   {item.image && (
                     <Image
@@ -62,6 +68,7 @@ export const PlaylistList = ({
                     <Heading size="2">{truncate(item.heading, 78)}</Heading>
                     <Text size="2">{item.content}</Text>
                   </Flex>
+                  {item.id === currentId && activeIcon}
                 </Flex>
               </Card>
             </button>

@@ -12,7 +12,6 @@ import {
 } from 'react'
 import { Logger } from '@/lib/Logger'
 import { playlistController } from '@/controllers/PlaylistController'
-import { saveCurrentlyPlaying } from '@/db/operations/currentlyPlaying'
 
 type CreatePlaylistArgs = {
   name: string
@@ -49,19 +48,31 @@ const PlaylistContext = createContext<Partial<PlaylistContext>>({
 export const PlaylistProvider = ({ children }: React.PropsWithChildren) => {
   const [initialized, setInitialized] = useState(false)
   const [currentEpisode, setCurrentEpisode] = useState<Episode | null>(null)
-  const playlists = playlistController.getPlaylists()
+
+  const [playlists, setPlaylists] = useState<PlaylistData[]>(
+    playlistController.getPlaylists()
+  )
+
   const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(
     playlistController.getSelectedPlaylist()
   )
+
   const autoPlaylist = playlistController.getAutoPlaylist()
-  console.log({ selectedPlaylist })
+
+  const updatePlaylists = useCallback(() => {
+    setPlaylists(playlistController.getPlaylists())
+  }, [])
+
   const createPlaylist = useCallback(
     async ({ name, description, episode }: CreatePlaylistArgs) => {
-      return await Playlist.createPlaylist({
+      const newPlaylist = await Playlist.createPlaylist({
         name,
         description,
         episodes: episode ? [episode] : []
       })
+      playlistController.addPlaylist(newPlaylist)
+      updatePlaylists()
+      return newPlaylist
     },
     []
   )
@@ -122,9 +133,11 @@ export const PlaylistProvider = ({ children }: React.PropsWithChildren) => {
         (ep) => ep.uuid === episode.uuid
       )
 
+      console.log({ exists, episode })
+
       if (exists) {
         Logger.debug('Episode already exists in playlist')
-        await _selectedPlaylist?.changeEpisodeOrder(exists.uuid, 0)
+        await _selectedPlaylist.changeEpisodeOrder(exists.uuid, 0)
         _selectedPlaylist.cursor = 0
       } else {
         if (_selectedPlaylist.isAutoPlaylist) {

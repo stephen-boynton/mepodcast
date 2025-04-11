@@ -113,6 +113,7 @@ export class Playlist {
     }
 
     this.cursor = this.episodes.findIndex((e) => e.uuid === episode.uuid) || 0
+    this.rewriteList(this.episodes)
     Logger.debug(`Playlist: Adding ${episode} as currently playing`)
     this.save()
   }
@@ -160,6 +161,12 @@ export class Playlist {
     )
 
     if (episodeToMove) {
+      Logger.debug('Playlist: Moving episode', {
+        uuid,
+        episodeToMove,
+        currentIndex,
+        index
+      })
       this.episodes.splice(currentIndex, 1)
       this.episodes.splice(index, 0, episodeToMove)
     }

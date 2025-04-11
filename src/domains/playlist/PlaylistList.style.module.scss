@@ -16,6 +16,7 @@
 	width: 100%;
 	color: white;
 	border-radius: 0.5rem;
+	position: relative;
 
 	&:hover {
 		cursor: pointer;
@@ -24,7 +25,7 @@
 	}
 
 	&.active {
-		border: 1px solid var(--mint-9);
+		border: 1px solid var(--gray-11);
 	}
 }
 

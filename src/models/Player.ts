@@ -1,5 +1,5 @@
 import { db } from '@/db'
-import { saveProgress } from '@/db/operations'
+import { getProgress, saveProgress } from '@/db/operations'
 import { removeCurrentlyPlaying } from '@/db/operations/currentlyPlaying'
 import { Logger } from '@/lib/Logger'
 import { Episode } from '@/models/Episode'
@@ -72,10 +72,6 @@ export class PodcastPlayer {
   }
 
   async play(episode?: Episode) {
-    if (this.isPlaying) {
-      return
-    }
-
     if (this.isPlayingSameEpisode(episode?.uuid as string)) {
       Logger.debug('Player: Already playing episode', this.#currentEpisode)
       return
@@ -91,7 +87,7 @@ export class PodcastPlayer {
       Logger.error('Player: No episode loaded')
     }
 
-    if (this.#currentEpisode && this.#currentEpisode.uuid !== episode?.uuid) {
+    if (this.#currentEpisode?.uuid !== episode?.uuid) {
       await removeCurrentlyPlaying()
     }
 
@@ -102,9 +98,29 @@ export class PodcastPlayer {
   }
 
   async load(_episode?: Episode) {
-    if (!_episode?.audioUrl && !this.#currentEpisode?.audioUrl) {
-      Logger.error('Player no episdoe to load')
+    const episode = _episode || this.#currentEpisode
+    if (!episode?.audioUrl) {
+      Logger.error('Player: no episdoe to load')
       return
+    }
+
+    const currentProgress = await db.progress.get({
+      episodeUuid: episode?.uuid
+    })
+
+    if (currentProgress) {
+      Logger.debug('Player: Loading episode with progress', currentProgress)
+      this.#player.currentTime = currentProgress.episodeProgress
+      this.#progress = currentProgress
+    } else {
+      Logger.debug('Player: Loading episode without progress', episode)
+      this.#progress = {
+        episodeUuid: _episode?.uuid as string,
+        seriesUuid: _episode?.seriesUuid as string,
+        completed: false,
+        episodeProgress: 0
+      }
+      this.#progress = currentProgress
     }
 
     if (
@@ -116,30 +132,12 @@ export class PodcastPlayer {
       return
     }
 
-    const episode = _episode || this.#currentEpisode
-
     if (!episode?.audioUrl || !episode?.uuid) {
       Logger.error('Player: No episode to load')
       return
     }
 
-    const currentProgress = await db.progress.get({
-      episodeUuid: episode?.uuid
-    })
-
     Logger.debug('Current progress', currentProgress)
-
-    if (currentProgress) {
-      this.#player.currentTime = currentProgress.episodeProgress
-      this.#progress = currentProgress
-    } else {
-      this.#progress = {
-        episodeUuid: episode?.uuid,
-        seriesUuid: episode?.seriesUuid as string,
-        completed: false,
-        episodeProgress: 0
-      }
-    }
 
     this.#player.src = episode.audioUrl
     Logger.debug('Loading episode', episode)
