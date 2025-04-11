@@ -154,7 +154,6 @@ export class PlaylistController {
   }
 
   getSelectedPlaylist() {
-    console.log('get selected playlist')
     return this.store.getState().selectedPlaylist
   }
 

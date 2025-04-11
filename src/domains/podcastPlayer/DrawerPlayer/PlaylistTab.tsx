@@ -1,10 +1,12 @@
 import { PlaylistData } from '@/db/Database'
+import { AddPlaylistButton } from '@/domains/playlist/AddPlaylistButton'
 import { PlaylistList, PlaylistListItem } from '@/domains/playlist/PlaylistList'
 import { transformToPlaylistListItem } from '@/domains/playlist/utils'
 import { sortByIds } from '@/utils'
 import { HeightIcon } from '@radix-ui/react-icons'
-import { Box, Flex, Switch, Tabs, Text } from '@radix-ui/themes'
+import { Box, Flex, ScrollArea, Switch, Tabs, Text } from '@radix-ui/themes'
 import { useEffect, useState } from 'react'
+import styles from './PlaylistTab.styles.module.scss'
 
 export const PlaylistTab = ({
   playlists,
@@ -58,12 +60,8 @@ export const PlaylistTab = ({
               {currentPlaylist.episodes.length === 1 ? '' : 's'}
             </Text>
           </Flex>
-          <Flex gap="3" p="3" align="center">
-            <HeightIcon width={32} height={32} />
-            <Switch onCheckedChange={() => setIsScrollable((prev) => !prev)} />
-          </Flex>
           <PlaylistList
-            currentId={currentPlaylist.cursor}
+            currentId={currentPlaylist.getCurrent()?.uuid || ''}
             onSwap={handleSwap}
             isScrollable={isScrollable}
             items={list}
@@ -71,14 +69,22 @@ export const PlaylistTab = ({
         </Tabs.Content>
 
         <Tabs.Content value="other">
-          <Text size="2">Other Playlists</Text>
-          {playlists.map((episode) => {
-            return (
-              <Box key={episode.id}>
-                <Text size="2">{episode.name}</Text>
-              </Box>
-            )
-          })}
+          <Flex
+            className={styles.otherPlaylists}
+            direction="column"
+            pb="3"
+            height={'100%'}
+          >
+            <AddPlaylistButton />
+            <ScrollArea>
+              <PlaylistList
+                currentId={'0'}
+                onSwap={() => {}}
+                isScrollable={isScrollable}
+                items={playlists.map(transformToPlaylistListItem)}
+              />
+            </ScrollArea>
+          </Flex>
         </Tabs.Content>
       </Box>
     </Tabs.Root>

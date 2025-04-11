@@ -74,13 +74,11 @@ export const useDrawerHandlers = ({
 
   useEffect(() => {
     if (playerInitialized) {
-      console.log('playerInitialized')
       if (isLoaded) {
-        console.log('buttonDrawer')
         buttonDrawer()
       }
     }
-  }, [playerInitialized, isLoaded])
+  }, [playerInitialized, isLoaded, buttonDrawer])
 
   return {
     buttonDrawer,

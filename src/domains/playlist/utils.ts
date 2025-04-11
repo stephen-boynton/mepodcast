@@ -6,12 +6,14 @@ export const transformToPlaylistListItem = (
   toTransform: Episode | Playlist
 ): PlaylistListItem => {
   const isEpisode = toTransform instanceof Episode
+
   return {
     heading: toTransform.name || '',
     id: (isEpisode ? toTransform.uuid : `${toTransform.id}`) || '',
     content:
       (isEpisode
         ? toTransform.authorName
-        : `${toTransform.episodes.length} Episodes`) || ''
+        : `${toTransform.episodes?.length || 0} Episodes`) || '',
+    image: (isEpisode && toTransform.imageUrl) || ''
   }
 }

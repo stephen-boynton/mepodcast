@@ -19,7 +19,7 @@ const TRUE: Cboolean = 1
 const FALSE: Cboolean = 0
 
 export class Playlist {
-  #cursor = 0
+  _cursor?: number
   description?: string
   episodes: Episode[] = []
   id?: number
@@ -29,6 +29,8 @@ export class Playlist {
 
   constructor(playlist: Partial<Playlist>) {
     Object.assign(this, playlist)
+    this.episodes =
+      playlist.episodes?.map((episode) => new Episode(episode)) || []
   }
 
   static async createPlaylist({
@@ -89,14 +91,14 @@ export class Playlist {
   }
 
   get cursor(): number {
-    return this.#cursor || 0
+    return this._cursor || 0
   }
 
   set cursor(cursor: number) {
     if (cursor < 0) {
       cursor = 0
     }
-    this.#cursor = cursor
+    this._cursor = cursor
   }
 
   async addAsCurrentlyPlaying(episode: Episode) {
@@ -109,7 +111,7 @@ export class Playlist {
     if (!has) {
       this.episodes.unshift(episode)
     }
-    console.log('am I here?')
+
     this.cursor = this.episodes.findIndex((e) => e.uuid === episode.uuid) || 0
     Logger.debug(`Playlist: Adding ${episode} as currently playing`)
     this.save()

@@ -50,9 +50,11 @@ export const PlaylistProvider = ({ children }: React.PropsWithChildren) => {
   const [initialized, setInitialized] = useState(false)
   const [currentEpisode, setCurrentEpisode] = useState<Episode | null>(null)
   const playlists = playlistController.getPlaylists()
-  const selectedPlaylist = playlists.find((p) => p.isCurrentPlaylist)
+  const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(
+    playlistController.getSelectedPlaylist()
+  )
   const autoPlaylist = playlistController.getAutoPlaylist()
-
+  console.log({ selectedPlaylist })
   const createPlaylist = useCallback(
     async ({ name, description, episode }: CreatePlaylistArgs) => {
       return await Playlist.createPlaylist({
@@ -105,23 +107,29 @@ export const PlaylistProvider = ({ children }: React.PropsWithChildren) => {
 
   const addAsCurrentlyPlaying = useCallback(
     async (episode: Episode) => {
-      if (!selectedPlaylist) {
-        Logger.error('No current playlist')
-        return
+      let _selectedPlaylist = selectedPlaylist
+      if (!_selectedPlaylist) {
+        Logger.warn('No current playlist, attempting to set')
+        _selectedPlaylist = playlistController.getSelectedPlaylist()
+        setSelectedPlaylist(_selectedPlaylist)
+        if (!_selectedPlaylist) {
+          Logger.error('No current playlist')
+          return
+        }
       }
 
-      const exists = selectedPlaylist?.episodes.find(
+      const exists = _selectedPlaylist?.episodes.find(
         (ep) => ep.uuid === episode.uuid
       )
 
       if (exists) {
         Logger.debug('Episode already exists in playlist')
-        await selectedPlaylist?.changeEpisodeOrder(exists.uuid, 0)
-        selectedPlaylist.cursor = 0
+        await _selectedPlaylist?.changeEpisodeOrder(exists.uuid, 0)
+        _selectedPlaylist.cursor = 0
       } else {
-        if (selectedPlaylist.isAutoPlaylist) {
+        if (_selectedPlaylist.isAutoPlaylist) {
           Logger.debug('Adding episode to (selected) auto playlist')
-          await selectedPlaylist?.addAsCurrentlyPlaying(episode)
+          await _selectedPlaylist?.addAsCurrentlyPlaying(episode)
         } else {
           if (!autoPlaylist) {
             Logger.error('No auto playlist')
