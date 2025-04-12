@@ -12,6 +12,7 @@ import { PodcastPlayer } from '../../../../models/Player'
 export type DrawerState = 'open' | 'minimized' | 'closed' | 'button'
 
 type DrawerPlayerState = {
+  audioSrc: string
   buttonDrawer: () => void
   closeDrawer: () => void
   drawerHeight: number | string
@@ -54,8 +55,14 @@ export const DrawerStateProvider = ({
 }: {
   children: React.ReactNode
 }) => {
-  const { player, initializePlayer, initialized, isPlaying, isLoaded } =
-    usePodcastPlayer()
+  const {
+    player,
+    initializePlayer,
+    initialized,
+    isPlaying,
+    isLoaded,
+    audioSrc
+  } = usePodcastPlayer()
 
   const {
     buttonDrawer,
@@ -77,11 +84,13 @@ export const DrawerStateProvider = ({
       minimizeDrawer,
       openDrawer,
       isInitialized: initialized,
-      player
+      player,
+      audioSrc
     })
 
   const value = useMemo(() => {
     return {
+      audioSrc,
       buttonDrawer,
       closeDrawer,
       drawerHeight,
@@ -100,6 +109,7 @@ export const DrawerStateProvider = ({
       swipeHandlers
     }
   }, [
+    audioSrc,
     buttonDrawer,
     closeDrawer,
     drawerHeight,

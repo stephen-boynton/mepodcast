@@ -11,14 +11,16 @@ import { Episode } from '@/models/Episode'
 import { ControlPanel } from './ControlPanel'
 import { useEpisodeDetail } from './useEpisodeDetails'
 import { usePlaylists } from '../playlist/usePlaylists'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export const EpisodeDetail = () => {
   const [disabled, setDisabled] = useState(false)
   const { id } = useParams()
-  const { handlePlay, player } = useDrawerPlayer()
+  const { handlePlay, audioSrc } = useDrawerPlayer()
+
   const { addAsCurrentlyPlaying, addAsPlayNext, currentEpisode } =
     usePlaylists()
+
   const { data: episode } = useEpisodeDetail({
     uuid: id as string
   })
@@ -56,6 +58,10 @@ export const EpisodeDetail = () => {
     addAsCurrentlyPlaying?.(episode as Episode)
   }
 
+  useEffect(() => {
+    setDisabled(audioSrc === episode?.audioUrl)
+  }, [audioSrc, episode?.audioUrl])
+
   return (
     <Box className={styles.container}>
       <Heading className={styles.title} size="6" as="h3">
@@ -77,7 +83,6 @@ export const EpisodeDetail = () => {
           addEpisodeToPlaylist={handleAddEpisodeToPlaylist}
           addAsPlayNext={handleAddAsPlayNext}
           handlePlayPause={handleAction}
-          isPlaying={Boolean(player?.isPlaying)}
         />
       </Flex>
       <Flex direction="column" className={styles.descriptionContainer}>

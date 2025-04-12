@@ -9,11 +9,17 @@ export const usePodcastPlayer = () => {
   const [isPlaying, setPlaying] = useState(false)
   const [isLoaded, setLoaded] = useState(false)
   const [initialized, setInitialized] = useState(false)
+  const [src, setSrc] = useState<string>('')
 
   const initializePlayer = (element: H5AudioPlayer) => {
     if (initialized) return
     setPlayer(
-      PodcastPlayer.create(element?.audio.current, setPlaying, setLoaded)
+      PodcastPlayer.create(
+        element?.audio.current,
+        setPlaying,
+        setLoaded,
+        setSrc
+      )
     )
     setInitialized(true)
   }
@@ -23,6 +29,7 @@ export const usePodcastPlayer = () => {
     initializePlayer,
     initialized,
     isPlaying,
-    isLoaded
+    isLoaded,
+    audioSrc: src
   }
 }

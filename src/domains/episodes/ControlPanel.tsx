@@ -15,7 +15,6 @@ const createButtons = ({
   addAsPlayNext,
   disablePlay
 }: {
-  isPlaying: boolean
   handlePlayPause: () => void
   addAsPlayNext: () => void
   disablePlay?: boolean
@@ -77,13 +76,11 @@ type ControlPanelProps = Partial<PlaylistContext> & {
   handlePlayPause: () => void
   addAsPlayNext: () => void
   addEpisodeToPlaylist: () => void
-  isPlaying: boolean
   disablePlay: boolean
 }
 
 export const ControlPanel = ({
   handlePlayPause,
-  isPlaying,
   addAsPlayNext,
   addEpisodeToPlaylist,
   disablePlay
@@ -91,7 +88,6 @@ export const ControlPanel = ({
   return (
     <Flex px="4" width="100%" gap="4" direction="column" align="stretch">
       {createButtons({
-        isPlaying,
         handlePlayPause,
         addAsPlayNext,
         addEpisodeToPlaylist,

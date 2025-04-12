@@ -6,13 +6,15 @@ import { PodcastPlayer } from '../../../models/Player'
 export const useAudioActions = ({
   drawerState,
   openDrawer,
-  player
+  player,
+  audioSrc
 }: {
   drawerState: string
   isInitialized: boolean
   minimizeDrawer: () => void
   openDrawer: () => void
   player: Maybe<PodcastPlayer>
+  audioSrc: string
 }) => {
   const handlePlay = useCallback(
     (episode?: Episode) => {
