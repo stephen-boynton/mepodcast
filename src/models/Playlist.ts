@@ -212,6 +212,8 @@ export class Playlist {
   }
 
   async save() {
+    const episodeData = this.episodes.map((episode) => episode.toDto())
+    this.episodes = episodeData
     await updatePlaylist(this)
   }
 }

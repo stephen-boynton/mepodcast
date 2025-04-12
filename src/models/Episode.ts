@@ -37,6 +37,26 @@ export class Episode {
   get id() {
     return this.uuid
   }
+
+  toDto() {
+    return {
+      uuid: this.uuid,
+      audioUrl: this.audioUrl,
+      authorName: this.authorName,
+      completed: this.completed,
+      datePublished: this.datePublished,
+      description: this.description,
+      duration: this.duration,
+      episodeNumber: this.episodeNumber,
+      imageUrl: this.imageUrl,
+      listens: this.listens,
+      name: this.name,
+      seriesUuid: this.seriesUuid,
+      seasonNumber: this.seasonNumber,
+      subtitle: this.subtitle,
+      websiteUrl: this.websiteUrl
+    }
+  }
 }
 
 export function createEpisode(episode: Episode) {

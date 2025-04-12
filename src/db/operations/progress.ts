@@ -1,8 +1,12 @@
 import { Progress } from '@/models/Progress'
 import { db } from '..'
 import { ProgressData } from '../Database'
+import { Logger } from '@/lib/Logger'
 
 export async function getProgress(episodeUuid: string) {
+  if (!episodeUuid) {
+    return null
+  }
   return await db.progress.where('episodeUuid').equals(episodeUuid).first()
 }
 
@@ -20,15 +24,21 @@ export async function updateProgress(
   return await db.progress.update(progress.id, progress)
 }
 
-export async function saveProgress(progress: Progress) {
-  const savedProgress = await getProgress(progress?.episodeUuid)
+export async function saveProgress(progress: Partial<ProgressData>) {
+  if (!progress?.episodeUuid) {
+    Logger.error('saveProgress: No episodeUuid')
+    return null
+  }
+
+  const savedProgress = await getProgress(progress.episodeUuid)
   if (savedProgress) {
     return await updateProgress({
       ...savedProgress,
       ...progress
     })
   }
-  return await createProgress(progress)
+
+  return await createProgress(progress as Progress)
 }
 
 export async function deleteProgress(id: number) {

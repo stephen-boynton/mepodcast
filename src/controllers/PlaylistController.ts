@@ -6,6 +6,7 @@ import { initializePlaylist, Playlist } from '@/models/Playlist'
 import { Logger } from '@/lib/Logger'
 import { FALSE, TRUE } from '@/db/constants'
 import { PodcastPlayer } from '@/models/Player'
+import { getPlaylists } from '@/db/operations/playlist'
 
 export type PlayerControllerState = {
   addPlaylist: (playlist: Playlist) => void
@@ -28,6 +29,9 @@ export const playlistControllerStore = createStore<PlayerControllerState>(
     cursor: 0,
 
     addPlaylist: async (playlist: Playlist) => {
+      const episodeData = playlist.episodes.map((episode) => episode.toDto())
+      playlist.episodes = episodeData
+      console.log({ playlist })
       set((state) => ({
         playlists: [...state.playlists, playlist]
       }))
@@ -82,7 +86,7 @@ export const playlistControllerStore = createStore<PlayerControllerState>(
     },
 
     populatePlaylists: async () => {
-      const _playlists = (await db.playlists.toArray()) || []
+      const _playlists = (await getPlaylists()) || []
 
       Logger.debug('Populating Playlists')
 

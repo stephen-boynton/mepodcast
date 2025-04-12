@@ -34,7 +34,7 @@ export const EpisodeList = ({
               key={episode.uuid}
               episodeNumber={episode.episodeNumber}
               episodeDatePublished={episode.datePublished}
-              inProgress={progress?.find((p) => p.episodeUuid === episode.uuid)}
+              inProgress={progress.find((p) => p.episodeUuid === episode.uuid)}
               href={`/series/${seriesId}/episodes/${episode.uuid}`}
               name={episode.name}
               description={episode.description}

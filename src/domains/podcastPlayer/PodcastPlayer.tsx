@@ -7,13 +7,13 @@ import { Box } from '@radix-ui/themes'
 import { Logger } from '@/lib/Logger'
 import { once } from 'es-toolkit'
 
-const s = (
+const initializeOnce = (
   isInitialized: boolean,
   initializePlayer: (player: H5AudioPlayer) => void
 ) =>
   once((instance: H5AudioPlayer) => {
     if (instance && !isInitialized) {
-      Logger.debug('Initializing Player')
+      Logger.debug('Creating Player instance')
       initializePlayer(instance)
     }
   })
@@ -50,7 +50,12 @@ export const PodcastPlayer = ({
         onEnded={handleCompleted}
         listenInterval={5000}
         src={src || undefined}
-        ref={s(isInitialized, initializePlayer)}
+        ref={(instance) =>
+          initializeOnce(
+            isInitialized,
+            initializePlayer
+          )(instance as H5AudioPlayer)
+        }
       />
     </Box>
   )
