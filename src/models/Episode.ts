@@ -1,6 +1,26 @@
 import { Maybe } from '@/types/shared'
 import type { Series } from './Series'
 
+export interface EpisodeDto {
+  audioUrl: Maybe<string>
+  authorName: Maybe<string>
+  completed: boolean
+  datePublished: Maybe<number>
+  description: Maybe<string>
+  duration: Maybe<number>
+  episodeNumber: Maybe<number>
+  imageUrl: Maybe<string>
+  listens: Maybe<number>
+  name: Maybe<string>
+  series?: Maybe<Partial<Series>>
+  seriesName: Maybe<string>
+  seriesUuid: Maybe<string>
+  seasonNumber: Maybe<number>
+  subtitle: Maybe<string>
+  uuid: string
+  websiteUrl: Maybe<string>
+}
+
 export class Episode {
   audioUrl: Maybe<string> = null
   authorName: Maybe<string> = null
@@ -34,11 +54,7 @@ export class Episode {
     return Boolean(audioUrl && name && uuid)
   }
 
-  get id() {
-    return this.uuid
-  }
-
-  toDto() {
+  toDto(): EpisodeDto {
     return {
       uuid: this.uuid,
       audioUrl: this.audioUrl,
@@ -52,6 +68,7 @@ export class Episode {
       listens: this.listens,
       name: this.name,
       seriesUuid: this.seriesUuid,
+      seriesName: this.seriesName,
       seasonNumber: this.seasonNumber,
       subtitle: this.subtitle,
       websiteUrl: this.websiteUrl

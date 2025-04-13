@@ -1,6 +1,5 @@
 import { Playlist } from '@/models/Playlist'
 import { db } from '..'
-import { PlaylistData } from '../Database'
 import { Logger } from '@/lib/Logger'
 
 const TRUE = 1
@@ -21,15 +20,15 @@ export const getPlaylist = async (id?: number) => {
 }
 
 export const createPlaylist = async (playlist: Playlist) => {
-  return await db.playlists.add(playlist)
+  return await db.playlists.add(playlist.toDto())
 }
 
-export const updatePlaylist = async (playlist: PlaylistData) => {
+export const updatePlaylist = async (playlist: Playlist) => {
   if (!playlist.id) {
     Logger.error('Playlist has no id')
   }
 
-  return await db.playlists.put(playlist)
+  return await db.playlists.put(playlist.toDto())
 }
 
 export const deletePlaylist = async (id: number) => {
@@ -60,12 +59,12 @@ export const getAutoPlaylist = async () => {
 
 export const createAutoPlaylist = async (playlist: Playlist) => {
   return await db.playlists.add({
-    ...playlist,
+    ...playlist.toDto(),
     isAutoPlaylist: TRUE
   })
 }
 
-export const updateAutoPlaylist = async (playlist: PlaylistData) => {
+export const updateAutoPlaylist = async (playlist: Playlist) => {
   const playlistToUpdate = await db.playlists
     .where('isAutoPlaylist')
     .equals(TRUE)
@@ -75,7 +74,7 @@ export const updateAutoPlaylist = async (playlist: PlaylistData) => {
     Logger.error('Auto playlist not found')
   }
 
-  return await db.playlists.put(playlist)
+  return await db.playlists.put(playlist.toDto())
 }
 
 export const deleteAutoPlaylist = async () => {

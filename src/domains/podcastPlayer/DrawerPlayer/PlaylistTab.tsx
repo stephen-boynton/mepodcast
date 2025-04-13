@@ -1,11 +1,10 @@
 import { PlaylistData } from '@/db/Database'
-import { AddPlaylistButton } from '@/domains/playlist/AddPlaylistButton'
 import { PlaylistList, PlaylistListItem } from '@/domains/playlist/PlaylistList'
 import { transformToPlaylistListItem } from '@/domains/playlist/utils'
 import { sortByIds } from '@/utils'
-import { HeightIcon, PlayIcon } from '@radix-ui/react-icons'
-import { Box, Flex, ScrollArea, Switch, Tabs, Text } from '@radix-ui/themes'
-import { useEffect, useState } from 'react'
+import { PlayIcon } from '@radix-ui/react-icons'
+import { Box, Flex, ScrollArea, Tabs, Text } from '@radix-ui/themes'
+import { useState } from 'react'
 import styles from './PlaylistTab.styles.module.scss'
 import { CreatePlaylistDialog } from '@/domains/playlist/CreatePlaylistDialog'
 import { usePlaylists } from '@/domains/playlist/usePlaylists'
@@ -30,11 +29,14 @@ export const PlaylistTab = ({
 
   const handleItemSelect = (id: string) => {
     const episode = currentPlaylist.episodes.find((ep) => ep.uuid === id)
+
     if (!episode) {
       Logger.error('No episode found')
       return
     }
+
     addAsCurrentlyPlaying(episode)
+
     if (isPlaying) {
       handlePause()
     }
@@ -104,6 +106,7 @@ export const PlaylistTab = ({
                 onSwap={() => {}}
                 isScrollable={true}
                 items={playlists.map(transformToPlaylistListItem)}
+                onItemSelect={() => {}}
               />
             </ScrollArea>
           </Flex>

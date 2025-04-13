@@ -1,7 +1,6 @@
 import { db } from '@/db'
 import { ProgressData } from '@/db/Database'
 import { getProgress } from '@/db/operations'
-import { removeCurrentlyPlaying } from '@/db/operations/currentlyPlaying'
 import { Logger } from '@/lib/Logger'
 import { Episode } from '@/models/Episode'
 import { Progress } from '@/models/Progress'
@@ -102,10 +101,6 @@ export class PodcastPlayer {
         return await this.#player.play()
       }
       Logger.error('Player: No episode loaded')
-    }
-
-    if (this.#currentEpisode?.uuid !== episode?.uuid) {
-      await removeCurrentlyPlaying()
     }
 
     Logger.debug('Player: Playing episode', episode)

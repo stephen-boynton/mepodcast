@@ -1,5 +1,5 @@
 import 'react-h5-audio-player/lib/styles.css'
-import H5AudioPlayer from 'react-h5-audio-player'
+import H5AudioPlayer, { RHAP_UI } from 'react-h5-audio-player'
 import AudioPlayer from 'react-h5-audio-player'
 import styles from './PodcastPlayer.style.module.scss'
 import { Maybe } from 'graphql/jsutils/Maybe'
@@ -47,6 +47,7 @@ export const PodcastPlayer = ({
         onPlay={handlePlay}
         onListen={handleListening}
         onLoadedMetaData={handleLoaded}
+        showSkipControls
         onEnded={handleCompleted}
         listenInterval={5000}
         src={src || undefined}

@@ -9,14 +9,23 @@ import {
   updatePlaylist
 } from '@/db/operations/playlist'
 import { merge } from 'es-toolkit'
-import { PlaylistData } from '@/db/Database'
 import { Logger } from '@/lib/Logger'
-import { Episode } from './Episode'
+import { Episode, EpisodeDto } from './Episode'
 
 type Cboolean = 1 | 0
 
 const TRUE: Cboolean = 1
 const FALSE: Cboolean = 0
+
+export interface PlaylistDto {
+  id?: number
+  name: string
+  description?: string
+  episodes: EpisodeDto[]
+  cursor: number
+  isAutoPlaylist: Cboolean
+  isCurrentPlaylist: Cboolean
+}
 
 export class Playlist {
   _cursor?: number
@@ -66,7 +75,7 @@ export class Playlist {
     }
   }
 
-  static async transferCurrentPlayist(newPlaylist: PlaylistData) {
+  static async transferCurrentPlayist(newPlaylist: Playlist) {
     if (!newPlaylist.id) {
       Logger.error('Playlist has no id')
       return
@@ -79,6 +88,10 @@ export class Playlist {
   }
 
   async makeCurrentPlaylist() {
+    if (!this.id) {
+      Logger.error('Playlist has no id')
+      return
+    }
     await unsetAsCurrentPlaylist()
     await setAsCurrentPlaylist(this.id)
     await this.save()
@@ -212,9 +225,19 @@ export class Playlist {
   }
 
   async save() {
-    const episodeData = this.episodes.map((episode) => episode.toDto())
-    this.episodes = episodeData
     await updatePlaylist(this)
+  }
+
+  toDto() {
+    return {
+      id: this.id,
+      name: this.name,
+      description: this.description,
+      episodes: this.episodes.map((episode) => episode.toDto()),
+      cursor: this.cursor,
+      isAutoPlaylist: this.isAutoPlaylist,
+      isCurrentPlaylist: this.isCurrentPlaylist
+    }
   }
 }
 

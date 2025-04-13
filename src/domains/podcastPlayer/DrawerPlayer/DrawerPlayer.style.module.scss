@@ -10,17 +10,18 @@ nav.container[id^="EZDrawer__"] {
 		div[class*="rhap_total-time"],
 		div[class*="rhap_current-time"],
 		button[class*="rhap_main-controls-button"],
-		button[class*="rhap_repeat-button"],
-		button[class*="rhap_volume-button"] {
+		button[class*="rhap_repeat-button"] {
 			color: white;
+		}
+
+		div[class*="rhap_additional-controls"],
+		div[class*="rhap_volume-indicator"],
+		button[class*="rhap_volume-button"] {
+			display: none;
 		}
 
 		button[aria-label*="Disable loop"] {
 			color: var(--mint-9);
-		}
-
-		div[class*="rhap_volume-indicator"] {
-			background: var(--blue-9);
 		}
 
 		div[class*="rhap_progress-indicator"] {
