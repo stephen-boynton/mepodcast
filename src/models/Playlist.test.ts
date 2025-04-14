@@ -1,7 +1,7 @@
 // make a test for the Playlist model
 
 import { initializePlaylist, Playlist } from '@/models/Playlist'
-import { FALSE, TRUE } from '@/db/constants'
+import { FALSE } from '@/db/constants'
 import { Episode } from '@/models/Episode'
 
 const episode1 = new Episode({

@@ -43,10 +43,10 @@ export class Episode {
   constructor(episode: Partial<EpisodeDto>) {
     const { series, ...rest } = episode
     Object.assign(this, rest)
-    this.seriesUuid = series?.uuid || null
-    this.imageUrl = series?.imageUrl || null
-    this.seriesName = series?.name || null
-    this.authorName = series?.authorName || null
+    this.seriesUuid = rest.seriesUuid || series?.uuid || null
+    this.imageUrl = rest.imageUrl || series?.imageUrl || null
+    this.seriesName = rest.seriesName || series?.name || null
+    this.authorName = rest.authorName || series?.authorName || null
   }
 
   static isPlayable(episode: Partial<Episode> = {}): boolean {

@@ -59,7 +59,7 @@ export class Playlist {
 
     if (has) {
       const existing = this.episodes.find((e) => e.uuid === episode.uuid)
-      console.log({ existing })
+
       if (!existing) return
       const [playing, ...rest] = this.episodes
       this.episodes = [playing, existing, ...rest]

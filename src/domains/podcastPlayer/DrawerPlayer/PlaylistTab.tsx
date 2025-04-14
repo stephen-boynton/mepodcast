@@ -40,7 +40,7 @@ export const PlaylistTab = ({
     if (isPlaying) {
       handlePause()
     }
-    console.log({ episode })
+
     handlePlay(episode)
     setSelectedEpisode(id)
     currentPlaylist.save()

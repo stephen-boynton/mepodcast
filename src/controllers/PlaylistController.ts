@@ -31,7 +31,6 @@ export const playlistControllerStore = createStore<PlayerControllerState>(
     addPlaylist: async (playlist: Playlist) => {
       const episodeData = playlist.episodes.map((episode) => episode.toDto())
       playlist.episodes = episodeData
-      console.log({ playlist })
       set((state) => ({
         playlists: [...state.playlists, playlist]
       }))

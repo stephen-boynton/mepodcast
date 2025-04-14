@@ -21,7 +21,6 @@ export const useAddToFavoriteSeries = ({ series }: { series: Series }) => {
   }
 
   const removeSeries = async () => {
-    console.log('hererereerererererererererr')
     return await deleteSeries(series?.uuid)
   }
 

@@ -133,8 +133,6 @@ export const PlaylistProvider = ({ children }: React.PropsWithChildren) => {
         (ep) => ep.uuid === episode.uuid
       )
 
-      console.log({ exists, episode })
-
       if (exists) {
         Logger.debug('Episode already exists in playlist')
         await _selectedPlaylist.changeEpisodeOrder(exists.uuid, 0)
