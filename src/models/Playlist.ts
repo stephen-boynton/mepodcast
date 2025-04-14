@@ -20,10 +20,11 @@ export class Playlist {
   isCurrentPlaylist: Cboolean = FALSE
   name: string = 'My-Playlist'
 
-  constructor(playlist: Partial<PlaylistDto>) {
+  constructor(playlist: Partial<Playlist | PlaylistDto>) {
     Object.assign(this, playlist)
     this.episodes =
-      playlist.episodes?.map((episode) => new Episode(episode)) || []
+      playlist.episodes?.map((episode) => new Episode(episode as EpisodeDto)) ||
+      []
   }
 
   get cursor(): number {
@@ -43,7 +44,6 @@ export class Playlist {
   }
 
   addAsCurrentlyPlaying(episode: Episode) {
-    if (!episode) return
     const has = this.alreadyHasEpisode(episode.uuid)
 
     if (!has) {
@@ -59,6 +59,7 @@ export class Playlist {
 
     if (has) {
       const existing = this.episodes.find((e) => e.uuid === episode.uuid)
+      console.log({ existing })
       if (!existing) return
       const [playing, ...rest] = this.episodes
       this.episodes = [playing, existing, ...rest]
@@ -113,19 +114,23 @@ export class Playlist {
   getPrevious() {
     if (this.episodes.length) {
       this.cursor -= 1
-      if (this.cursor < 0) {
-        this.cursor = 0
-      }
       return this.episodes[this.cursor]
     }
   }
 
   rewriteList(episodes: Episode[]) {
+    const currentlyEpisode = this.getCurrent()
     const currentIds = episodes.map((episode) => episode.uuid)
     const existingIds = this.episodes.map((episode) => episode.uuid)
     const hasAllSameIds = existingIds.every((id) => currentIds.includes(id))
     if (hasAllSameIds) {
       this.episodes = episodes
+      if (currentlyEpisode) {
+        this.cursor =
+          episodes.findIndex(
+            (episode) => episode.uuid === currentlyEpisode.uuid
+          ) || 0
+      }
     }
   }
 
