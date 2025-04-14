@@ -1,2 +1,4 @@
-export const TRUE = 1
-export const FALSE = 0
+export type Cboolean = 1 | 0
+
+export const TRUE: Cboolean = 1
+export const FALSE: Cboolean = 0

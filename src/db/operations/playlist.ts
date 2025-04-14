@@ -32,11 +32,23 @@ export const updatePlaylist = async (playlist: Playlist) => {
 }
 
 export const deletePlaylist = async (id: number) => {
-  return await db.playlists.delete(id)
+  try {
+    await db.playlists.delete(id)
+    return true
+  } catch (error: unknown) {
+    Logger.error(`Error deleting playlist ${id} - ${(error as Error).message}`)
+    return false
+  }
 }
 
 export const deleteAllPlaylists = async () => {
-  return await db.playlists.clear()
+  try {
+    await db.playlists.clear()
+    return true
+  } catch (error: unknown) {
+    Logger.error(`Error deleting all playlists - ${(error as Error).message}`)
+    return false
+  }
 }
 
 export const setAsCurrentPlaylist = async (id: number) => {

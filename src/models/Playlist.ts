@@ -1,21 +1,5 @@
-import {
-  createAutoPlaylist,
-  createPlaylist,
-  deleteAutoPlaylist,
-  getAutoPlaylist,
-  setAsCurrentPlaylist,
-  unsetAsCurrentPlaylist,
-  //   updateAutoPlaylist,
-  updatePlaylist
-} from '@/db/operations/playlist'
-import { merge } from 'es-toolkit'
-import { Logger } from '@/lib/Logger'
+import { Cboolean, FALSE } from '@/db/constants'
 import { Episode, EpisodeDto } from './Episode'
-
-type Cboolean = 1 | 0
-
-const TRUE: Cboolean = 1
-const FALSE: Cboolean = 0
 
 export interface PlaylistDto {
   id?: number
@@ -36,71 +20,10 @@ export class Playlist {
   isCurrentPlaylist: Cboolean = FALSE
   name: string = 'My-Playlist'
 
-  constructor(playlist: Partial<Playlist>) {
+  constructor(playlist: Partial<PlaylistDto>) {
     Object.assign(this, playlist)
     this.episodes =
       playlist.episodes?.map((episode) => new Episode(episode)) || []
-  }
-
-  static async createPlaylist({
-    name,
-    description,
-    episodes
-  }: {
-    name: string
-    description?: string
-    episodes: Episode[] | []
-  }) {
-    const newPlaylist = new Playlist({ name, description, episodes })
-    const id = await createPlaylist(newPlaylist)
-    newPlaylist.id = id
-    return newPlaylist
-  }
-
-  static async createAutoPlaylist(playlist: Partial<Playlist>) {
-    const existingAutoPlaylist = await getAutoPlaylist()
-
-    if (existingAutoPlaylist) {
-      playlist = merge(playlist, { isAutoPlaylist: TRUE })
-      await deleteAutoPlaylist()
-      const newPlaylist = new Playlist({ ...playlist, isAutoPlaylist: TRUE })
-      const id = await createAutoPlaylist(newPlaylist)
-      newPlaylist.id = id
-      return newPlaylist
-    } else {
-      const newPlaylist = new Playlist({ ...playlist, isAutoPlaylist: TRUE })
-      const id = await createAutoPlaylist(newPlaylist)
-      newPlaylist.id = id
-      return newPlaylist
-    }
-  }
-
-  static async transferCurrentPlayist(newPlaylist: Playlist) {
-    if (!newPlaylist.id) {
-      Logger.error('Playlist has no id')
-      return
-    }
-
-    await unsetAsCurrentPlaylist()
-    await newPlaylist.save()
-    await setAsCurrentPlaylist(newPlaylist.id)
-    return
-  }
-
-  async makeCurrentPlaylist() {
-    if (!this.id) {
-      Logger.error('Playlist has no id')
-      return
-    }
-    await unsetAsCurrentPlaylist()
-    await setAsCurrentPlaylist(this.id)
-    await this.save()
-  }
-
-  addEpisodeToPlaylist(episode: Episode) {
-    if (this.alreadyHasEpisode(episode.uuid)) return
-    this.episodes.push(episode)
-    this.save()
   }
 
   get cursor(): number {
@@ -114,11 +37,13 @@ export class Playlist {
     this._cursor = cursor
   }
 
-  async addAsCurrentlyPlaying(episode: Episode) {
-    if (!episode) {
-      Logger.error('Playlist: No episode provided')
-      return
-    }
+  addEpisodeToPlaylist(episode: Episode) {
+    if (this.alreadyHasEpisode(episode.uuid)) return
+    this.episodes.push(episode)
+  }
+
+  addAsCurrentlyPlaying(episode: Episode) {
+    if (!episode) return
     const has = this.alreadyHasEpisode(episode.uuid)
 
     if (!has) {
@@ -127,32 +52,25 @@ export class Playlist {
 
     this.cursor = this.episodes.findIndex((e) => e.uuid === episode.uuid) || 0
     this.rewriteList(this.episodes)
-    Logger.debug(`Playlist: Adding ${episode} as currently playing`)
-    this.save()
   }
 
   addAsPlayNext(episode: Episode): void {
     const has = this.alreadyHasEpisode(episode.uuid)
+
     if (has) {
       const existing = this.episodes.find((e) => e.uuid === episode.uuid)
-      if (!existing) {
-        Logger.error('Playlist: Episode does not exist')
-        return
-      }
-      Logger.debug('Playlist: Adding episode as play next')
+      if (!existing) return
       const [playing, ...rest] = this.episodes
       this.episodes = [playing, existing, ...rest]
       return
     }
+
     if (this.episodes.length) {
-      Logger.debug('Playlist: Adding episode as play next')
       const [playing, ...rest] = this.episodes
       this.episodes = [playing, episode, ...rest]
     } else {
-      Logger.debug('Playlist: Adding episode as only episode')
       this.episodes = [episode]
     }
-    this.save()
   }
 
   alreadyHasEpisode(uuid: string) {
@@ -174,12 +92,6 @@ export class Playlist {
     )
 
     if (episodeToMove) {
-      Logger.debug('Playlist: Moving episode', {
-        uuid,
-        episodeToMove,
-        currentIndex,
-        index
-      })
       this.episodes.splice(currentIndex, 1)
       this.episodes.splice(index, 0, episodeToMove)
     }
@@ -212,23 +124,12 @@ export class Playlist {
     const currentIds = episodes.map((episode) => episode.uuid)
     const existingIds = this.episodes.map((episode) => episode.uuid)
     const hasAllSameIds = existingIds.every((id) => currentIds.includes(id))
-    Logger.debug('Attempting to rewrite playlist', {
-      currentIds,
-      existingIds,
-      hasAllSameIds
-    })
     if (hasAllSameIds) {
       this.episodes = episodes
-    } else {
-      Logger.error(`Playlist rewrite failed: ${currentIds} !== ${existingIds}`)
     }
   }
 
-  async save() {
-    await updatePlaylist(this)
-  }
-
-  toDto() {
+  toDto(): PlaylistDto {
     return {
       id: this.id,
       name: this.name,
@@ -241,6 +142,6 @@ export class Playlist {
   }
 }
 
-export const initializePlaylist = (playlist: Partial<Playlist>) => {
+export const initializePlaylist = (playlist: Partial<PlaylistDto>) => {
   return new Playlist(playlist)
 }

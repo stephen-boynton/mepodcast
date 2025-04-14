@@ -9,12 +9,11 @@ interface Id {
 
 export type SeriesData = Series & { id?: number; seriesUuid: string }
 export type ProgressData = Progress & { id?: number }
-export interface PlaylistData extends PlaylistDto, Id {}
 
 export class Database extends Dexie {
   series!: EntityTable<SeriesData, 'id'>
   progress!: EntityTable<ProgressData, 'id'>
-  playlists!: EntityTable<PlaylistData, 'id'>
+  playlists!: EntityTable<PlaylistDto, 'id'>
 
   constructor() {
     super('PodcastDB')
@@ -29,30 +28,26 @@ export class Database extends Dexie {
 		listens,
 		name,
 		seriesUuid,
-		totalEpisodesCount,
-		uuid,
-		websiteUrl
-	`,
+		subtitle,
+		websiteUrl`,
       progress: `
-		++id, 
-		episodeUuid, 
-		seriesUuid,
-		episodeLength, 
-		episodeProgress,
-		completed
-	  `,
+		++id,
+		episodeUuid,
+		progress,
+		seriesUuid`,
       playlists: `
 		++id,
 		name,
 		description,
 		episodes,
-		isAutoPlaylist,
 		cursor,
-		isCurrentPlaylist
-	  `
+		isAutoPlaylist,
+		isCurrentPlaylist`
     })
     this.series.mapToClass(Series)
     this.progress.mapToClass(Progress)
     this.playlists.mapToClass(Playlist)
   }
 }
+
+export const db = new Database()

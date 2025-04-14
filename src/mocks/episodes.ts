@@ -1,16 +1,16 @@
+import { FALSE } from '@/db/constants'
 import { createEpisode, Episode } from '@/models/Episode'
 
 export const episodeMockBuilder = ({
-  id,
+  id = '1',
   name
-}: Pick<Episode, 'id' | 'name'>): Episode => {
+}: Pick<Episode, 'name'> & { id?: string }): Episode => {
   return createEpisode({
-    id,
     name: `name-${name}-${id}`,
     audioUrl: `https://example.com/audio${id}.mp3`,
     imageUrl: `https://example.com/image${id}.jpg`,
     authorName: `Author ${id}`,
-    completed: false,
+    completed: FALSE,
     datePublished: new Date().getTime(),
     description: `Description ${id}`,
     duration: 100,
@@ -21,8 +21,7 @@ export const episodeMockBuilder = ({
     seasonNumber: 1,
     subtitle: `Subtitle ${id}`,
     uuid: `uuid${id}`,
-    websiteUrl: `https://example.com`,
-    toDto: (): Episode => episodeMockBuilder({ id, name })
+    websiteUrl: `https://example.com`
   })
 }
 

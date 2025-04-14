@@ -31,7 +31,16 @@ export const playlistMockCreator: (
     name,
     removeEpisodeFromPlaylist: () => Promise.resolve(),
     rewriteList: () => Promise.resolve(),
-    save: () => Promise.resolve()
+    save: () => Promise.resolve(),
+    toDto: () => ({
+      id,
+      name,
+      description,
+      episodes: episodesMock.map((episode) => episode.toDto()),
+      cursor: 0,
+      isAutoPlaylist: 0,
+      isCurrentPlaylist: 0
+    })
   }
 }
 

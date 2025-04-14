@@ -4,7 +4,7 @@ import type { Series } from './Series'
 export interface EpisodeDto {
   audioUrl: Maybe<string>
   authorName: Maybe<string>
-  completed: boolean
+  completed: 0 | 1
   datePublished: Maybe<number>
   description: Maybe<string>
   duration: Maybe<number>
@@ -40,7 +40,7 @@ export class Episode {
   uuid: string = ''
   websiteUrl: Maybe<string> = null
 
-  constructor(episode: Episode) {
+  constructor(episode: Partial<EpisodeDto>) {
     const { series, ...rest } = episode
     Object.assign(this, rest)
     this.seriesUuid = series?.uuid || null
@@ -59,7 +59,7 @@ export class Episode {
       uuid: this.uuid,
       audioUrl: this.audioUrl,
       authorName: this.authorName,
-      completed: this.completed,
+      completed: this.completed ? 1 : 0,
       datePublished: this.datePublished,
       description: this.description,
       duration: this.duration,
@@ -76,6 +76,6 @@ export class Episode {
   }
 }
 
-export function createEpisode(episode: Episode) {
+export function createEpisode(episode: Partial<EpisodeDto>) {
   return new Episode(episode)
 }
