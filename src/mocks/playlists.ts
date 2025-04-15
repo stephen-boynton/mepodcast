@@ -1,13 +1,20 @@
 // make mock playlist using episodesMock
 
+import { Cboolean, FALSE, TRUE } from '@/db/constants'
 import { episodesMock } from './episodes'
 import { Playlist } from '@/models/Playlist'
 
 export const playlistMockCreator: (
   name: string,
   description: string,
-  id: number
-) => Playlist = (name: string, description: string, id: number) => {
+  id: number,
+  isAuto?: Cboolean
+) => Playlist = (
+  name: string,
+  description: string,
+  id: number,
+  isAuto: Cboolean = FALSE
+) => {
   return {
     id,
     addAsCurrentlyPlaying: () => Promise.resolve(),
@@ -25,7 +32,7 @@ export const playlistMockCreator: (
     getEpisodesCount: () => Promise.resolve(episodesMock.length),
     getNext: () => episodesMock[1],
     getPrevious: () => episodesMock[0],
-    isAutoPlaylist: 0,
+    isAutoPlaylist: isAuto,
     isCurrentPlaylist: 0,
     makeCurrentPlaylist: () => Promise.resolve(),
     name,
@@ -60,6 +67,13 @@ export const playlistMock3: Playlist = playlistMockCreator(
   'Test Playlist 3',
   'Test Description 3',
   3
+)
+
+export const autoPlaylistMock: Playlist = playlistMockCreator(
+  'Test Auto Playlist',
+  'Test Description 4',
+  4,
+  TRUE
 )
 
 export const playlistsMock: Playlist[] = [

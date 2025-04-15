@@ -4,7 +4,22 @@ import { getProgress } from '@/db/operations'
 import { Logger } from '@/lib/Logger'
 import { Episode } from '@/models/Episode'
 import { Progress } from '@/models/Progress'
+import { EpisodeShared } from '@/types/shared'
 import { Dispatch, SetStateAction } from 'react'
+
+const fetchAndSaveEpisode = async (episode: EpisodeShared) => {
+  if (!episode.audioUrl) {
+    Logger.error('Player: No episode to download')
+    return
+  }
+
+  const response = await fetch(episode.audioUrl)
+  const blob = await response.blob()
+  const url = URL.createObjectURL(blob)
+  console.log({ url })
+  episode.audioUrl = url
+  return episode
+}
 
 export class PodcastPlayer {
   static #instance: PodcastPlayer
@@ -49,6 +64,26 @@ export class PodcastPlayer {
     this.#player.src = src
   }
 
+  get isPlaying() {
+    return !this.#player.paused
+  }
+
+  set currentEpisode(episode: Episode | undefined) {
+    this.#currentEpisode = episode
+  }
+
+  isPaused() {
+    return this.#player.paused
+  }
+
+  getDuration() {
+    return this.#player.duration
+  }
+
+  isLoaded() {
+    return this.#player.buffered.length > 0
+  }
+
   public static create(
     player: HTMLAudioElement,
     onPlayStateChange: Dispatch<SetStateAction<boolean>>,
@@ -67,23 +102,18 @@ export class PodcastPlayer {
     return PodcastPlayer.#instance
   }
 
-  isPlayingSameEpisode(episodeUuid: string) {
-    return this.isPlaying && this.#currentEpisode?.uuid === episodeUuid
-  }
+  async initialize(initialEpisode: Episode) {
+    this.clear()
+    Logger.debug('Player: Initializing player', initialEpisode)
 
-  get isPlaying() {
-    return !this.#player.paused
-  }
-
-  async initialize(currentlyPlaying?: Episode) {
-    Logger.debug('Player: Initializing player', currentlyPlaying)
-
-    if (currentlyPlaying?.audioUrl) {
-      this.#player.src = currentlyPlaying.audioUrl
-      this.#currentEpisode = currentlyPlaying
-      await this.load()
+    if (!initialEpisode?.audioUrl) {
+      Logger.error('Player: No episode to initialize')
+      return
     }
 
+    this.#player.src = initialEpisode.audioUrl
+    this.currentEpisode = initialEpisode
+    await this.load()
     this.isInitialized = true
   }
 
@@ -101,8 +131,8 @@ export class PodcastPlayer {
         return await this.#player.play()
       }
       Logger.error('Player: No episode loaded')
+      return
     }
-
     Logger.debug('Player: Playing episode', episode)
     this.#currentEpisode = episode
     this.onPlayStateChange?.(true)
@@ -110,6 +140,7 @@ export class PodcastPlayer {
   }
 
   async load(_episode?: Episode) {
+    this.#player.src = ''
     const episode = _episode || this.#currentEpisode
 
     if (!episode?.audioUrl) {
@@ -145,21 +176,6 @@ export class PodcastPlayer {
       this.#progress.save()
     }
 
-    if (
-      this.#player.src === episode?.audioUrl ||
-      this.#player.src === this.#currentEpisode?.audioUrl
-    ) {
-      Logger.debug('Player: Episode already loaded')
-      this.onLoadedChange?.(true)
-      this.onSrcChange?.(this.#player.src)
-      return
-    }
-
-    if (!episode?.audioUrl || !episode?.uuid) {
-      Logger.error('Player: No episode to load')
-      return
-    }
-
     Logger.debug('Current progress', currentProgress)
 
     this.#player.src = episode.audioUrl
@@ -168,6 +184,10 @@ export class PodcastPlayer {
 
     this.onLoadedChange?.(true)
     await this.#player.load()
+  }
+
+  isPlayingSameEpisode(episodeUuid: string) {
+    return this.isPlaying && this.#currentEpisode?.uuid === episodeUuid
   }
 
   complete() {
@@ -197,20 +217,21 @@ export class PodcastPlayer {
     this.#player.currentTime = 0
   }
 
-  download() {
-    this.#player.pause()
+  async download(episode: EpisodeShared) {
+    if (!episode.audioUrl) {
+      Logger.error('Player: No episode to download')
+      return
+    }
+
+    const episodeAudio = await fetchAndSaveEpisode(episode)
+    console.log({ episodeAudio })
+  }
+
+  clear() {
+    this.#player.src = ''
     this.#player.currentTime = 0
-  }
-
-  isPaused() {
-    return this.#player.paused
-  }
-
-  getDuration() {
-    return this.#player.duration
-  }
-
-  isLoaded() {
-    return this.#player.buffered.length > 0
+    this.currentEpisode = undefined
+    this.#progress = undefined
+    this.isInitialized = false
   }
 }

@@ -24,6 +24,10 @@ export class PlaylistService {
     return playlist
   }
 
+  static async bulkCreatePlaylists(playlists: Playlist[]) {
+    return await db.playlists.bulkAdd(playlists.map((p) => p.toDto()))
+  }
+
   static async updatePlaylist(playlist: Playlist) {
     if (!playlist.id) {
       Logger.error('Playlist has no id')
@@ -76,9 +80,12 @@ export class PlaylistService {
 
   static async createAutoPlaylist(playlist: Playlist) {
     const existingAutoPlaylist = await this.getAutoPlaylist()
+
     if (existingAutoPlaylist) {
-      await this.deletePlaylist(existingAutoPlaylist.id!)
+      Logger.error('Auto playlist already exists')
+      return null
     }
+
     const id = await db.playlists.add({
       ...playlist.toDto(),
       isAutoPlaylist: TRUE
@@ -108,8 +115,9 @@ export class PlaylistService {
   static async deleteAutoPlaylist() {
     const autoPlaylist = await this.getAutoPlaylist()
     if (autoPlaylist) {
-      return await this.deletePlaylist(autoPlaylist.id!)
+      await this.deletePlaylist(autoPlaylist.id!)
+      return true
     }
-    return true
+    return false
   }
 }
