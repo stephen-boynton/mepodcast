@@ -8,19 +8,24 @@ export async function getAllSeries() {
 }
 
 export async function getSeries(uuid: string) {
-  return await db.series.get({ uuid })
+  return await db.series.where('seriesUuid').equals(uuid).first()
 }
 
 export async function deleteSeries(uuid: string) {
-  return await db.series.where('uuid').equals(uuid).delete()
+  await db.series.where('seriesUuid').equals(uuid).delete()
+  return true
+}
+
+export async function deleteAllSeries() {
+  await db.series.clear()
+  return true
 }
 
 export async function upsertSeries(series: Series) {
-  if (!series.uuid) {
+  if (!series.seriesUuid) {
     Logger.warn(`Missing series uuid: ${series.name}`)
-    return null
+    return false
   }
-
   await db.series.put(series as SeriesData)
   return true
 }
