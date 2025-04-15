@@ -26,29 +26,20 @@ export const createPlaylist = async (playlist: Playlist) => {
 export const updatePlaylist = async (playlist: Playlist) => {
   if (!playlist.id) {
     Logger.error('Playlist has no id')
+    return null
   }
 
   return await db.playlists.put(playlist.toDto())
 }
 
 export const deletePlaylist = async (id: number) => {
-  try {
-    await db.playlists.delete(id)
-    return true
-  } catch (error: unknown) {
-    Logger.error(`Error deleting playlist ${id} - ${(error as Error).message}`)
-    return false
-  }
+  await db.playlists.delete(id)
+  return true
 }
 
 export const deleteAllPlaylists = async () => {
-  try {
-    await db.playlists.clear()
-    return true
-  } catch (error: unknown) {
-    Logger.error(`Error deleting all playlists - ${(error as Error).message}`)
-    return false
-  }
+  await db.playlists.clear()
+  return true
 }
 
 export const setAsCurrentPlaylist = async (id: number) => {
