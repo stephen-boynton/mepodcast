@@ -1,4 +1,4 @@
-import { Progress } from '@/models/Progress'
+import { Progress, ProgressDto } from '@/models/Progress'
 import { db } from '..'
 import { ProgressData } from '../Database'
 import { Logger } from '@/lib/Logger'
@@ -7,7 +7,13 @@ export async function getProgress(episodeUuid: string) {
   if (!episodeUuid) {
     return null
   }
-  return await db.progress.where('episodeUuid').equals(episodeUuid).first()
+  return (
+    (await db.progress.where('episodeUuid').equals(episodeUuid).first()) || null
+  )
+}
+
+export async function getAllProgress() {
+  return await db.progress.toArray()
 }
 
 export async function getSeriesProgress(seriesUuid: string) {
@@ -18,10 +24,8 @@ export async function createProgress(progress: Progress) {
   return await db.progress.add(progress)
 }
 
-export async function updateProgress(
-  progress: Pick<ProgressData, 'id' | 'episodeProgress'>
-) {
-  return await db.progress.update(progress.id, progress)
+export async function updateProgress(progress: ProgressDto) {
+  return await db.progress.put(progress)
 }
 
 export async function saveProgress(progress: Partial<ProgressData>) {
@@ -43,4 +47,8 @@ export async function saveProgress(progress: Partial<ProgressData>) {
 
 export async function deleteProgress(id: number) {
   return await db.progress.delete(id)
+}
+
+export async function deleteAllProgress() {
+  return await db.progress.clear()
 }

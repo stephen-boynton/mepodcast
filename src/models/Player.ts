@@ -4,6 +4,7 @@ import { getProgress } from '@/db/operations'
 import { Logger } from '@/lib/Logger'
 import { Episode } from '@/models/Episode'
 import { Progress } from '@/models/Progress'
+import { ProgressService } from '@/services/ProgressService'
 import { EpisodeShared } from '@/types/shared'
 import { Dispatch, SetStateAction } from 'react'
 
@@ -173,7 +174,7 @@ export class PodcastPlayer {
         episodeProgress: 0
       })
 
-      this.#progress.save()
+      await this.saveProgress()
     }
 
     Logger.debug('Current progress', currentProgress)
@@ -190,20 +191,20 @@ export class PodcastPlayer {
     return this.isPlaying && this.#currentEpisode?.uuid === episodeUuid
   }
 
-  complete() {
+  async complete() {
     if (!this.#progress) return
     Logger.debug('Completing episode', this.#progress)
     this.#player.currentTime = this.#player.duration
     this.onPlayStateChange?.(false)
-    this.saveProgress()
+    await this.saveProgress()
     db.progress.update(this.#progress.id, { completed: true })
   }
 
-  saveProgress() {
+  async saveProgress() {
     if (!this.#progress) return
     Logger.debug('Saving progress', this.#progress)
     this.#progress.episodeProgress = this.#player.currentTime
-    this.#progress.save()
+    await ProgressService.updateProgress(this.#progress)
   }
 
   pause() {

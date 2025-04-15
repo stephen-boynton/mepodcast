@@ -1,6 +1,5 @@
-import { saveProgress } from '@/db/operations'
-
-export type ProgressValues = {
+export type ProgressDto = {
+  id?: number
   episodeUuid: string
   episodeProgress: number
   seriesUuid: string
@@ -8,34 +7,32 @@ export type ProgressValues = {
 }
 
 export class Progress {
+  id?: number
   episodeUuid: string = ''
   episodeProgress: number = 0
   seriesUuid: string = ''
   completed: boolean = false
 
-  constructor(progress: ProgressValues) {
+  constructor(progress: ProgressDto) {
     Object.assign(this, progress)
   }
 
   updateProgress(time: number) {
     this.episodeProgress = time
-    this.save()
   }
 
-  toDto() {
+  toDto(): ProgressDto {
     return {
+      id: this.id,
+      completed: this.completed,
       episodeUuid: this.episodeUuid,
       episodeProgress: this.episodeProgress,
       seriesUuid: this.seriesUuid
     }
   }
-
-  save() {
-    saveProgress(this)
-  }
 }
 
-export const createProgress = (progress: Progress) => {
+export const createProgress = (progress: ProgressDto) => {
   return new Progress(progress)
 }
 
