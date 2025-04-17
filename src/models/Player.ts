@@ -1,9 +1,9 @@
 import { db } from '@/db'
 import { ProgressData } from '@/db/Database'
-import { getProgress } from '@/db/operations'
+import { getProgress, saveProgress } from '@/db/operations'
 import { Logger } from '@/lib/Logger'
 import { Episode } from '@/models/Episode'
-import { Progress } from '@/models/Progress'
+import { createProgress, Progress } from '@/models/Progress'
 import { ProgressService } from '@/services/ProgressService'
 import { EpisodeShared } from '@/types/shared'
 import { Dispatch, SetStateAction } from 'react'
@@ -17,7 +17,7 @@ const fetchAndSaveEpisode = async (episode: EpisodeShared) => {
   const response = await fetch(episode.audioUrl)
   const blob = await response.blob()
   const url = URL.createObjectURL(blob)
-  console.log({ url })
+
   episode.audioUrl = url
   return episode
 }
@@ -39,6 +39,7 @@ export class PodcastPlayer {
     onSrcChange: Dispatch<SetStateAction<string>>
   ) {
     if (PodcastPlayer.#instance) {
+      console.log('hererererre')
       Logger.debug('PLayer: Returning existing player')
       return PodcastPlayer.#instance
     }
@@ -131,6 +132,7 @@ export class PodcastPlayer {
         this.onPlayStateChange(true)
         return await this.#player.play()
       }
+
       Logger.error('Player: No episode loaded')
       return
     }
@@ -149,9 +151,7 @@ export class PodcastPlayer {
       return
     }
 
-    const currentProgress = episode?.uuid
-      ? await getProgress(episode?.uuid)
-      : undefined
+    const currentProgress = await ProgressService.getProgress(episode?.uuid)
 
     if (currentProgress) {
       let progress = currentProgress
@@ -188,6 +188,7 @@ export class PodcastPlayer {
   }
 
   isPlayingSameEpisode(episodeUuid: string) {
+    if (!this.#currentEpisode) return false
     return this.isPlaying && this.#currentEpisode?.uuid === episodeUuid
   }
 
@@ -196,8 +197,13 @@ export class PodcastPlayer {
     Logger.debug('Completing episode', this.#progress)
     this.#player.currentTime = this.#player.duration
     this.onPlayStateChange?.(false)
-    await this.saveProgress()
-    db.progress.update(this.#progress.id, { completed: true })
+    await ProgressService.updateProgress(
+      createProgress({
+        ...this.#progress,
+        completed: true,
+        episodeProgress: this.#player.duration
+      })
+    )
   }
 
   async saveProgress() {

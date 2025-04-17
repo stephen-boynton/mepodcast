@@ -7,7 +7,7 @@ import {
   getAllSeries,
   deleteAllSeries
 } from '@/db/operations/series'
-import { createSeries, Series } from '@/models/Series'
+import { createSeries } from '@/models/Series'
 
 const seriesMock = createSeries({
   uuid: '1',
@@ -49,6 +49,17 @@ describe('Series Operations', () => {
     const seriesSaved = await getSeries(seriesMock.uuid).catch(console.error)
     expect(seriesSaved).toBeDefined()
     expect(seriesSaved?.uuid).toBe(seriesMock.uuid)
+  })
+
+  it('upsertSeries with missing uuid', async () => {
+    const series = createSeries({
+      ...seriesMock,
+      // @ts-expect-error - for testing purposes
+      uuid: undefined
+    })
+
+    const successful = await upsertSeries(series)
+    expect(successful).toEqual(false)
   })
 
   it('deleteSeries', async () => {
