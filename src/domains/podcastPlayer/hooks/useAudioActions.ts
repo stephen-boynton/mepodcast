@@ -6,8 +6,7 @@ import { PodcastPlayer } from '../../../models/Player'
 export const useAudioActions = ({
   drawerState,
   openDrawer,
-  player,
-  audioSrc
+  player
 }: {
   drawerState: string
   isInitialized: boolean

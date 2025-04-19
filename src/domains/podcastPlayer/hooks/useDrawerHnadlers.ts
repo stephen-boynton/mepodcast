@@ -66,6 +66,7 @@ export const useDrawerHandlers = ({
     onSwiping: (event: SwipeEventData) => {
       if (event.deltaY < 0) {
         handleSwipeUp()
+        console.log('swipy')
       } else {
         handleSwipeDown()
       }
