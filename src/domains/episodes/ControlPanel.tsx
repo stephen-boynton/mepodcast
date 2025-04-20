@@ -1,7 +1,6 @@
 import {
   CardStackPlusIcon,
   DownloadIcon,
-  PauseIcon,
   PlayIcon,
   PlusIcon
 } from '@radix-ui/react-icons'

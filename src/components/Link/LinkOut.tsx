@@ -4,10 +4,12 @@ import { Flex, Link } from '@radix-ui/themes'
 
 export const LinkOut = ({
   href,
-  children
+  children,
+  testId
 }: {
   href: string
   children: string
+  testId?: string
 }) => {
   return (
     <Link
@@ -15,6 +17,7 @@ export const LinkOut = ({
       href={href}
       target="_blank"
       rel="noopener noreferrer"
+      data-testid={testId}
     >
       <Flex align="center">
         {children}

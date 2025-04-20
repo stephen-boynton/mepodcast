@@ -12,6 +12,10 @@ export const clean = (dirty: string) =>
     }
   })
 
+export const removeHtml = (dirty: string) => {
+  return dirty.replace(/<[^>]*>?/g, '')
+}
+
 export const convertFromUnix = (unix: number) => {
   return new Date(unix * 1000).toDateString()
 }

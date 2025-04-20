@@ -4,7 +4,7 @@ import styles from './Episode.style.module.scss'
 import Image from 'next/image'
 import { LinkOut } from '@/components/Link/LinkOut'
 import Link from 'next/link'
-import { clean } from '@/utils'
+import { clean, convertFromUnix } from '@/utils'
 import { useDrawerPlayer } from '../podcastPlayer/hooks/useDrawerPlayer'
 import { useParams } from 'next/navigation'
 import { Episode } from '@/models/Episode'
@@ -45,9 +45,11 @@ export const EpisodeDetail = () => {
     if (isCurrentEpisode) {
       setDisabled(true)
     } else {
+      console.log('herererer')
       await addAsCurrentlyPlaying?.(episode as Episode)
       handlePlay(episode)
     }
+    return
   }
 
   const handleAddAsPlayNext = () => {
@@ -75,7 +77,7 @@ export const EpisodeDetail = () => {
           src={image}
           width={205}
           height={205}
-          alt="Show Image"
+          alt={`${name} Show Image`}
           className={styles.image}
         />
         <ControlPanel
@@ -87,13 +89,17 @@ export const EpisodeDetail = () => {
       </Flex>
       <Flex direction="column" className={styles.descriptionContainer}>
         <Heading className={styles.subtitle} size="5" as="h3">
-          {showUrl && <LinkOut href={showUrl}>Show Website</LinkOut>}
+          {showUrl && (
+            <LinkOut testId="show-website" href={showUrl}>
+              Show Website
+            </LinkOut>
+          )}
         </Heading>
         <Flex justify="between" mb="4">
           <Text className={styles.seasonEpisode}>
             Season {seasonNumber} Episode {episodeNumber}
           </Text>
-          <Text>{datePublished && new Date(datePublished).toDateString()}</Text>
+          <Text>{datePublished && convertFromUnix(datePublished)}</Text>
         </Flex>
         <ScrollArea
           type="always"
