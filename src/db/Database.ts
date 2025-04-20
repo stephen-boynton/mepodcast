@@ -3,10 +3,6 @@ import { Progress } from '@/models/Progress'
 import { Series } from '@/models/Series'
 import Dexie, { type EntityTable } from 'dexie'
 
-interface Id {
-  id?: number
-}
-
 export type SeriesData = Series & { id?: number; seriesUuid: string }
 export type ProgressData = Progress & { id?: number }
 

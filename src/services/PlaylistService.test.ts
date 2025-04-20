@@ -159,14 +159,23 @@ describe('Playlist Operations', () => {
     expect(playlist?.isAutoPlaylist).toBe(1)
   })
 
-  it('createAutoPlaylist: should return null if auto playlist already exists', async () => {
-    const autoPlaylist = new Playlist({
+  it('createAutoPlaylist: should return existing auto playlist if auto playlist already exists', async () => {
+    const autoPlaylist1 = new Playlist({
       ...playlistData,
+      id: 1,
       episodes: playlistData.episodes.map((episode) => episode.toDto())
     })
-    await PlaylistService.createAutoPlaylist(autoPlaylist)
-    const playlist = await PlaylistService.createAutoPlaylist(autoPlaylist)
-    expect(playlist).toBeNull()
+
+    await PlaylistService.createAutoPlaylist(autoPlaylist1)
+
+    const autoPlaylist2 = new Playlist({
+      ...playlistData,
+      id: 2,
+      episodes: playlistData.episodes.map((episode) => episode.toDto())
+    })
+
+    const playlist = await PlaylistService.createAutoPlaylist(autoPlaylist2)
+    expect(playlist.id).toEqual(autoPlaylist1.id)
   })
 
   it('updateAutoPlaylist: should update an auto playlist', async () => {

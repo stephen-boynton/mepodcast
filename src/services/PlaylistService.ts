@@ -1,7 +1,7 @@
 import { db } from '@/db'
 import { FALSE, TRUE } from '@/db/constants'
 import { Logger } from '@/lib/Logger'
-import { Playlist } from '@/models/Playlist'
+import { Playlist, PlaylistDto } from '@/models/Playlist'
 
 export class PlaylistService {
   static async getPlaylists() {
@@ -83,7 +83,7 @@ export class PlaylistService {
 
     if (existingAutoPlaylist) {
       Logger.error('Auto playlist already exists')
-      return null
+      return new Playlist(existingAutoPlaylist)
     }
 
     const id = await db.playlists.add({
@@ -119,5 +119,17 @@ export class PlaylistService {
       return true
     }
     return false
+  }
+
+  static async isAutoPlaylist(playlist: Playlist) {
+    return playlist.isAutoPlaylist === TRUE
+  }
+
+  static async isCurrentPlaylist(playlist: Playlist) {
+    return playlist.isCurrentPlaylist === TRUE
+  }
+
+  static isPlaylist(playlist: Playlist | PlaylistDto): playlist is Playlist {
+    return playlist instanceof Playlist
   }
 }

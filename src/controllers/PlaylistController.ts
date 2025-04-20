@@ -1,48 +1,53 @@
 'use client'
 import { createStore } from 'zustand'
 import { Maybe } from '@/types/shared'
-import { db } from '@/db'
 import { initializePlaylist, Playlist } from '@/models/Playlist'
 import { Logger } from '@/lib/Logger'
 import { FALSE, TRUE } from '@/db/constants'
 import { PodcastPlayer } from '@/models/Player'
 import { getPlaylists } from '@/db/operations/playlist'
+import { Episode } from '@/models/Episode'
+import { PlaylistService } from '@/services/PlaylistService'
 
 export type PlayerControllerState = {
   addPlaylist: (playlist: Playlist) => void
   bulkAddPlaylist: (playlists: Playlist[]) => void
   cursor: number
+  getSelectedPlaylist: () => Playlist | null
   nextPlaylist: () => void
   playlists: Playlist[]
   populatePlaylists: () => void
   prevPlaylist: () => void
   removePlaylist: (playlistId: number) => void
-  selectedPlaylist: Maybe<Playlist>
+  reset: () => void
   selectPlaylist: (playlistId: number) => void
   setCursor: (cursor: number) => void
 }
 
 export const playlistControllerStore = createStore<PlayerControllerState>(
   (set, get) => ({
-    selectedPlaylist: null,
     playlists: [],
     cursor: 0,
 
-    addPlaylist: async (playlist: Playlist) => {
+    addPlaylist: (playlist: Playlist) => {
       const episodeData = playlist.episodes.map((episode) => episode.toDto())
-      playlist.episodes = episodeData
+      playlist.episodes = episodeData.map((episode) => new Episode(episode))
       set((state) => ({
         playlists: [...state.playlists, playlist]
       }))
     },
 
-    bulkAddPlaylist: async (playlists: Playlist[]) => {
+    bulkAddPlaylist: (playlists: Playlist[]) => {
       set((state) => ({
         playlists: [...state.playlists, ...playlists]
       }))
     },
 
-    async removePlaylist(playlistId: number) {
+    getSelectedPlaylist() {
+      return get().playlists[get().cursor]
+    },
+
+    removePlaylist(playlistId: number) {
       set((state) => {
         const location = state.playlists.findIndex((p) => p.id === playlistId)
         if (state.cursor <= location) {
@@ -54,34 +59,34 @@ export const playlistControllerStore = createStore<PlayerControllerState>(
       })
     },
 
-    selectPlaylist: async (playlistId: number) => {
+    selectPlaylist: (playlistId: number) => {
       set((state) => {
-        const selected = state.playlists.find((p) => p.id === playlistId)
+        const selected = state.playlists.findIndex((p) => p.id === playlistId)
+        const prevSelected = state.playlists[state.cursor]
 
-        if (!selected) {
+        if (selected === -1) {
           Logger.error(`Playlist not found to select: ${playlistId}`)
-          return {
-            selectedPlaylist: null
-          }
+          return state
         }
 
-        selected.isCurrentPlaylist = TRUE
+        state.playlists[selected].isCurrentPlaylist = TRUE
 
-        if (state.selectedPlaylist) {
-          state.selectedPlaylist.isCurrentPlaylist = FALSE
+        if (prevSelected) {
+          prevSelected.isCurrentPlaylist = FALSE
         }
 
         return {
-          selectedPlaylist: state.playlists.find((p) => p.id === playlistId)
+          ...state,
+          cursor: selected
         }
       })
     },
 
-    nextPlaylist: async () => {
-      set((state) => ({
-        curssor: state.cursor++,
-        selectedPlaylist: state.playlists[state.cursor]
-      }))
+    nextPlaylist: () => {
+      const cursor = get().cursor
+      set({
+        cursor: cursor + 1
+      })
     },
 
     populatePlaylists: async () => {
@@ -99,13 +104,25 @@ export const playlistControllerStore = createStore<PlayerControllerState>(
           'Playlist Controller: Current Playlist found',
           currenPlaylist
         )
-        return set({ playlists, selectedPlaylist: currenPlaylist })
+
+        return set((state) => ({
+          ...state,
+          playlists,
+          cursor: playlists.findIndex((p) => p.id === currenPlaylist.id)
+        }))
       }
 
-      const autoPlaylist = await Playlist.createAutoPlaylist({
-        name: 'Auto Playlist',
-        isCurrentPlaylist: TRUE
-      })
+      const autoPlaylist = await PlaylistService.createAutoPlaylist(
+        initializePlaylist({
+          name: 'Auto Playlist',
+          isCurrentPlaylist: TRUE
+        })
+      )
+
+      if (!PlaylistService.isPlaylist(autoPlaylist)) {
+        Logger.error('Auto Playlist not created')
+        return
+      }
 
       set((state) => ({
         ...state,
@@ -121,6 +138,17 @@ export const playlistControllerStore = createStore<PlayerControllerState>(
         cursor: (state.cursor -= 1),
         selectedPlaylist: state.playlists[state.cursor]
       }))
+    },
+
+    getCursor() {
+      return get().cursor
+    },
+
+    reset() {
+      set({
+        playlists: [],
+        cursor: 0
+      })
     },
 
     setCursor: (cursor: number) => set({ cursor })
@@ -148,16 +176,20 @@ export class PlaylistController {
     await this.store.getState().addPlaylist(playlist)
   }
 
+  async bulkAddPlaylist(playlists: Playlist[]) {
+    await this.store.getState().bulkAddPlaylist(playlists)
+  }
+
   getPlaylists() {
-    return this.store.getState().playlists
+    return this.store.getState().playlists || []
   }
 
   getAutoPlaylist() {
-    return this.store.getState().playlists.find((p) => p.isAutoPlaylist)
+    return this.store.getState().playlists.find((p) => p.isAutoPlaylist) || null
   }
 
   getSelectedPlaylist() {
-    return this.store.getState().selectedPlaylist
+    return this.store.getState().getSelectedPlaylist() || null
   }
 
   nextPlaylist() {
@@ -175,8 +207,14 @@ export class PlaylistController {
   selectPlaylist(playlistId: number) {
     const selected = this.store
       .getState()
-      .playlists.find((p) => p.id === playlistId)
-    this.store.setState({ selectedPlaylist: selected })
+      .playlists.findIndex((p) => p.id === playlistId)
+
+    if (selected === -1) {
+      Logger.error(`Playlist not found to select: ${playlistId}`)
+      return
+    }
+
+    this.store.setState({ cursor: selected })
   }
 }
 

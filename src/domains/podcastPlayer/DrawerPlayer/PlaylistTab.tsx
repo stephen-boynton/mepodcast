@@ -1,4 +1,3 @@
-import { PlaylistData } from '@/db/Database'
 import { PlaylistList, PlaylistListItem } from '@/domains/playlist/PlaylistList'
 import { transformToPlaylistListItem } from '@/domains/playlist/utils'
 import { sortByIds } from '@/utils'
@@ -10,18 +9,20 @@ import { CreatePlaylistDialog } from '@/domains/playlist/CreatePlaylistDialog'
 import { usePlaylists } from '@/domains/playlist/usePlaylists'
 import { useDrawerPlayer } from '../hooks/useDrawerPlayer'
 import { Logger } from '@/lib/Logger'
+import { Playlist } from '@/models/Playlist'
+import { PlaylistService } from '@/services/PlaylistService'
+import { Episode } from '@/models/Episode'
 
 export const PlaylistTab = ({
   playlists,
   currentPlaylist
 }: {
-  playlists: PlaylistData[]
-  currentPlaylist: PlaylistData
+  playlists: Playlist[]
+  currentPlaylist: Playlist
 }) => {
-  const { addAsCurrentlyPlaying } = usePlaylists()
   const { handlePlay, handlePause, isPlaying } = useDrawerPlayer()
   const [list, setList] = useState<PlaylistListItem[]>(
-    currentPlaylist.episodes.map(transformToPlaylistListItem)
+    currentPlaylist.episodes?.map(transformToPlaylistListItem)
   )
   const [selectedEpisode, setSelectedEpisode] = useState<string | null>(
     currentPlaylist.getCurrent()?.uuid || null
@@ -35,22 +36,36 @@ export const PlaylistTab = ({
       return
     }
 
-    addAsCurrentlyPlaying(episode)
+    currentPlaylist.addAsCurrentlyPlaying(episode)
 
     if (isPlaying) {
       handlePause()
     }
 
+    if (!currentPlaylist.id) {
+      Logger.error('No current playlist id')
+      return
+    }
+
     handlePlay(episode)
     setSelectedEpisode(id)
-    currentPlaylist.save()
+    PlaylistService.updatePlaylist(currentPlaylist)
     setList(currentPlaylist.episodes.map(transformToPlaylistListItem))
   }
+
   // Got to rearrange episodes based on the transformed PlaylistListItem
   const handleSwap = (rearranged: PlaylistListItem[]) => {
+    if (!currentPlaylist.episodes?.length) {
+      Logger.error('No current playlist with episodes')
+      return
+    }
+
     const rearrangedEpisodes = sortByIds(
       rearranged.map((ep) => ep.id),
-      currentPlaylist.episodes
+      currentPlaylist.episodes.map((ep) => ({
+        ...ep,
+        id: ep.uuid
+      })) as (Episode & { id: string })[]
     )
 
     setList(rearranged)
@@ -59,7 +74,7 @@ export const PlaylistTab = ({
     )
     currentPlaylist.rewriteList(rearrangedEpisodes)
     currentPlaylist.cursor = currentLocation
-    currentPlaylist.save()
+    PlaylistService.updatePlaylist(currentPlaylist)
   }
 
   return (

@@ -22,6 +22,7 @@ export interface EpisodeDto {
 }
 
 export class Episode {
+  id?: number
   audioUrl: Maybe<string> = null
   authorName: Maybe<string> = null
   completed: boolean = false
