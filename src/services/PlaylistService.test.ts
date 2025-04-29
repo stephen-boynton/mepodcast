@@ -43,7 +43,6 @@ describe('Playlist Operations', () => {
 
   it('getPlaylist: should get a playlist', async () => {
     const playlist = await PlaylistService.getPlaylist(1)
-    console.log('playlist', playlist)
     expect(playlist).toBeDefined()
   })
 

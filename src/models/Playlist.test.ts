@@ -128,7 +128,6 @@ describe('Playlist', () => {
     })
 
     playlist.addAsPlayNext(episode)
-    console.log({ playlist })
     expect(playlist.episodes[1]).toEqual(episode)
   })
 
