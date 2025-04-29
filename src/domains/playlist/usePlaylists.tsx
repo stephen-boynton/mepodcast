@@ -11,10 +11,7 @@ import {
   useState
 } from 'react'
 import { Logger } from '@/lib/Logger'
-import {
-  PlaylistController,
-  playlistController
-} from '@/controllers/PlaylistController'
+import { playlistController } from '@/controllers/PlaylistController'
 import { PlaylistService } from '@/services/PlaylistService'
 import { FALSE } from '@/db/constants'
 
@@ -158,6 +155,7 @@ export const PlaylistProvider = ({ children }: React.PropsWithChildren) => {
         Logger.debug('Episode already exists in playlist')
         await currentPlaylist.changeEpisodeOrder(existingEpisode.uuid, 0)
         currentPlaylist.cursor = 0
+        await saveCurrentPlaylist()
         return
       }
 
@@ -166,6 +164,7 @@ export const PlaylistProvider = ({ children }: React.PropsWithChildren) => {
         // Add directly to current auto playlist
         Logger.debug('Adding episode to auto playlist')
         await currentPlaylist.addAsCurrentlyPlaying(episode)
+        await saveCurrentPlaylist()
         return
       }
 
@@ -188,8 +187,9 @@ export const PlaylistProvider = ({ children }: React.PropsWithChildren) => {
       }
       Logger.debug('Adding episode to selected auto playlist')
       await targetAutoPlaylist.addAsCurrentlyPlaying(episode)
+      await saveCurrentPlaylist()
     },
-    [selectedPlaylist, autoPlaylist]
+    [selectedPlaylist, autoPlaylist, saveCurrentPlaylist]
   )
 
   useEffect(() => {

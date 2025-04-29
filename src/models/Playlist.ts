@@ -1,7 +1,7 @@
 import { Cboolean, FALSE } from '@/db/constants'
 import { Episode, EpisodeDto } from './Episode'
 import { Logger } from '@/lib/Logger'
-import { PlaylistService } from '@/services/PlaylistService'
+
 export interface PlaylistDto {
   id?: number
   name: string
@@ -51,7 +51,7 @@ export class Playlist {
       this.episodes.unshift(episode)
       this.cursor = 0
       this.rewriteList(this.episodes)
-      PlaylistService.updatePlaylist(this)
+
       return
     }
 
@@ -63,7 +63,6 @@ export class Playlist {
     }
 
     this.rewriteList(this.episodes)
-    PlaylistService.updatePlaylist(this)
   }
 
   addAsPlayNext(episode: Episode): void {
