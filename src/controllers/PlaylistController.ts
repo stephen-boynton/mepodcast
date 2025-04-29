@@ -126,8 +126,8 @@ export const playlistControllerStore = createStore<PlayerControllerState>(
 
       set((state) => ({
         ...state,
-        playlists: [autoPlaylist],
-        selectedPlaylist: autoPlaylist
+        cursor: 0,
+        playlists: [autoPlaylist]
       }))
 
       Logger.debug('New Auto Playlist populated', get())
@@ -189,7 +189,7 @@ export class PlaylistController {
   }
 
   getSelectedPlaylist() {
-    return this.store.getState().getSelectedPlaylist() || null
+    return this.store.getState().getSelectedPlaylist() || this.getAutoPlaylist()
   }
 
   nextPlaylist() {

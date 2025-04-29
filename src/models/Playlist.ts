@@ -1,6 +1,7 @@
 import { Cboolean, FALSE } from '@/db/constants'
 import { Episode, EpisodeDto } from './Episode'
-
+import { Logger } from '@/lib/Logger'
+import { PlaylistService } from '@/services/PlaylistService'
 export interface PlaylistDto {
   id?: number
   name: string
@@ -48,10 +49,21 @@ export class Playlist {
 
     if (!has) {
       this.episodes.unshift(episode)
+      this.cursor = 0
+      this.rewriteList(this.episodes)
+      PlaylistService.updatePlaylist(this)
+      return
     }
 
-    this.cursor = this.episodes.findIndex((e) => e.uuid === episode.uuid) || 0
+    this.cursor = this.episodes.findIndex((e) => e.uuid === episode.uuid)
+
+    if (this.cursor === -1) {
+      Logger.warn('Playlist: Cannot add as currently playing')
+      return
+    }
+
     this.rewriteList(this.episodes)
+    PlaylistService.updatePlaylist(this)
   }
 
   addAsPlayNext(episode: Episode): void {
@@ -100,21 +112,23 @@ export class Playlist {
 
   getCurrent() {
     if (this.episodes.length) {
-      return this.episodes[this.cursor]
+      return this.episodes[this.cursor] || null
     }
+    Logger.warn('Playlist: No episodes in playlist')
+    return null
   }
 
   getNext() {
     if (this.episodes.length) {
       this.cursor += 1
-      return this.episodes[this.cursor]
+      return this.episodes[this.cursor] || null
     }
   }
 
   getPrevious() {
     if (this.episodes.length) {
       this.cursor -= 1
-      return this.episodes[this.cursor]
+      return this.episodes[this.cursor] || null
     }
   }
 

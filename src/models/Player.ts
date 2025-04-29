@@ -1,11 +1,9 @@
-import { db } from '@/db'
 import { ProgressData } from '@/db/Database'
-import { getProgress, saveProgress } from '@/db/operations'
 import { Logger } from '@/lib/Logger'
 import { Episode } from '@/models/Episode'
 import { createProgress, Progress } from '@/models/Progress'
 import { ProgressService } from '@/services/ProgressService'
-import { EpisodeShared } from '@/types/shared'
+import { EpisodeShared, Maybe } from '@/types/shared'
 import { Dispatch, SetStateAction } from 'react'
 
 const fetchAndSaveEpisode = async (episode: EpisodeShared) => {
@@ -104,12 +102,12 @@ export class PodcastPlayer {
     return PodcastPlayer.#instance
   }
 
-  async initialize(initialEpisode: Episode) {
+  async initialize(initialEpisode: Maybe<Episode>) {
     this.clear()
     Logger.debug('Player: Initializing player', initialEpisode)
 
     if (!initialEpisode?.audioUrl) {
-      Logger.error('Player: No episode to initialize')
+      Logger.warn('Player: No episode to initialize')
       return
     }
 

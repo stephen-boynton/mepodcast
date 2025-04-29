@@ -10,7 +10,8 @@ import Image from 'next/image'
 import { PlaylistTab } from './PlaylistTab'
 import cn from 'classnames'
 import { usePlaylists } from '@/domains/playlist/usePlaylists'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { Logger } from '@/lib/Logger'
 
 const Drawer = dynamic(() => import('react-modern-drawer'), { ssr: false })
 
@@ -38,16 +39,24 @@ export const DrawerPlayer: React.FC = () => {
     swipeHandlers
   } = useDrawerPlayer()
   const { playlists, selectedPlaylist } = usePlaylists()
+  const [episode, setEpisode] = useState<Episode | null>(null)
   const isOpen = drawerState === 'open'
   const isMinimized = drawerState === 'minimized'
-  const episode = selectedPlaylist?.getCurrent()
 
   useEffect(() => {
     if (isInitialized) {
       player?.initialize(episode)
+    } else {
+      Logger.warn('DrawerPlayer: No episode or player')
     }
   }, [isInitialized, player, episode])
 
+  useEffect(() => {
+    if (selectedPlaylist) {
+      console.log('huhhhhhh?, ', selectedPlaylist.getCurrent())
+      setEpisode(selectedPlaylist.getCurrent())
+    }
+  }, [selectedPlaylist])
   return (
     <Drawer
       enableOverlay={false}
